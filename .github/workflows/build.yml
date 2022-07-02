@@ -22,6 +22,11 @@ jobs:
         with:
           ruby-version: 2.7
 
+      - uses: actions/cache@v2
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+
       - run: yarn --frozen-lockfile
 
       - uses: limjh16/jekyll-action-ts@v2
