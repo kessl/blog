@@ -1,0 +1,7 @@
+permalink: /:categories/:title/
+
+plugins:
+  - jekyll-postcss
+
+postcss:
+  cache: false
