@@ -77,7 +77,18 @@ module.exports = {
       max: 'max-content',
       fit: 'fit-content',
     }),
-    extend: {},
+    extend: {
+      typography: {
+        DEFAULT: {
+          css: {
+            a: 'dark:text-light',
+            code: null,
+            'code::before': null,
+            'code::after': null,
+          },
+        },
+      },
+    },
   },
   variants: {},
   plugins: [

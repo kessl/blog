@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2022-07-03T13:17:47+00:00</updated><id>/feed.xml</id><entry><title type="html">Apples</title><link href="/apples/" rel="alternate" type="text/html" title="Apples" /><published>2018-08-21T00:00:00+00:00</published><updated>2018-08-21T00:00:00+00:00</updated><id>/apples</id><content type="html" xml:base="/apples/"><![CDATA[<h2 id="h2-heading">H2 heading</h2>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2022-07-03T17:30:22+00:00</updated><id>/feed.xml</id><entry><title type="html">Apples</title><link href="/apples/" rel="alternate" type="text/html" title="Apples" /><published>2018-08-21T00:00:00+00:00</published><updated>2018-08-21T00:00:00+00:00</updated><id>/apples</id><content type="html" xml:base="/apples/"><![CDATA[<h2 id="h2-heading">H2 heading</h2>
 
 <p>An apple is a sweet, edible fruit produced by an apple tree.</p>
 
@@ -26,11 +26,11 @@ colonists.</p>
 the genus Malus. The tree originated in Central Asia, where its wild ancestor,
 Malus sieversii, is still found today. Apples have been grown for thousands of
 years in Asia and Europe, and were brought to North America by European
-colonists.</p>]]></content><author><name>daniel</name></author><summary type="html"><![CDATA[H2 heading]]></summary></entry><entry><title type="html">Bananas</title><link href="/bananas/" rel="alternate" type="text/html" title="Bananas" /><published>2018-08-20T00:00:00+00:00</published><updated>2018-08-20T00:00:00+00:00</updated><id>/bananas</id><content type="html" xml:base="/bananas/"><![CDATA[<p>A banana is an edible fruit – botanically a berry – produced by several kinds
+colonists.</p>]]></content><author><name>daniel</name></author><category term="apple" /><category term="post" /><category term="tag" /><category term="tag2" /><category term="tag3" /><summary type="html"><![CDATA[H2 heading]]></summary></entry><entry><title type="html">Bananas</title><link href="/bananas/" rel="alternate" type="text/html" title="Bananas" /><published>2018-08-20T00:00:00+00:00</published><updated>2018-08-20T00:00:00+00:00</updated><id>/bananas</id><content type="html" xml:base="/bananas/"><![CDATA[<p>A banana is an edible fruit – botanically a berry – produced by several kinds
 of large herbaceous flowering plants in the genus Musa.</p>
 
 <p>In some countries, bananas used for cooking may be called “plantains”,
 distinguishing them from dessert bananas. The fruit is variable in size, color,
 and firmness, but is usually elongated and curved, with soft flesh rich in
 starch covered with a rind, which may be green, yellow, red, purple, or brown
-when ripe.</p>]]></content><author><name>daniel</name></author><summary type="html"><![CDATA[A banana is an edible fruit – botanically a berry – produced by several kinds of large herbaceous flowering plants in the genus Musa.]]></summary></entry></feed>
+when ripe.</p>]]></content><author><name>daniel</name></author><category term="banana" /><category term="post" /><category term="tag" /><category term="tag2" /><summary type="html"><![CDATA[A banana is an edible fruit – botanically a berry – produced by several kinds of large herbaceous flowering plants in the genus Musa.]]></summary></entry></feed>
