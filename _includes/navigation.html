@@ -1,5 +1,5 @@
-<nav class="flex space-x-5 underline">
-  {% for item in site.data.navigation %}
-    <a href="{{ item.link }}">{{ item.name }}</a>
+<nav class="flex justify-center space-x-60 underline">
+  {% for link in site.data.navigation %}
+    <a href="{{ link }}">{{ link }}</a>
   {% endfor %}
 </nav>
