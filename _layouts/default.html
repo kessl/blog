@@ -3,13 +3,17 @@
   <head>
     <meta charset="utf-8">
     <link rel="stylesheet" href="/assets/css/default.css">
+    <link rel="stylesheet" href="/assets/css/fonts.css">
+    <link rel="icon" href="/assets/favicon.png" type="image/png">
     {% feed_meta %}
     {% seo %}
   </head>
-  <body class="m-16">
-    {% include navigation.html %}
-    <main class="mt-9">
-      {{ content }}
-    </main>
+  <body>
+    <div class="golden bg-grid">
+      {% include navigation.html %}
+      <main class="mt-60 prose max-w-[900px]">
+        {{ content }}
+      </main>
+    </div>
   </body>
 </html>

@@ -3,3 +3,49 @@
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
+
+@layer base {
+  html {
+    @apply text-base font-mono h-full;
+
+    /* monospace + ligatures = 😑 */
+    font-feature-settings: 'liga' 0;
+  }
+
+  body {
+    @apply min-h-full bg-light text-dark;
+  }
+
+  body.dark {
+    @apply bg-dark text-light;
+  }
+
+  main {
+    @apply min-h-full;
+  }
+
+  .prose {
+    @apply text-dark dark:text-light;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading text-dark dark:text-light;
+  }
+
+  .golden {
+    min-height: calc(100vh - 120px);
+    max-width: 930px;
+    padding: 30px 120px 90px 90px;
+    margin-left: calc(61.8% - 720px);
+  }
+
+  .bg-grid {
+    background: linear-gradient(90deg, theme(colors.dark / 5%) 1%, transparent 1%) 0 0, theme(colors.light);
+    background-size: 90px 90px;
+  }
+
+  .dark .bg-grid {
+    background: linear-gradient(90deg, theme(colors.light / 5%) 1%, transparent 1%) 0 0, theme(colors.dark);
+    background-size: 90px 90px;
+  }
+}
