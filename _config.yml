@@ -7,6 +7,7 @@ defaults:
       type: 'pages'
     values:
       layout: 'default'
+      prose: true
   -
     scope:
       path: ''
@@ -14,6 +15,7 @@ defaults:
     values:
       layout: 'post'
       author: 'daniel'
+      prose: true
 
 plugins:
   - jekyll-postcss

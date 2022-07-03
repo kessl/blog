@@ -12,7 +12,7 @@
     {% include themeToggle.html %}
     <div class="golden bg-grid">
       {% include navigation.html %}
-      <main class="mt-60 prose">
+      <main class="mt-60 max-w-none {% if page.prose %}prose{% endif %}">
         {{ content }}
       </main>
     </div>

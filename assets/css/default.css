@@ -30,8 +30,8 @@ layout: null
   }
 
   .golden {
-    min-height: calc(100vh - 120px);
-    max-width: 900px;
+    @apply min-h-screen;
+    max-width: 930px;
     padding: 30px 120px 90px 90px;
     margin-left: calc(61.8% - 720px);
   }
@@ -46,7 +46,8 @@ layout: null
     background-size: 90px 90px;
   }
 
-  .prose a {
-    @apply dark:text-light;
+  code {
+    padding: 2px 4px;
+    @apply whitespace-pre-wrap bg-dark-20 dark:bg-dark-80 dark:text-light;
   }
 }
