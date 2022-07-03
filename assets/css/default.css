@@ -1,4 +1,5 @@
 ---
+layout: null
 ---
 @import "tailwindcss/base";
 @import "tailwindcss/components";
@@ -13,11 +14,7 @@
   }
 
   body {
-    @apply min-h-full bg-light text-dark;
-  }
-
-  body.dark {
-    @apply bg-dark text-light;
+    @apply min-h-full bg-light text-dark dark:bg-dark dark:text-light;
   }
 
   main {
@@ -34,7 +31,7 @@
 
   .golden {
     min-height: calc(100vh - 120px);
-    max-width: 930px;
+    max-width: 900px;
     padding: 30px 120px 90px 90px;
     margin-left: calc(61.8% - 720px);
   }
@@ -47,5 +44,9 @@
   .dark .bg-grid {
     background: linear-gradient(90deg, theme(colors.light / 5%) 1%, transparent 1%) 0 0, theme(colors.dark);
     background-size: 90px 90px;
+  }
+
+  .prose a {
+    @apply dark:text-light;
   }
 }

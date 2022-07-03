@@ -9,11 +9,15 @@
     {% seo %}
   </head>
   <body>
+    {% include themeToggle.html %}
     <div class="golden bg-grid">
       {% include navigation.html %}
-      <main class="mt-60 prose max-w-[900px]">
+      <main class="mt-60 prose">
         {{ content }}
       </main>
     </div>
+    <script>
+      {% include theme.js %}
+    </script>
   </body>
 </html>
