@@ -1,5 +1,7 @@
 ---
 title: Home data storage with encrypted cloud backup
+tags:
+  - homelab
 ---
 I thought it would be a good idea to consolidate all my data to a central storage.
 Before I set this up, I had data all over the place: photos and documents on iCloud and OneDrive, old programming projects and very old documents scattered on random hard drives, games and music on my PC.

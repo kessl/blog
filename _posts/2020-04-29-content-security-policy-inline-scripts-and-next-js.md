@@ -1,5 +1,7 @@
 ---
 title: Content Security Policy, inline scripts and Next.js
+tags:
+  - frontend
 ---
 **TL;DR** Use CSP with nonce & `strict-dynamic` to secure the origin of inline scripts.
 

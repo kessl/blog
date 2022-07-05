@@ -1,5 +1,7 @@
 ---
 title: Static site analytics with Nginx, GoAccess & no JS
+tags:
+  - devops
 ---
 I've been using Cloudflare analytics to get an idea if anyone visits this site
 Cloudflare tells me the number of requests, unique visitors and used bandwidth.

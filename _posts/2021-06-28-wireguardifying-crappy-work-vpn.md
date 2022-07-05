@@ -1,5 +1,7 @@
 ---
 title: Wireguardifying crappy work VPN
+tags:
+  - devops
 ---
 I need to connect to a VPN to access our development environments and various tools we use at work.
 We were given [FortiClient](https://www.fortinet.com/support/product-downloads) as the VPN client, which is utter crap and probably the worst Mac app I've ever had the misfortune to use.

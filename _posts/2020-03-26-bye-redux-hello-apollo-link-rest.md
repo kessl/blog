@@ -1,5 +1,7 @@
 ---
 title: Getting rid of Redux / apollo-link-rest with Next.js
+tags:
+  - frontend
 ---
 **TL;DR** I ditched Redux in favor of Apollo. This is how I set up `apollo-link-rest`.
 

@@ -1,5 +1,7 @@
 ---
 title: Setting up a dev environment on GitLab pages
+tags:
+  - devops
 ---
 **TL;DR** Preview changes to your GitLab pages by directly accessing job artifacts, without overwriting your pages deployment.
 

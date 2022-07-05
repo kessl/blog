@@ -1,5 +1,7 @@
 ---
 title: My humble homelab beginnings
+tags:
+  - homelab
 ---
 Hi, I'm Daniel and I'm an absolute newb when it comes to kubernetes.
 I also really like the idea of having a homelab to experiment on, self-host some apps and look at pretty lights and cables.
