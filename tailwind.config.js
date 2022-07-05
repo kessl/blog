@@ -58,7 +58,7 @@ module.exports = {
         'monospace',
       ],
       heading: [
-        '"Space Mono"',
+        'Noah',
         'ui-monospace',
         'SFMono-Regular',
         'Menlo',

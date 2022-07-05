@@ -36,6 +36,18 @@ layout: null
     @apply font-heading text-dark dark:text-light;
   }
 
+  .prose h1 {
+    @apply text-5xl mb-0;
+  }
+
+  .prose h2 {
+    @apply text-3xl;
+  }
+
+  .prose h3 {
+    @apply text-xl;
+  }
+
   .golden {
     @apply min-h-screen max-w-[930px];
     padding: 30px 90px 90px 90px;
