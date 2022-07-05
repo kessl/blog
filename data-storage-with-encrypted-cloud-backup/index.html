@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <link rel="stylesheet" href="/assets/css/default.css?1657031521155715461">
+    <link rel="stylesheet" href="/assets/css/default.css?1657032561356438082">
     <link rel="stylesheet" href="/assets/css/fonts.css">
     <link rel="icon" href="/assets/favicon.png" type="image/png">
     <link type="application/atom+xml" rel="alternate" href="/feed.xml" />
@@ -66,14 +66,14 @@ Before I set this up, I had data all over the place: photos and documents on iCl
 
 <p>I decided to use an Odroid HC1 with an HDD.
 The Odroid will advertise an NFS share and periodically back up its contents to a cloud storage.
-I chose to go with <a href="https://www.backblaze.com/b2/cloud-storage.html">Backblaze</a>, which offers an S3-compatible object store at $0.005/GB.
+I chose to go with <a href="https://www.backblaze.com/b2/cloud-storage.html" target="_blank">Backblaze</a>, which offers an S3-compatible object store at $0.005/GB.
 First 10 GB are free.</p>
 
 <h2 id="odroid-setup">Odroid setup</h2>
 
-<p>I downloaded Armbian for the HC1 here: <a href="https://www.armbian.com/odroid-hc1/">https://www.armbian.com/odroid-hc1/</a> and wrote the image to an SD card using <a href="https://www.balena.io/etcher/">Etcher</a>.
+<p>I downloaded Armbian for the HC1 here: <a href="https://www.armbian.com/odroid-hc1/" target="_blank">https://www.armbian.com/odroid-hc1/</a> and wrote the image to an SD card using <a href="https://www.balena.io/etcher/">Etcher</a>.
 I’m using OSX on my machine.
-If you’re on Windows, <a href="https://rufus.ie/">Rufus</a> is a good choice.</p>
+If you’re on Windows, <a href="https://rufus.ie/" target="_blank">Rufus</a> is a good choice.</p>
 
 <p>Once the Odroid boots up, find its MAC address in your router config and configure a static IP lease.
 Mine has <code class="language-plaintext highlighter-rouge">192.168.0.11</code>. Then SSH in:</p>
@@ -210,11 +210,11 @@ Verify it still works.</p>
 
 <h2 id="backup-setup">Backup setup</h2>
 
-<p>Register for a Backblaze account at <a href="https://www.backblaze.com/b2/cloud-storage.html">https://www.backblaze.com/b2/cloud-storage.html</a>.
+<p>Register for a Backblaze account at <a href="https://www.backblaze.com/b2/cloud-storage.html" target="_blank">https://www.backblaze.com/b2/cloud-storage.html</a>.
 (You can use any other cloud storage provider supported by <code class="language-plaintext highlighter-rouge">rclone</code>, which is most of them.)
 Create a private bucket with versioning on (it’s the default for B2).</p>
 
-<p>Side note: if you create a public bucket, you can <a href="https://help.backblaze.com/hc/en-us/articles/217666928-Using-Backblaze-B2-with-the-Cloudflare-CDN">proxy traffic</a> to it through Cloudflare to create your own private CDN.</p>
+<p>Side note: if you create a public bucket, you can <a href="https://help.backblaze.com/hc/en-us/articles/217666928-Using-Backblaze-B2-with-the-Cloudflare-CDN" target="_blank">proxy traffic</a> to it through Cloudflare to create your own private CDN.</p>
 
 <p>Next, create an app key with permissions to your bucket and save the app key ID and the key to configure <code class="language-plaintext highlighter-rouge">rclone</code>.</p>
 
@@ -298,7 +298,7 @@ It’s basically rsync for the cloud. Let’s install rclone and add B2 as a rem
 <h3 id="enable-encryption">Enable encryption</h3>
 
 <p>To enable encryption, rclone has a <code class="language-plaintext highlighter-rouge">crypt</code> remote type that encrypts files uploaded to it.
-Most of the configuration is straightforward and uses the defaults, except for filename and directory name encryption, which <a href="https://github.com/rclone/rclone/issues/1627#issuecomment-371625277">does not work with B2 versioning system</a>, so we will disable it.
+Most of the configuration is straightforward and uses the defaults, except for filename and directory name encryption, which <a href="https://github.com/rclone/rclone/issues/1627#issuecomment-371625277" target="_blank">does not work with B2 versioning system</a>, so we will disable it.
 If you insist on encrypting file and directory names, you could disable versioning and use the <code class="language-plaintext highlighter-rouge">--backup-dir</code> option instead.</p>
 
 <p>Let’s add another remote:</p>
@@ -482,12 +482,12 @@ Create a bash script in <code class="language-plaintext highlighter-rouge">/home
   0,30 <span class="k">*</span> <span class="k">*</span> <span class="k">*</span> <span class="k">*</span> /home/&lt;username&gt;/rclone-cron.sh <span class="o">&gt;</span>/dev/null 2&gt;&amp;1
 </code></pre></div></div>
 
-<p>If you’d like to change the schedule, <a href="https://crontab.guru/#0,30_*_*_*_*">crontab.guru</a> is handy when editing crontab.</p>
+<p>If you’d like to change the schedule, <a href="https://crontab.guru/#0,30_*_*_*_*" target="_blank">crontab.guru</a> is handy when editing crontab.</p>
 
 <p>That’s it! Anything you store on the Odroid will be backed up to Backblaze every 30 minutes.
 Previous versions of edited or deleted files will remain in Backblaze.
 You can recover them using <code class="language-plaintext highlighter-rouge">rclone --b2-versions</code>.
-You’ll find more about that in the <a href="https://rclone.org/b2/#versions">docs</a>.</p>
+You’ll find more about that in the <a href="https://rclone.org/b2/#versions" target="_blank">docs</a>.</p>
 
 
       </main>

@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <link rel="stylesheet" href="/assets/css/default.css?1657031521155715461">
+    <link rel="stylesheet" href="/assets/css/default.css?1657032561356438082">
     <link rel="stylesheet" href="/assets/css/fonts.css">
     <link rel="icon" href="/assets/favicon.png" type="image/png">
     <link type="application/atom+xml" rel="alternate" href="/feed.xml" />
@@ -61,7 +61,7 @@ Dotfiles hold configuration for programs like bash, zsh, vim and git.</p>
 That way I have all my settings backed up, so that I can quickly transfer them to a new machine.
 Dotfiles obviously save time when setting up a new laptop or desktop, but they are so easy to use – just copy them to your home directory – that I can use them even on one-off virtual machines and servers.</p>
 
-<p>In addition to the actual dotfiles, which hold configuration for the shell and other programs, my <a href="https://github.com/kessl/dotfiles">dotfiles repository</a> contains a few scripts for setting up a new machine.
+<p>In addition to the actual dotfiles, which hold configuration for the shell and other programs, my <a href="https://github.com/kessl/dotfiles" target="_blank">dotfiles repository</a> contains a few scripts for setting up a new machine.
 Some dotfiles hold secrets and are encrypted.</p>
 
 <h2 id="actual-dotfiles">Actual dotfiles</h2>
@@ -71,7 +71,7 @@ Some are in <code class="language-plaintext highlighter-rouge">~/.config</code> 
 
 <p>These dotfiles are in the root of the git repo.
 Installing them is as easy as copying to the home directory.
-This is what <a href="https://github.com/kessl/dotfiles/blob/main/bootstrap.sh"><code class="language-plaintext highlighter-rouge">bootstrap.sh</code></a> does.</p>
+This is what <a href="https://github.com/kessl/dotfiles/blob/main/bootstrap.sh" target="_blank"><code class="language-plaintext highlighter-rouge">bootstrap.sh</code></a> does.</p>
 
 <p>My dotfiles mostly define the behavior of <code class="language-plaintext highlighter-rouge">bash</code>, which I use as my shell, as well as the shell prompt.
 Other than the shell, there are files for <code class="language-plaintext highlighter-rouge">git</code>, <code class="language-plaintext highlighter-rouge">vim</code> and <code class="language-plaintext highlighter-rouge">curl</code>.</p>
@@ -83,36 +83,36 @@ Other than the shell, there are files for <code class="language-plaintext highli
 <p>The <code class="language-plaintext highlighter-rouge">setup</code> directory holds scripts which help setting up a new machine.
 They are MacOS-specific, except for <code class="language-plaintext highlighter-rouge">secrets.sh</code>, though it doesn’t make much sense to put secrets like SSH keys and configs with passwords anywhere else than on my main machine.</p>
 
-<h3 id="macossh"><a href="https://github.com/kessl/dotfiles/blob/main/setup/macos.sh">macos.sh</a></h3>
+<h3 id="macossh"><a href="https://github.com/kessl/dotfiles/blob/main/setup/macos.sh" target="_blank">macos.sh</a></h3>
 
 <p>This script configures a new, clean MacOS installation.
 It mostly sets options you would configure in the System Preferences GUI (like wallpaper, Dock preferences), but also some more hidden settings like showing path in Finder at all times.
 There are some downright esoteric settings like disabling (unbearably slow) window animations in Apple Mail.</p>
 
-<h3 id="brewsh"><a href="https://github.com/kessl/dotfiles/blob/main/setup/brew.sh">brew.sh</a></h3>
+<h3 id="brewsh"><a href="https://github.com/kessl/dotfiles/blob/main/setup/brew.sh" target="_blank">brew.sh</a></h3>
 
 <p>Updates Homebrew and installs formulae and casks.
 Also switches the shell to less ancient, brew-installed <code class="language-plaintext highlighter-rouge">bash</code>.</p>
 
-<h3 id="vscodesh"><a href="https://github.com/kessl/dotfiles/blob/main/setup/vscode.sh">vscode.sh</a></h3>
+<h3 id="vscodesh"><a href="https://github.com/kessl/dotfiles/blob/main/setup/vscode.sh" target="_blank">vscode.sh</a></h3>
 
 <p>Copies settings and keybindings to VSCode’s configuration folder and installs a couple of extensions.</p>
 
-<h3 id="mountsh"><a href="https://github.com/kessl/dotfiles/blob/main/setup/mount.sh">mount.sh</a></h3>
+<h3 id="mountsh"><a href="https://github.com/kessl/dotfiles/blob/main/setup/mount.sh" target="_blank">mount.sh</a></h3>
 
 <p>Extends automount config <code class="language-plaintext highlighter-rouge">/etc/auto_master</code> with <code class="language-plaintext highlighter-rouge">/etc/auto_nfs</code>, which mounts my <a href="/data-storage-with-encrypted-cloud-backup/">NAS</a> as a NFS share.
 Also comes in handy after a system update, because MacOS updates reset the <code class="language-plaintext highlighter-rouge">auto_master</code> for some reason.</p>
 
-<h3 id="sudosh"><a href="https://github.com/kessl/dotfiles/blob/main/setup/sudo.sh">sudo.sh</a></h3>
+<h3 id="sudosh"><a href="https://github.com/kessl/dotfiles/blob/main/setup/sudo.sh" target="_blank">sudo.sh</a></h3>
 
 <p>Allows using Touch ID for <code class="language-plaintext highlighter-rouge">sudo</code> instead of password.
 Also gets reset by a system update.</p>
 
 <h2 id="secrets">Secrets</h2>
 
-<p>Last script in the repo is <a href="https://github.com/kessl/dotfiles/blob/main/setup/secrets.sh"><code class="language-plaintext highlighter-rouge">setup/secrets.sh</code></a>.
+<p>Last script in the repo is <a href="https://github.com/kessl/dotfiles/blob/main/setup/secrets.sh" target="_blank"><code class="language-plaintext highlighter-rouge">setup/secrets.sh</code></a>.
 It takes care of decrypting and installing dotfiles which contain secrets such as private keys and passwords and cannot be commited to a git repo in plaintext.
-Before running the script, ensure you have <code class="language-plaintext highlighter-rouge">gpg</code> available (such as GnuPG on Mac, installed by <a href="https://github.com/kessl/dotfiles/blob/main/setup/brew.sh"><code class="language-plaintext highlighter-rouge">brew.sh</code></a>) and a private key that can decrypt your secrets.
+Before running the script, ensure you have <code class="language-plaintext highlighter-rouge">gpg</code> available (such as GnuPG on Mac, installed by <a href="https://github.com/kessl/dotfiles/blob/main/setup/brew.sh" target="_blank"><code class="language-plaintext highlighter-rouge">brew.sh</code></a>) and a private key that can decrypt your secrets.
 It’s important to back this private key up to a password manager.</p>
 
 <p>I prefer to keep all my dotfiles with secrets in <code class="language-plaintext highlighter-rouge">~/.secrets/</code>, which makes it easy to back them up.
@@ -122,7 +122,7 @@ I then symlink the files to their original location:</p>
 </code></pre></div></div>
 
 <p>That’s all there is to my dotfiles so far.
-Thanks to Mathias Bynens and his awesome <a href="https://github.com/mathiasbynens/dotfiles">dotfiles repo</a> (<a href="https://news.ycombinator.com/item?id=26513528">HN discussion</a>), which were the inspiration and basis for mine.</p>
+Thanks to Mathias Bynens and his awesome <a href="https://github.com/mathiasbynens/dotfiles" target="_blank">dotfiles repo</a> (<a href="https://news.ycombinator.com/item?id=26513528" target="_blank">HN discussion</a>), which were the inspiration and basis for mine.</p>
 
 
       </main>

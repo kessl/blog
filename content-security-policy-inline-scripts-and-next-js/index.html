@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <link rel="stylesheet" href="/assets/css/default.css?1657031521155715461">
+    <link rel="stylesheet" href="/assets/css/default.css?1657032561356438082">
     <link rel="stylesheet" href="/assets/css/fonts.css">
     <link rel="icon" href="/assets/favicon.png" type="image/png">
     <link type="application/atom+xml" rel="alternate" href="/feed.xml" />
@@ -61,7 +61,7 @@ I went with nonce, and even though it turned out to be pretty straightforward in
 
 <h2 id="setting-up-security-headers">Setting up security headers</h2>
 
-<p>I used <a href="https://helmetjs.github.io/"><code class="language-plaintext highlighter-rouge">helmet</code></a>, an <code class="language-plaintext highlighter-rouge">express</code> middleware that makes setting security headers easier.
+<p>I used <a href="https://helmetjs.github.io/" target="_blank"><code class="language-plaintext highlighter-rouge">helmet</code></a>, an <code class="language-plaintext highlighter-rouge">express</code> middleware that makes setting security headers easier.
 The types make it convenient to see all the configuration options.</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>yarn add helmet
@@ -71,7 +71,7 @@ The types make it convenient to see all the configuration options.</p>
 <h2 id="setting-up-csp-with-nonce">Setting up CSP with nonce</h2>
 
 <p>The idea is to generate a random nonce on every request, send it to the browser in the CSP header and make sure all scripts have a matching value: <code class="language-plaintext highlighter-rouge">&lt;script nonce={nonce}&gt;</code>.
-See <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP">MDN</a> for all possible CSP options.</p>
+See <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP" target="_blank">MDN</a> for all possible CSP options.</p>
 
 <p><code class="language-plaintext highlighter-rouge">'strict-dynamic'</code> tells the browser to trust any other code executed by already trusted code.
 If you specify <code class="language-plaintext highlighter-rouge">'strict-dynamic'</code>, the browser will disregard other options such as <code class="language-plaintext highlighter-rouge">'self' *.3rdparty.com</code>.

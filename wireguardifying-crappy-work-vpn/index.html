@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <link rel="stylesheet" href="/assets/css/default.css?1657031521155715461">
+    <link rel="stylesheet" href="/assets/css/default.css?1657032561356438082">
     <link rel="stylesheet" href="/assets/css/fonts.css">
     <link rel="icon" href="/assets/favicon.png" type="image/png">
     <link type="application/atom+xml" rel="alternate" href="/feed.xml" />
@@ -52,7 +52,7 @@
   on 28 Jun 2021
 </p>
 <p>I need to connect to a VPN to access our development environments and various tools we use at work.
-We were given <a href="https://www.fortinet.com/support/product-downloads">FortiClient</a> as the VPN client, which is utter crap and probably the worst Mac app I’ve ever had the misfortune to use.
+We were given <a href="https://www.fortinet.com/support/product-downloads" target="_blank&quot;,:rel=&quot;nofollow">FortiClient</a> as the VPN client, which is utter crap and probably the worst Mac app I’ve ever had the misfortune to use.
 To give you a picture of how bad it is:</p>
 
 <ul>
@@ -96,14 +96,14 @@ I will still have to SSH in and manually log in with <code class="language-plain
 <h2 id="tailscale-to-the-rescue">Tailscale to the rescue</h2>
 
 <p>Wireguard is awesome but takes a bit of work to set up and maintain.
-<a href="https://tailscale.com/">Tailscale</a>, however, uses Wireguard internally, is even more awesome and is unbelievably easy to set up.
+<a href="https://tailscale.com/" target="_blank">Tailscale</a>, however, uses Wireguard internally, is even more awesome and is unbelievably easy to set up.
 It just works™.
 Also it’s free for a single account (which you can use for <del>as many devices as you like</del> 20 devices + one subnet route as of June 2021).
-It works behind <a href="https://tailscale.com/blog/how-nat-traversal-works/">all sorts of nasty NATs</a>.
+It works behind <a href="https://tailscale.com/blog/how-nat-traversal-works/" target="_blank">all sorts of nasty NATs</a>.
 Seriously, it’s amazing.</p>
 
 <p>I used a $5 DigitalOcean VPS I have lying around for random purposes like this.
-I connected both using Tailscale, installed <a href="https://github.com/adrienverge/openfortivpn">openfortivpn</a> (an open-source CLI alternative to FortClient) and connected.</p>
+I connected both using Tailscale, installed <a href="https://github.com/adrienverge/openfortivpn" target="_blank">openfortivpn</a> (an open-source CLI alternative to FortClient) and connected.</p>
 
 <p><img src="/assets/images/tailscale-machines.png" alt="Tailscale machines screen with arcane-potato (VPS) connected" /></p>
 
@@ -151,7 +151,7 @@ daniel@arcane-potato:~<span class="nv">$ </span><span class="nb">sudo </span>tai
 </code></pre></div></div>
 
 <p>In the Tailscale control panel, <code class="language-plaintext highlighter-rouge">arcane-potato</code> now has a badge saying that it advertises routes.
-Before these routes are applied, they need to be <a href="https://tailscale.com/kb/1019/subnets/">reviewed</a> and approved.
+Before these routes are applied, they need to be <a href="https://tailscale.com/kb/1019/subnets/" target="_blank">reviewed</a> and approved.
 Once that was done, I was able to reach services behind the VPN by their IP addresses.</p>
 
 <h2 id="configuring-dns">Configuring DNS</h2>

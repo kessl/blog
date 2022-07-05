@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <link rel="stylesheet" href="/assets/css/default.css?1657031521155715461">
+    <link rel="stylesheet" href="/assets/css/default.css?1657032561356438082">
     <link rel="stylesheet" href="/assets/css/fonts.css">
     <link rel="icon" href="/assets/favicon.png" type="image/png">
     <link type="application/atom+xml" rel="alternate" href="/feed.xml" />
@@ -58,15 +58,15 @@ But there’s only 30 days of history, I don’t know how many of the visits are
 
 <p><img src="/assets/images/cloudflare-analytics.png" alt="Screenshot of Cloudflare analytics" /></p>
 
-<p>I’ve been wanting to give <a href="https://goaccess.io/">GoAccess</a> a try for some time.
+<p>I’ve been wanting to give <a href="https://goaccess.io/" target="_blank">GoAccess</a> a try for some time.
 GoAccess provides real-time analytics by parsing access logs of your server.
 It works entirely server-side and it’s in my opinion the most privacy-conscious analytics solution, because it only collects what the browser explicitly sends to the server.
-There’s a slight problem though – I host this site on <a href="/gitlab-pages-dev-env">Gitlab pages</a> and <a href="https://www.yourofficeanywhere.co.uk/wp-content/uploads/2019/07/Cloud-Definitionn-2.png">there’s no server</a>.</p>
+There’s a slight problem though – I host this site on <a href="/gitlab-pages-dev-env">Gitlab pages</a> and <a href="https://www.yourofficeanywhere.co.uk/wp-content/uploads/2019/07/Cloud-Definitionn-2.png" target="_blank">there’s no server</a>.</p>
 
 <h2 id="enter-the-tracking-pixel">Enter the tracking pixel</h2>
 
 <p>A tracking pixel is a 1x1 transparent pixel made infamous by Facebook, who use it to track people across third party sites.
-I’ll use the same technique here thanks to excellent writeups by <a href="https://benhoyt.com/writings/replacing-google-analytics/">Ben Hoyt</a> and <a href="https://timnash.co.uk/pixel-tracking-with-nginx-a-tiny-bit-of-javascript/">Tim Nash</a>.</p>
+I’ll use the same technique here thanks to excellent writeups by <a href="https://benhoyt.com/writings/replacing-google-analytics/" target="_blank">Ben Hoyt</a> and <a href="https://timnash.co.uk/pixel-tracking-with-nginx-a-tiny-bit-of-javascript/" target="_blank">Tim Nash</a>.</p>
 
 <p>This is the plan:</p>
 
@@ -128,7 +128,7 @@ We’ll need to change the log format to use the <code class="language-plaintext
   <span class="nt">-v</span> <span class="k">${</span><span class="nv">PWD</span><span class="k">}</span>/log:/var/log/nginx nginx:alpine
 </code></pre></div></div>
 
-<p>If you open <a href="http://localhost:8080/cat.gif"><code class="language-plaintext highlighter-rouge">http://localhost:8080/cat.gif</code></a>, there should be a record like the following in the pixel’s log:</p>
+<p>If you open <a href="http://localhost:8080/cat.gif" target="_blank"><code class="language-plaintext highlighter-rouge">http://localhost:8080/cat.gif</code></a>, there should be a record like the following in the pixel’s log:</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">cat </span>log/pixel.log
 172.17.0.1 - - <span class="o">[</span>14/Mar/2021:21:13:15 +0000] <span class="s2">""</span> 200 43 <span class="s2">""</span> <span class="s2">"Mozilla/5.0 (Windows NT 10.0; rv:78.0) Gecko/20100101 Firefox/78.0"</span> <span class="s2">"-"</span>
@@ -180,7 +180,7 @@ We already have an Nginx up and running; let’s add a <code class="language-pla
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">-v</span> <span class="k">${</span><span class="nv">PWD</span><span class="k">}</span>/goaccess/index.html:/var/www/index.html <span class="nt">-p</span> 8081:8081
 </code></pre></div></div>
 
-<p>You should now find the report at <a href="http://localhost:8081"><code class="language-plaintext highlighter-rouge">http://localhost:8081</code></a>.</p>
+<p>You should now find the report at <a href="http://localhost:8081" target="_blank"><code class="language-plaintext highlighter-rouge">http://localhost:8081</code></a>.</p>
 
 <p>To make deployment easier, I created a <code class="language-plaintext highlighter-rouge">docker-compose.yml</code>.
 I mapped the ports differently so that the pixel is available at port 80, 7890 is GoAccess’s default websocket port and 7891 is the report.
@@ -188,7 +188,7 @@ I mapped the ports differently so that the pixel is available at port 80, 7890 i
 
 <p>I added a Let’s Encrypt config to enable HTTPS.
 Without HTTPS, the numbers would be skewed, because recent versions of Chrome will not load mixed content.
-See the <a href="https://github.com/kessl/static-pixel-tracking">readme</a> for the necessary steps to get it all up and running.</p>
+See the <a href="https://github.com/kessl/static-pixel-tracking" target="_blank">readme</a> for the necessary steps to get it all up and running.</p>
 
 <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">version</span><span class="pi">:</span> <span class="s1">'</span><span class="s">3.8'</span>
 

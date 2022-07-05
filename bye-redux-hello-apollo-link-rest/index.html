@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <link rel="stylesheet" href="/assets/css/default.css?1657031521155715461">
+    <link rel="stylesheet" href="/assets/css/default.css?1657032561356438082">
     <link rel="stylesheet" href="/assets/css/fonts.css">
     <link rel="icon" href="/assets/favicon.png" type="image/png">
     <link type="application/atom+xml" rel="alternate" href="/feed.xml" />
@@ -90,7 +90,7 @@ Because it’s an Apollo link, there is no need for separate error and authoriza
 
 <p>The setup is as simple as creating a <code class="language-plaintext highlighter-rouge">RestLink</code> and adding it to you Apollo client.
 I’m using Next.js <code class="language-plaintext highlighter-rouge">^9.3.1</code> with <code class="language-plaintext highlighter-rouge">@apollo/client ^3.0.0-beta</code>.
-This is my <code class="language-plaintext highlighter-rouge">createApolloClient</code> function based on the <a href="https://github.com/zeit/next.js/tree/canary/examples/with-apollo">with-apollo</a> example by Next:</p>
+This is my <code class="language-plaintext highlighter-rouge">createApolloClient</code> function based on the <a href="https://github.com/zeit/next.js/tree/canary/examples/with-apollo" target="_blank">with-apollo</a> example by Next:</p>
 
 <div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span> <span class="nx">RestLink</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">apollo-link-rest</span><span class="dl">'</span>
 
@@ -121,7 +121,7 @@ We want to have <code class="language-plaintext highlighter-rouge">AuthLink</cod
 <p><img src="/assets/images/headers.png" alt="Screenshot of ReferenceError: Headers is not defined" /></p>
 
 <p>Turns out SSR can reliably break just about anything at all.
-<code class="language-plaintext highlighter-rouge">Apollo-link-rest</code> is apparently <a href="https://github.com/apollographql/apollo-link-rest/issues/182#issuecomment-453181542">not intended</a> for SSR use and relies on the browser <a href="https://developer.mozilla.org/en-US/docs/Web/API/Headers">Headers API</a> which is missing in our Node.js environment.
+<code class="language-plaintext highlighter-rouge">Apollo-link-rest</code> is apparently <a href="https://github.com/apollographql/apollo-link-rest/issues/182#issuecomment-453181542" target="_blank">not intended</a> for SSR use and relies on the browser <a href="https://developer.mozilla.org/en-US/docs/Web/API/Headers">Headers API</a> which is missing in our Node.js environment.
 Let’s use <code class="language-plaintext highlighter-rouge">Header</code> from <code class="language-plaintext highlighter-rouge">node-fetch</code> as a polyfill: <code class="language-plaintext highlighter-rouge">yarn add node-fetch</code></p>
 
 <div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// polyfill Headers API server-side for apollo-link-rest</span>

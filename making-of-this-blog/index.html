@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <link rel="stylesheet" href="/assets/css/default.css?1657031521155715461">
+    <link rel="stylesheet" href="/assets/css/default.css?1657032561356438082">
     <link rel="stylesheet" href="/assets/css/fonts.css">
     <link rel="icon" href="/assets/favicon.png" type="image/png">
     <link type="application/atom+xml" rel="alternate" href="/feed.xml" />
@@ -68,7 +68,7 @@ Next has a lot of awesome features that make development (and writing posts loca
 <p><del>The result is an SPA with a 73 KB first load. Subsequent page transitions are client-side and only fetch JSON data.
 Still works flawlessly with Javascript turned off.</del></p>
 
-<p><a name="no-js"><em>Update 2021-01-15:</em></a> I found an <a href="https://github.com/vercel/next.js/pull/11949">unstable Next.js page-level config option</a> to turn off all runtime JS.
+<p><a name="no-js"><em>Update 2021-01-15:</em></a> I found an <a href="https://github.com/vercel/next.js/pull/11949" target="_blank">unstable Next.js page-level config option</a> to turn off all runtime JS.
 The result is 7.54 KB transferred (compressed) on first load.</p>
 
 <div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">export</span> <span class="kd">const</span> <span class="nx">config</span> <span class="o">=</span> <span class="p">{</span>
@@ -78,12 +78,12 @@ The result is 7.54 KB transferred (compressed) on first load.</p>
 
 <h3 id="how-this-works">How this works</h3>
 
-<p>Next.js pages fetch data from Markdown files at build time with the use of <a href="https://nextjs.org/docs/basic-features/data-fetching#getstaticprops-static-generation"><code class="language-plaintext highlighter-rouge">getStaticProps</code></a>.
-Next exports all pages static and dynamic (as defined in <a href="https://nextjs.org/docs/basic-features/data-fetching#getstaticpaths-static-generation"><code class="language-plaintext highlighter-rouge">getStaticPaths</code></a>) as HTML files which I deploy to GitLab pages through a CI pipeline.</p>
+<p>Next.js pages fetch data from Markdown files at build time with the use of <a href="https://nextjs.org/docs/basic-features/data-fetching#getstaticprops-static-generation" target="_blank"><code class="language-plaintext highlighter-rouge">getStaticProps</code></a>.
+Next exports all pages static and dynamic (as defined in <a href="https://nextjs.org/docs/basic-features/data-fetching#getstaticpaths-static-generation" target="_blank"><code class="language-plaintext highlighter-rouge">getStaticPaths</code></a>) as HTML files which I deploy to GitLab pages through a CI pipeline.</p>
 
 <h3 id="try-it-for-yourself">Try it for yourself</h3>
 
-<p>Clone <a href="https://gitlab.com/kessl/blog"><code class="language-plaintext highlighter-rouge">https://gitlab.com/kessl/blog</code></a>, install, add a new post, run dev server.</p>
+<p>Clone <a href="https://gitlab.com/kessl/blog" target="_blank"><code class="language-plaintext highlighter-rouge">https://gitlab.com/kessl/blog</code></a>, install, add a new post, run dev server.</p>
 
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>git clone https://gitlab.com/kessl/blog
 <span class="nv">$ </span><span class="nb">cd </span>blog <span class="o">&amp;&amp;</span> yarn <span class="nb">install</span>
@@ -111,10 +111,10 @@ I ended up with 3 stages in the pipeline:</p>
   <li>gzip, copy to <code class="language-plaintext highlighter-rouge">public</code> folder, deploy to pages</li>
 </ul>
 
-<p>GitLab pages can serve gzip and brotli <a href="https://gitlab.com/gitlab-org/gitlab-pages/-/merge_requests/25">compressed files</a>, if you pre-compress them prior to deploying.
-See the pipeline config in <a href="https://gitlab.com/kessl/blog/-/blob/master/.gitlab-ci.yml#L49"><code class="language-plaintext highlighter-rouge">.gitlab.ci</code></a> for how I did it here.</p>
+<p>GitLab pages can serve gzip and brotli <a href="https://gitlab.com/gitlab-org/gitlab-pages/-/merge_requests/25" target="_blank">compressed files</a>, if you pre-compress them prior to deploying.
+See the pipeline config in <a href="https://gitlab.com/kessl/blog/-/blob/master/.gitlab-ci.yml#L49" target="_blank"><code class="language-plaintext highlighter-rouge">.gitlab.ci</code></a> for how I did it here.</p>
 
-<p>I’m using a <a href="https://gist.github.com/kessl/d5ec24894833f7af5d10101128145b0d">simple Cloudflare worker</a> to add basic security headers.</p>
+<p>I’m using a <a href="https://gist.github.com/kessl/d5ec24894833f7af5d10101128145b0d" target="_blank">simple Cloudflare worker</a> to add basic security headers.</p>
 
 <h2 id="thats-it">That’s it!</h2>
 
@@ -126,7 +126,7 @@ I find writing in Markdown very convenient, the site is fast <del>(landing page 
 GitLab unfortunately does not provide any access logs for pages, and I’m not going to ruin a static site with a JS tracking script.
 A tracking pixel would work but still need to be hosted somewhere.</p>
 
-<p><em>Update: I got around to setting up a <a href="/static-site-analytics-with-nginx-goaccess-no-js">GoAccess tracking pixel</a>.</em></p>
+<p><em>Update: I got around to setting up a <a href="/static-site-analytics-with-nginx-goaccess-no-js" target="_blank">GoAccess tracking pixel</a>.</em></p>
 
 
       </main>
