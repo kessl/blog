@@ -48,6 +48,6 @@ layout: null
 
   code {
     padding: 2px 4px;
-    @apply whitespace-pre-wrap bg-dark-20 dark:bg-dark-80 dark:text-light;
+    @apply whitespace-nowrap bg-dark-20 dark:bg-dark-80 dark:text-light;
   }
 }
