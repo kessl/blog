@@ -1,0 +1,282 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="/assets/css/default.css">
+    <link rel="stylesheet" href="/assets/css/fonts.css">
+    <link rel="icon" href="/assets/favicon.png" type="image/png">
+    <link type="application/atom+xml" rel="alternate" href="/feed.xml" />
+    <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Static site analytics with Nginx, GoAccess &amp; no JS</title>
+<meta name="generator" content="Jekyll v4.2.2" />
+<meta property="og:title" content="Static site analytics with Nginx, GoAccess &amp; no JS" />
+<meta name="author" content="daniel" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="I’ve been using Cloudflare analytics to get an idea if anyone visits this site Cloudflare tells me the number of requests, unique visitors and used bandwidth. Better than nothing, considering it’s free and works out of the box (if you manage DNS with Cloudflare). But there’s only 30 days of history, I don’t know how many of the visits are crawlers and what pages the visitors request." />
+<meta property="og:description" content="I’ve been using Cloudflare analytics to get an idea if anyone visits this site Cloudflare tells me the number of requests, unique visitors and used bandwidth. Better than nothing, considering it’s free and works out of the box (if you manage DNS with Cloudflare). But there’s only 30 days of history, I don’t know how many of the visits are crawlers and what pages the visitors request." />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2021-03-14T00:00:00+00:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Static site analytics with Nginx, GoAccess &amp; no JS" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"daniel"},"dateModified":"2021-03-14T00:00:00+00:00","datePublished":"2021-03-14T00:00:00+00:00","description":"I’ve been using Cloudflare analytics to get an idea if anyone visits this site Cloudflare tells me the number of requests, unique visitors and used bandwidth. Better than nothing, considering it’s free and works out of the box (if you manage DNS with Cloudflare). But there’s only 30 days of history, I don’t know how many of the visits are crawlers and what pages the visitors request.","headline":"Static site analytics with Nginx, GoAccess &amp; no JS","mainEntityOfPage":{"@type":"WebPage","@id":"/static-site-analytics-with-nginx-goaccess-no-js/"},"url":"/static-site-analytics-with-nginx-goaccess-no-js/"}</script>
+<!-- End Jekyll SEO tag -->
+
+  </head>
+  <body class="overflow-x-hidden">
+    <button id="theme-toggle" class="hidden sm:block absolute top-30 right-30 border-none rounded-sm -mx-[5px] px-[5px] hover:bg-dark/10 dark:hover:bg-light/10">
+  <span class="hidden dark:inline" title="switch to light theme">☀️</span>
+  <span class="dark:hidden" title="switch to dark theme">🌑</span>
+</button>
+
+    <div class="golden bg-grid">
+      <nav class="flex justify-center space-x-30 sm:space-x-60 underline">
+  
+    <a href="/">/</a>
+  
+    <a href="/about">/about</a>
+  
+    <a href="/archive">/archive</a>
+  
+    <a href="/tags">/tags</a>
+  
+</nav>
+
+      <main class="mt-30 md:mt-60 max-w-none prose">
+        <h1>Static site analytics with Nginx, GoAccess & no JS</h1>
+<p class="text-sm text-muted">
+  written by daniel in
+  
+    <a href="/tags/devops"><code>devops</code></a>
+  
+  on 14 Mar 2021
+</p>
+<p>I’ve been using Cloudflare analytics to get an idea if anyone visits this site
+Cloudflare tells me the number of requests, unique visitors and used bandwidth.
+Better than nothing, considering it’s free and works out of the box (if you manage DNS with Cloudflare).
+But there’s only 30 days of history, I don’t know how many of the visits are crawlers and what pages the visitors request.</p>
+
+<p><img src="/assets/images/cloudflare-analytics.png" alt="Screenshot of Cloudflare analytics" /></p>
+
+<p>I’ve been wanting to give <a href="https://goaccess.io/">GoAccess</a> a try for some time.
+GoAccess provides real-time analytics by parsing access logs of your server.
+It works entirely server-side and it’s in my opinion the most privacy-conscious analytics solution, because it only collects what the browser explicitly sends to the server.
+There’s a slight problem though – I host this site on <a href="/gitlab-pages-dev-env">Gitlab pages</a> and <a href="https://www.yourofficeanywhere.co.uk/wp-content/uploads/2019/07/Cloud-Definitionn-2.png">there’s no server</a>.</p>
+
+<h2 id="enter-the-tracking-pixel">Enter the tracking pixel</h2>
+
+<p>A tracking pixel is a 1x1 transparent pixel made infamous by Facebook, who use it to track people across third party sites.
+I’ll use the same technique here thanks to excellent writeups by <a href="https://benhoyt.com/writings/replacing-google-analytics/">Ben Hoyt</a> and <a href="https://timnash.co.uk/pixel-tracking-with-nginx-a-tiny-bit-of-javascript/">Tim Nash</a>.</p>
+
+<p>This is the plan:</p>
+
+<ul>
+  <li>set up an Nginx instance to serve a pixel</li>
+  <li>include the pixel on every page of this site</li>
+  <li>parse Nginx’s access log with GoAccess and get beautiful analytics</li>
+</ul>
+
+<p>To get any useful information out of the pixel request, we’ll need to add the data we want to log to the pixel’s query string.
+Ben and Tim used a tiny script to add the pixel to their pages, which sends over the current URL and the referrer.
+Since I’ve <a href="/making-of-this-blog#no-js">liberated</a> this site from Javascript some time ago, I won’t be using any scripts.
+Instead I’ll generate the pixel markup at build time, baking the current URL into the pixel request like this: <code class="language-plaintext highlighter-rouge">cat.gif?u=&lt;current-url&gt;</code>.
+This way I won’t need any runtime JS, but there will be no referrer data.
+Good enough for me.</p>
+
+<h2 id="serving-the-pixel">Serving the pixel</h2>
+
+<p>We’ll tell Nginx to serve an empty gif at the path <code class="language-plaintext highlighter-rouge">/cat.gif</code>.
+(Originally I used <code class="language-plaintext highlighter-rouge">t.gif</code> but it got blocked by EasyPrivacy.)</p>
+
+<div class="language-nginx highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">location</span> <span class="p">=</span> <span class="n">/cat.gif</span> <span class="p">{</span>
+    <span class="kn">empty_gif</span><span class="p">;</span>
+    <span class="kn">access_log</span> <span class="n">/var/log/nginx/pixel.log</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>If we parsed <code class="language-plaintext highlighter-rouge">pixel.log</code> with GoAccess, we would see a bunch of requests to <code class="language-plaintext highlighter-rouge">/cat.gif</code>.
+We’ll need to change the log format to use the <code class="language-plaintext highlighter-rouge">u</code> query param as the request URL.</p>
+
+<div class="language-nginx highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">events</span> <span class="p">{}</span>
+
+<span class="k">http</span> <span class="p">{</span>
+    <span class="kn">include</span> <span class="s">mime.types</span><span class="p">;</span>
+    <span class="kn">default_type</span> <span class="nc">application/octet-stream</span><span class="p">;</span>
+    <span class="kn">sendfile</span> <span class="no">on</span><span class="p">;</span>
+
+    <span class="c1"># goaccess-compatible pixel log format</span>
+    <span class="kn">log_format</span> <span class="s">pixel</span> <span class="s">'</span><span class="nv">$remote_addr</span> <span class="s">-</span> <span class="nv">$remote_user</span> <span class="s">[</span><span class="nv">$time_local</span><span class="s">]</span> <span class="s">"</span><span class="nv">$rurl</span><span class="s">"</span> <span class="nv">$status</span> <span class="nv">$body_bytes_sent</span> <span class="s">""</span> <span class="s">"</span><span class="nv">$http_user_agent</span><span class="s">"</span> <span class="s">"</span><span class="nv">$http_x_forwarded_for</span><span class="s">"'</span><span class="p">;</span>
+
+    <span class="kn">server</span> <span class="p">{</span>
+        <span class="kn">listen</span> <span class="mi">8080</span><span class="p">;</span>
+        <span class="kn">server_name</span> <span class="s">localhost</span> <span class="s">t.bitgate.cz</span><span class="p">;</span>
+
+        <span class="c1"># tracking pixel</span>
+        <span class="kn">location</span> <span class="p">=</span> <span class="n">/cat.gif</span> <span class="p">{</span>
+            <span class="kn">empty_gif</span><span class="p">;</span>
+            <span class="kn">set</span> <span class="nv">$rurl</span> <span class="nv">$arg_u</span><span class="p">;</span>
+            <span class="kn">access_log</span> <span class="n">/var/log/nginx/pixel.log</span> <span class="s">pixel</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Let’s save this as <code class="language-plaintext highlighter-rouge">nginx.conf</code> and run Nginx from the same directory as the config:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>docker run <span class="nt">-it</span> <span class="nt">--rm</span> <span class="nt">-p</span> 8080:8080 <span class="se">\</span>
+  <span class="nt">-v</span> <span class="k">${</span><span class="nv">PWD</span><span class="k">}</span>/nginx.conf:/etc/nginx/nginx.conf:ro <span class="se">\</span>
+  <span class="nt">-v</span> <span class="k">${</span><span class="nv">PWD</span><span class="k">}</span>/log:/var/log/nginx nginx:alpine
+</code></pre></div></div>
+
+<p>If you open <a href="http://localhost:8080/cat.gif"><code class="language-plaintext highlighter-rouge">http://localhost:8080/cat.gif</code></a>, there should be a record like the following in the pixel’s log:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">cat </span>log/pixel.log
+172.17.0.1 - - <span class="o">[</span>14/Mar/2021:21:13:15 +0000] <span class="s2">""</span> 200 43 <span class="s2">""</span> <span class="s2">"Mozilla/5.0 (Windows NT 10.0; rv:78.0) Gecko/20100101 Firefox/78.0"</span> <span class="s2">"-"</span>
+</code></pre></div></div>
+
+<p><em>It’s funny and sad that Firefox on OSX with resist fingerprinting on pretends it runs on Windows and is <strong>8 versions</strong> old.</em></p>
+
+<h2 id="parsing-logs-with-goaccess">Parsing logs with GoAccess</h2>
+
+<p>Create a config and run GoAccess:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">mkdir </span>goaccess
+<span class="nv">$ </span>vi goaccess/goaccess.conf
+</code></pre></div></div>
+
+<div class="language-conf highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">log</span>-<span class="n">format</span> <span class="n">COMBINED</span>
+<span class="n">log</span>-<span class="n">file</span> /<span class="n">goaccess</span>/<span class="n">access</span>.<span class="n">log</span>
+<span class="n">output</span> /<span class="n">goaccess</span>/<span class="n">index</span>.<span class="n">html</span>
+<span class="n">real</span>-<span class="n">time</span>-<span class="n">html</span> <span class="n">true</span>
+</code></pre></div></div>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>docker run <span class="nt">-it</span> <span class="nt">--rm</span> <span class="nt">-p</span> 7890:7890 <span class="se">\</span>
+  <span class="nt">-v</span> <span class="k">${</span><span class="nv">PWD</span><span class="k">}</span>/goaccess:/goaccess <span class="se">\</span>
+  <span class="nt">-v</span> <span class="k">${</span><span class="nv">PWD</span><span class="k">}</span>/log/pixel.log:/goaccess/access.log <span class="se">\</span>
+  allinurl/goaccess <span class="nt">--config-file</span><span class="o">=</span>/goaccess/goaccess.conf
+</code></pre></div></div>
+
+<p>Open <code class="language-plaintext highlighter-rouge">goaccess/index.html</code> in your browser and there it is!
+If you make another request for <code class="language-plaintext highlighter-rouge">/cat.gif</code>, the report should update in real time.</p>
+
+<p><img src="/assets/images/goaccess-report.png" alt="Screenshot of GoAccess report" /></p>
+
+<h2 id="compose-for-deployment">Compose for deployment</h2>
+
+<p>I want to deploy this to my Raspberry at home, so I’ll need a way to access the report over the network.
+We already have an Nginx up and running; let’s add a <code class="language-plaintext highlighter-rouge">server</code> section to serve the report on another port so that I can port forward only the pixel:</p>
+
+<div class="language-nginx highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">server</span> <span class="p">{</span>
+    <span class="kn">listen</span> <span class="mi">8081</span><span class="p">;</span>
+    <span class="kn">server_name</span> <span class="s">localhost</span><span class="p">;</span>
+
+    <span class="c1"># goaccess report</span>
+    <span class="kn">root</span> <span class="n">/var/www</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>To have it work with the docker command from earlier, we need to map the report to <code class="language-plaintext highlighter-rouge">/var/www</code> and expose port 8081:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">-v</span> <span class="k">${</span><span class="nv">PWD</span><span class="k">}</span>/goaccess/index.html:/var/www/index.html <span class="nt">-p</span> 8081:8081
+</code></pre></div></div>
+
+<p>You should now find the report at <a href="http://localhost:8081"><code class="language-plaintext highlighter-rouge">http://localhost:8081</code></a>.</p>
+
+<p>To make deployment easier, I created a <code class="language-plaintext highlighter-rouge">docker-compose.yml</code>.
+I mapped the ports differently so that the pixel is available at port 80, 7890 is GoAccess’s default websocket port and 7891 is the report.
+<code class="language-plaintext highlighter-rouge">--ignore-panel</code>s hide sections we don’t have data for.</p>
+
+<p>I added a Let’s Encrypt config to enable HTTPS.
+Without HTTPS, the numbers would be skewed, because recent versions of Chrome will not load mixed content.
+See the <a href="https://github.com/kessl/static-pixel-tracking">readme</a> for the necessary steps to get it all up and running.</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">version</span><span class="pi">:</span> <span class="s1">'</span><span class="s">3.8'</span>
+
+<span class="na">services</span><span class="pi">:</span>
+  <span class="na">goaccess</span><span class="pi">:</span>
+    <span class="na">container_name</span><span class="pi">:</span> <span class="s">goaccess</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">memphisx/rpi-goaccess</span>
+    <span class="na">command</span><span class="pi">:</span> <span class="s">--config-file=/goaccess/goaccess.conf --ignore-panel=REQUESTS_STATIC --ignore-panel=REFERRERS --ignore-panel=REFERRING_SITES --ignore-panel=KEYPHRASES --ignore-panel=STATUS_CODES --ignore-panel=NOT_FOUND</span>
+    <span class="na">environment</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">TZ=Europe/Prague</span>
+    <span class="na">volumes</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">${PWD}/goaccess:/goaccess</span>
+      <span class="pi">-</span> <span class="s">${PWD}/log:/log</span>
+    <span class="na">ports</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">7890:7890</span> <span class="c1"># goaccess websocket</span>
+
+  <span class="na">goaccess-nginx</span><span class="pi">:</span>
+    <span class="na">container_name</span><span class="pi">:</span> <span class="s">goaccess-nginx</span>
+    <span class="na">command</span><span class="pi">:</span> <span class="s1">'</span><span class="s">/bin/sh</span><span class="nv"> </span><span class="s">-c</span><span class="nv"> </span><span class="s">'</span><span class="s1">'</span><span class="s">while</span><span class="nv"> </span><span class="s">:;</span><span class="nv"> </span><span class="s">do</span><span class="nv"> </span><span class="s">sleep</span><span class="nv"> </span><span class="s">6h</span><span class="nv"> </span><span class="s">&amp;</span><span class="nv"> </span><span class="s">wait</span><span class="nv"> </span><span class="s">$${!};</span><span class="nv"> </span><span class="s">nginx</span><span class="nv"> </span><span class="s">-s</span><span class="nv"> </span><span class="s">reload;</span><span class="nv"> </span><span class="s">done</span><span class="nv"> </span><span class="s">&amp;</span><span class="nv"> </span><span class="s">nginx</span><span class="nv"> </span><span class="s">-g</span><span class="nv"> </span><span class="s">"daemon</span><span class="nv"> </span><span class="s">off;"'</span><span class="s1">'</span><span class="s">'</span>
+    <span class="na">volumes</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">${PWD}/nginx.conf:/etc/nginx/nginx.conf:ro</span>
+      <span class="pi">-</span> <span class="s">${PWD}/log:/var/log/nginx</span>
+      <span class="pi">-</span> <span class="s">${PWD}/goaccess/html:/var/www</span>
+      <span class="pi">-</span> <span class="s">${PWD}/certbot/conf:/etc/letsencrypt</span>
+      <span class="pi">-</span> <span class="s">${PWD}/certbot/www:/var/www/certbot</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">tobi312/rpi-nginx:alpine</span>
+    <span class="na">ports</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">80:80</span> <span class="c1"># certbot</span>
+      <span class="pi">-</span> <span class="s">443:443</span> <span class="c1"># tracking pixel</span>
+      <span class="pi">-</span> <span class="s">7891:8081</span> <span class="c1"># goaccess report</span>
+
+  <span class="na">goaccess-certbot</span><span class="pi">:</span>
+    <span class="na">container_name</span><span class="pi">:</span> <span class="s">goaccess-certbot</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">certbot/certbot:arm32v6-latest</span>
+    <span class="na">entrypoint</span><span class="pi">:</span> <span class="s2">"</span><span class="s">/bin/sh</span><span class="nv"> </span><span class="s">-c</span><span class="nv"> </span><span class="s">'trap</span><span class="nv"> </span><span class="s">exit</span><span class="nv"> </span><span class="s">TERM;</span><span class="nv"> </span><span class="s">while</span><span class="nv"> </span><span class="s">:;</span><span class="nv"> </span><span class="s">do</span><span class="nv"> </span><span class="s">certbot</span><span class="nv"> </span><span class="s">renew;</span><span class="nv"> </span><span class="s">sleep</span><span class="nv"> </span><span class="s">12h</span><span class="nv"> </span><span class="s">&amp;</span><span class="nv"> </span><span class="s">wait</span><span class="nv"> </span><span class="s">$${!};</span><span class="nv"> </span><span class="s">done;'"</span>
+    <span class="na">volumes</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">./certbot/conf:/etc/letsencrypt</span>
+      <span class="pi">-</span> <span class="s">./certbot/www:/var/www/certbot</span>
+</code></pre></div></div>
+
+<h2 id="embed-the-pixel">Embed the pixel</h2>
+
+<p>I added this component to my layout to appear in every page.</p>
+
+<div class="language-tsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span> <span class="nx">useRouter</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">next/dist/client/router</span><span class="dl">'</span>
+
+<span class="kd">const</span> <span class="nx">PIXEL_URL</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">https://t.bitgate.cz/cat.gif?u=</span><span class="dl">'</span>
+
+<span class="k">export</span> <span class="kd">const</span> <span class="nx">Pixel</span><span class="p">:</span> <span class="nx">React</span><span class="p">.</span><span class="nx">FC</span> <span class="o">=</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="kd">const</span> <span class="nx">router</span> <span class="o">=</span> <span class="nx">useRouter</span><span class="p">()</span>
+  <span class="kd">const</span> <span class="nx">currentUrl</span> <span class="o">=</span> <span class="nb">encodeURIComponent</span><span class="p">(</span><span class="s2">`</span><span class="p">${</span><span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">NEXT_PUBLIC_BASE_URL</span><span class="p">}${</span><span class="nx">router</span><span class="p">.</span><span class="nx">asPath</span><span class="p">}</span><span class="s2">`</span><span class="p">)</span>
+
+  <span class="k">return</span> <span class="p">(</span>
+    <span class="p">&lt;</span><span class="nt">img</span>
+      <span class="na">src</span><span class="p">=</span><span class="si">{</span><span class="s2">`</span><span class="p">${</span><span class="nx">PIXEL_URL</span><span class="p">}${</span><span class="nx">currentUrl</span><span class="p">}</span><span class="s2">`</span><span class="si">}</span>
+      <span class="na">decoding</span><span class="p">=</span><span class="s">"async"</span>
+      <span class="na">loading</span><span class="p">=</span><span class="s">"eager"</span>
+      <span class="na">style</span><span class="p">=</span><span class="si">{</span><span class="p">{</span> <span class="na">visibility</span><span class="p">:</span> <span class="dl">'</span><span class="s1">hidden</span><span class="dl">'</span> <span class="p">}</span><span class="si">}</span>
+    <span class="p">/&gt;</span>
+  <span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>That’s it!</p>
+
+
+      </main>
+    </div>
+    <script>
+      function applyTheme(theme) {
+  document.documentElement.classList.toggle('dark', theme === 'dark')
+}
+
+const isDark = localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
+applyTheme(isDark ? 'dark' : 'light')
+
+document.getElementById('theme-toggle').addEventListener('click', function() {
+  let newTheme
+  if (!('theme' in localStorage)) {
+    newTheme = document.documentElement.classList.contains('dark') ? 'light' : 'dark'
+  } else {
+    newTheme = localStorage.theme === 'dark' ? 'light' : 'dark'
+  }
+
+  localStorage.theme = newTheme
+  applyTheme(newTheme)
+})
+
+    </script>
+  </body>
+</html>

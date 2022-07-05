@@ -1,0 +1,181 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="/assets/css/default.css">
+    <link rel="stylesheet" href="/assets/css/fonts.css">
+    <link rel="icon" href="/assets/favicon.png" type="image/png">
+    <link type="application/atom+xml" rel="alternate" href="/feed.xml" />
+    <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Content Security Policy, inline scripts and Next.js</title>
+<meta name="generator" content="Jekyll v4.2.2" />
+<meta property="og:title" content="Content Security Policy, inline scripts and Next.js" />
+<meta name="author" content="daniel" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="TL;DR Use CSP with nonce &amp; strict-dynamic to secure the origin of inline scripts." />
+<meta property="og:description" content="TL;DR Use CSP with nonce &amp; strict-dynamic to secure the origin of inline scripts." />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-04-29T00:00:00+00:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Content Security Policy, inline scripts and Next.js" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"daniel"},"dateModified":"2020-04-29T00:00:00+00:00","datePublished":"2020-04-29T00:00:00+00:00","description":"TL;DR Use CSP with nonce &amp; strict-dynamic to secure the origin of inline scripts.","headline":"Content Security Policy, inline scripts and Next.js","mainEntityOfPage":{"@type":"WebPage","@id":"/content-security-policy-inline-scripts-and-next-js/"},"url":"/content-security-policy-inline-scripts-and-next-js/"}</script>
+<!-- End Jekyll SEO tag -->
+
+  </head>
+  <body class="overflow-x-hidden">
+    <button id="theme-toggle" class="hidden sm:block absolute top-30 right-30 border-none rounded-sm -mx-[5px] px-[5px] hover:bg-dark/10 dark:hover:bg-light/10">
+  <span class="hidden dark:inline" title="switch to light theme">☀️</span>
+  <span class="dark:hidden" title="switch to dark theme">🌑</span>
+</button>
+
+    <div class="golden bg-grid">
+      <nav class="flex justify-center space-x-30 sm:space-x-60 underline">
+  
+    <a href="/">/</a>
+  
+    <a href="/about">/about</a>
+  
+    <a href="/archive">/archive</a>
+  
+    <a href="/tags">/tags</a>
+  
+</nav>
+
+      <main class="mt-30 md:mt-60 max-w-none prose">
+        <h1>Content Security Policy, inline scripts and Next.js</h1>
+<p class="text-sm text-muted">
+  written by daniel in
+  
+    <a href="/tags/frontend"><code>frontend</code></a>
+  
+  on 29 Apr 2020
+</p>
+<p><strong>TL;DR</strong> Use CSP with nonce &amp; <code class="language-plaintext highlighter-rouge">strict-dynamic</code> to secure the origin of inline scripts.</p>
+
+<p><em>Updated 2021-02-17 for Helmet v4</em></p>
+
+<p>Next includes client-side scripts in <code class="language-plaintext highlighter-rouge">&lt;script&gt;</code> tags in <code class="language-plaintext highlighter-rouge">Document</code>, so usually, a <code class="language-plaintext highlighter-rouge">script-src 'self';</code> would be sufficient.
+However, I also needed to execute inline scripts, which meant that I either had to use <code class="language-plaintext highlighter-rouge">unsafe-inline</code> (which is only marginally better than no CSP), a hash of the scripts’ content, or a nonce.
+I went with nonce, and even though it turned out to be pretty straightforward in the end, it still ended up eating most of my afternoon today.</p>
+
+<h2 id="setting-up-security-headers">Setting up security headers</h2>
+
+<p>I used <a href="https://helmetjs.github.io/"><code class="language-plaintext highlighter-rouge">helmet</code></a>, an <code class="language-plaintext highlighter-rouge">express</code> middleware that makes setting security headers easier.
+The types make it convenient to see all the configuration options.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>yarn add helmet
+<span class="nv">$ </span>yarn add <span class="nt">-D</span> @types/helmet
+</code></pre></div></div>
+
+<h2 id="setting-up-csp-with-nonce">Setting up CSP with nonce</h2>
+
+<p>The idea is to generate a random nonce on every request, send it to the browser in the CSP header and make sure all scripts have a matching value: <code class="language-plaintext highlighter-rouge">&lt;script nonce={nonce}&gt;</code>.
+See <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP">MDN</a> for all possible CSP options.</p>
+
+<p><code class="language-plaintext highlighter-rouge">'strict-dynamic'</code> tells the browser to trust any other code executed by already trusted code.
+If you specify <code class="language-plaintext highlighter-rouge">'strict-dynamic'</code>, the browser will disregard other options such as <code class="language-plaintext highlighter-rouge">'self' *.3rdparty.com</code>.
+Every script will then need to have the nonce.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nx">express</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">express</span><span class="dl">'</span>
+<span class="k">import</span> <span class="nx">helmet</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">helmet</span><span class="dl">'</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">v4</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">uuid</span><span class="dl">'</span>
+
+<span class="kd">const</span> <span class="nx">server</span> <span class="o">=</span> <span class="nx">express</span><span class="p">()</span>
+
+<span class="kd">const</span> <span class="nx">options</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="na">directives</span><span class="p">:</span> <span class="p">{</span>
+    <span class="dl">'</span><span class="s1">default-src</span><span class="dl">'</span><span class="p">:</span> <span class="p">[</span><span class="dl">"</span><span class="s2">'self'</span><span class="dl">"</span><span class="p">],</span>
+    <span class="dl">'</span><span class="s1">script-src</span><span class="dl">'</span><span class="p">:</span> <span class="p">[(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="s2">`'nonce-</span><span class="p">${</span><span class="nx">res</span><span class="p">.</span><span class="nx">locals</span><span class="p">.</span><span class="nx">nonce</span><span class="p">}</span><span class="s2">' 'strict-dynamic'`</span><span class="p">],</span>
+  <span class="p">},</span>
+  <span class="c1">// ... more config options</span>
+<span class="p">}</span>
+
+<span class="c1">// generate a nonce on every request and save it</span>
+<span class="nx">server</span><span class="p">.</span><span class="nx">use</span><span class="p">((</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">res</span><span class="p">.</span><span class="nx">locals</span><span class="p">.</span><span class="nx">nonce</span> <span class="o">=</span> <span class="nx">v4</span><span class="p">()</span>
+  <span class="nx">helmet</span><span class="p">.</span><span class="nx">contentSecurityPolicy</span><span class="p">(</span><span class="nx">options</span><span class="p">)(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+<p>We will need to pass the nonce to Next as well as any other scripts.
+Let’s create a custom <code class="language-plaintext highlighter-rouge">Document</code> in <code class="language-plaintext highlighter-rouge">pages/_document.tsx</code>, retrieve the nonce from context and pass it down:</p>
+
+<div class="language-jsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nx">Document</span><span class="p">,</span> <span class="p">{</span>
+  <span class="nx">Head</span><span class="p">,</span>
+  <span class="nx">Html</span><span class="p">,</span>
+  <span class="nx">Main</span><span class="p">,</span>
+  <span class="nx">NextScript</span><span class="p">,</span>
+  <span class="nx">DocumentContext</span><span class="p">,</span>
+<span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">next/document</span><span class="dl">'</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">ServerResponse</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">http</span><span class="dl">'</span>
+
+<span class="nx">type</span> <span class="nx">ResponseWithNonce</span> <span class="o">=</span> <span class="nx">ServerResponse</span> <span class="o">&amp;</span> <span class="p">{</span> <span class="na">locals</span><span class="p">:</span> <span class="p">{</span> <span class="nx">nonce</span><span class="p">?:</span> <span class="nx">string</span> <span class="p">}</span> <span class="p">}</span>
+
+<span class="nx">type</span> <span class="nx">CustomDocumentProps</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">nonce</span><span class="p">?:</span> <span class="nx">string</span>
+<span class="p">}</span>
+
+<span class="kd">class</span> <span class="nx">CustomDocument</span> <span class="kd">extends</span> <span class="nx">Document</span><span class="o">&lt;</span><span class="nx">CustomDocumentProps</span><span class="o">&gt;</span> <span class="p">{</span>
+  <span class="kd">static</span> <span class="k">async</span> <span class="nx">getInitialProps</span><span class="p">(</span><span class="na">ctx</span><span class="p">:</span> <span class="nx">DocumentContext</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// get the nonce from res.locals.nonce</span>
+    <span class="kd">const</span> <span class="nx">nonce</span> <span class="o">=</span> <span class="p">(</span><span class="nx">ctx</span><span class="p">.</span><span class="nx">res</span> <span class="k">as</span> <span class="nx">ResponseWithNonce</span><span class="p">).</span><span class="nx">locals</span><span class="p">.</span><span class="nx">nonce</span>
+    <span class="kd">const</span> <span class="nx">initialProps</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">Document</span><span class="p">.</span><span class="nx">getInitialProps</span><span class="p">(</span><span class="nx">ctx</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span> <span class="p">...</span><span class="nx">initialProps</span><span class="p">,</span> <span class="nx">nonce</span> <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span>
+      <span class="p">&lt;</span><span class="nc">Html</span><span class="p">&gt;</span>
+        <span class="si">{</span><span class="cm">/* pass it to Next Head */</span><span class="si">}</span>
+        <span class="p">&lt;</span><span class="nc">Head</span> <span class="na">nonce</span><span class="p">=</span><span class="si">{</span><span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">nonce</span><span class="si">}</span> <span class="p">/&gt;</span>
+        <span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+          <span class="p">&lt;</span><span class="nc">Main</span> <span class="p">/&gt;</span>
+          <span class="si">{</span><span class="cm">/* pass it to Next scripts */</span><span class="si">}</span>
+          <span class="p">&lt;</span><span class="nc">NextScript</span> <span class="na">nonce</span><span class="p">=</span><span class="si">{</span><span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">nonce</span><span class="si">}</span> <span class="p">/&gt;</span>
+
+          <span class="si">{</span><span class="cm">/* as well as any other scripts */</span><span class="si">}</span>
+          <span class="p">&lt;</span><span class="nt">script</span>
+            <span class="na">src</span><span class="p">=</span><span class="s">"https://trustworthy-conglomerate.com/vacuum.js"</span>
+            <span class="na">nonce</span><span class="p">=</span><span class="si">{</span><span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">nonce</span><span class="si">}</span>
+          <span class="p">/&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+      <span class="p">&lt;/</span><span class="nc">Html</span><span class="p">&gt;</span>
+    <span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">export</span> <span class="k">default</span> <span class="nx">CustomDocument</span>
+</code></pre></div></div>
+
+<h2 id="easier-option">Easier option</h2>
+
+<p>If you don’t need to execute inline scripts, you don’t need this nonce stuff.
+It will suffice to specify trusted origins: <code class="language-plaintext highlighter-rouge">script-src 'self' *.3rdparty.com;</code>.</p>
+
+
+      </main>
+    </div>
+    <script>
+      function applyTheme(theme) {
+  document.documentElement.classList.toggle('dark', theme === 'dark')
+}
+
+const isDark = localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
+applyTheme(isDark ? 'dark' : 'light')
+
+document.getElementById('theme-toggle').addEventListener('click', function() {
+  let newTheme
+  if (!('theme' in localStorage)) {
+    newTheme = document.documentElement.classList.contains('dark') ? 'light' : 'dark'
+  } else {
+    newTheme = localStorage.theme === 'dark' ? 'light' : 'dark'
+  }
+
+  localStorage.theme = newTheme
+  applyTheme(newTheme)
+})
+
+    </script>
+  </body>
+</html>

@@ -1,0 +1,136 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="/assets/css/default.css">
+    <link rel="stylesheet" href="/assets/css/fonts.css">
+    <link rel="icon" href="/assets/favicon.png" type="image/png">
+    <link type="application/atom+xml" rel="alternate" href="/feed.xml" />
+    <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>My humble homelab beginnings</title>
+<meta name="generator" content="Jekyll v4.2.2" />
+<meta property="og:title" content="My humble homelab beginnings" />
+<meta name="author" content="daniel" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Hi, I’m Daniel and I’m an absolute newb when it comes to kubernetes. I also really like the idea of having a homelab to experiment on, self-host some apps and look at pretty lights and cables. My original plan to rack-mount a HP DL380 G6 in my living room I abandoned rather quickly in hopes of remaining in a relationship." />
+<meta property="og:description" content="Hi, I’m Daniel and I’m an absolute newb when it comes to kubernetes. I also really like the idea of having a homelab to experiment on, self-host some apps and look at pretty lights and cables. My original plan to rack-mount a HP DL380 G6 in my living room I abandoned rather quickly in hopes of remaining in a relationship." />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-05-06T00:00:00+00:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="My humble homelab beginnings" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"daniel"},"dateModified":"2020-05-06T00:00:00+00:00","datePublished":"2020-05-06T00:00:00+00:00","description":"Hi, I’m Daniel and I’m an absolute newb when it comes to kubernetes. I also really like the idea of having a homelab to experiment on, self-host some apps and look at pretty lights and cables. My original plan to rack-mount a HP DL380 G6 in my living room I abandoned rather quickly in hopes of remaining in a relationship.","headline":"My humble homelab beginnings","mainEntityOfPage":{"@type":"WebPage","@id":"/my-humble-homelab-beginnings/"},"url":"/my-humble-homelab-beginnings/"}</script>
+<!-- End Jekyll SEO tag -->
+
+  </head>
+  <body class="overflow-x-hidden">
+    <button id="theme-toggle" class="hidden sm:block absolute top-30 right-30 border-none rounded-sm -mx-[5px] px-[5px] hover:bg-dark/10 dark:hover:bg-light/10">
+  <span class="hidden dark:inline" title="switch to light theme">☀️</span>
+  <span class="dark:hidden" title="switch to dark theme">🌑</span>
+</button>
+
+    <div class="golden bg-grid">
+      <nav class="flex justify-center space-x-30 sm:space-x-60 underline">
+  
+    <a href="/">/</a>
+  
+    <a href="/about">/about</a>
+  
+    <a href="/archive">/archive</a>
+  
+    <a href="/tags">/tags</a>
+  
+</nav>
+
+      <main class="mt-30 md:mt-60 max-w-none prose">
+        <h1>My humble homelab beginnings</h1>
+<p class="text-sm text-muted">
+  written by daniel in
+  
+    <a href="/tags/homelab"><code>homelab</code></a>
+  
+  on 06 May 2020
+</p>
+<p>Hi, I’m Daniel and I’m an absolute newb when it comes to kubernetes.
+I also really like the idea of having a homelab to experiment on, self-host some apps and look at pretty lights and cables.
+My original plan to rack-mount a HP DL380 G6 in my living room I <a href="https://youtu.be/eBTPKBm4vA4?t=36">abandoned rather quickly</a> in hopes of remaining in a relationship.</p>
+
+<p>The next best thing I have is a random assortment of mostly ARM hardware, which I’ll try to coerce into homelab stuff with the help of kubernetes.</p>
+
+<p>I know next to nothing about kubernetes, so my setup will be a mashup of these great kubernetes guides:</p>
+
+<ul>
+  <li>https://blog.alexellis.io/test-drive-k3s-on-raspberry-pi/</li>
+  <li>https://blog.quickbird.uk/domesticating-kubernetes-d49c178ebc41</li>
+  <li>https://kauri.io/38-install-and-configure-a-kubernetes-cluster-with/418b3bc1e0544fbc955a4bbba6fff8a9/a</li>
+</ul>
+
+<h2 id="the-goal">The goal</h2>
+
+<p>The ultimate goal is to set up a homelab kubernetes environment on hardware that I have lying around.
+I should be able to deploy apps to the cluster and have them be reachable on a subdomain of bitgate.cz over HTTPS.</p>
+
+<p>I have a few apps in mind that I’d like to eventually host:</p>
+
+<ul>
+  <li><strong><a href="https://nextcloud.com/">NextCloud</a></strong> - self-hosted file sharing &amp; document tools</li>
+  <li><strong><a href="https://jellyfin.org/">Jellyfin</a>, Sonarr, Radarr,</strong> etc - home theater with automated media management</li>
+  <li><strong>nginx &amp; <a href="https://goaccess.io/">goaccess</a> analytics</strong> - something to tell me if anyone reads this blog</li>
+  <li><strong>storage</strong> with off-site backup - a NAS backed up to B2</li>
+</ul>
+
+<h2 id="the-hardware">The hardware</h2>
+
+<p>I have a Raspberry Pi 3B+, a 2011 Raspberry Pi, an old Windows laptop and two Odroid HC1s.
+All devices are very low-end for kubernetes.
+I will therefore be going for <a href="https://k3s.io/">k3s</a>, a lightweight, stripped-down kubernetes distribution crammed in a single binary.</p>
+
+<p>The 2011 is apparently way too slow and not supported by k3s.
+The 3B+ is supported but slow, needs to run off an SD card and is limited to USB2.0 and 100Mb ethernet.
+It should do its job as master node.</p>
+
+<p>The Odroids are better specced with an 8-core CPU, 2GB RAM and a SATA port.
+They will serve as agent nodes doing the heavy lifting, as well as storage hosts.</p>
+
+<h2 id="the-path">The path</h2>
+
+<p>Since my current knowledge of kubernetes is that it’s something I somehow deploy things to at work, this should be a pretty fun ride.</p>
+
+<p>Based on the excellent guides linked above, I plan to tackle the setup in this order:</p>
+
+<ol>
+  <li>prepare hardware and operating systems, install k3s</li>
+  <li>configure load balancer, ingress controller, certificate management and DNS</li>
+  <li>add persistent storage</li>
+  <li>deploy apps</li>
+</ol>
+
+<p>It will probably take a lot of my time to understand how it all works, so I’ll split this endeavor into multiple posts.
+Let’s do this!</p>
+
+
+      </main>
+    </div>
+    <script>
+      function applyTheme(theme) {
+  document.documentElement.classList.toggle('dark', theme === 'dark')
+}
+
+const isDark = localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
+applyTheme(isDark ? 'dark' : 'light')
+
+document.getElementById('theme-toggle').addEventListener('click', function() {
+  let newTheme
+  if (!('theme' in localStorage)) {
+    newTheme = document.documentElement.classList.contains('dark') ? 'light' : 'dark'
+  } else {
+    newTheme = localStorage.theme === 'dark' ? 'light' : 'dark'
+  }
+
+  localStorage.theme = newTheme
+  applyTheme(newTheme)
+})
+
+    </script>
+  </body>
+</html>

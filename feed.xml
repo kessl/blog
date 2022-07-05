@@ -1,36 +1,1195 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2022-07-03T17:39:22+00:00</updated><id>/feed.xml</id><entry><title type="html">Apples</title><link href="/apples/" rel="alternate" type="text/html" title="Apples" /><published>2018-08-21T00:00:00+00:00</published><updated>2018-08-21T00:00:00+00:00</updated><id>/apples</id><content type="html" xml:base="/apples/"><![CDATA[<h2 id="h2-heading">H2 heading</h2>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2022-07-05T14:28:29+00:00</updated><id>/feed.xml</id><entry><title type="html">Dotfiles</title><link href="/dotfiles/" rel="alternate" type="text/html" title="Dotfiles" /><published>2021-10-01T00:00:00+00:00</published><updated>2021-10-01T00:00:00+00:00</updated><id>/dotfiles</id><content type="html" xml:base="/dotfiles/"><![CDATA[<p>Dotfiles are configuration files, typically for command line programs.
+They are named after a Unix convention of starting their name with a dot <code class="language-plaintext highlighter-rouge">.</code>.
+Dotfiles hold configuration for programs like bash, zsh, vim and git.</p>
 
-<p>An apple is a sweet, edible fruit produced by an apple tree.</p>
+<p>I keep all my dotfiles in a git repository.
+That way I have all my settings backed up, so that I can quickly transfer them to a new machine.
+Dotfiles obviously save time when setting up a new laptop or desktop, but they are so easy to use – just copy them to your home directory – that I can use them even on one-off virtual machines and servers.</p>
 
-<h2 id="h2-heading-1">H2 heading</h2>
+<p>In addition to the actual dotfiles, which hold configuration for the shell and other programs, my <a href="https://github.com/kessl/dotfiles">dotfiles repository</a> contains a few scripts for setting up a new machine.
+Some dotfiles hold secrets and are encrypted.</p>
 
-<p>Apple trees are cultivated worldwide, and are the most widely grown species in
-the genus Malus. The tree originated in Central Asia, where its wild ancestor,
-Malus sieversii, is still found today. Apples have been grown for thousands of
-years in Asia and Europe, and were brought to North America by European
-colonists.</p>
+<h2 id="actual-dotfiles">Actual dotfiles</h2>
 
-<p>Apple trees are cultivated worldwide, and are the most widely grown species in
-the genus Malus. The tree originated in Central Asia, where its wild ancestor,
-Malus sieversii, is still found today. Apples have been grown for thousands of
-years in Asia and Europe, and were brought to North America by European
-colonists.</p>
+<p>Most of my dotfiles reside in <code class="language-plaintext highlighter-rouge">$HOME</code>.
+Some are in <code class="language-plaintext highlighter-rouge">~/.config</code> (<code class="language-plaintext highlighter-rouge">$XDG_CONFIG_HOME</code>), which is IMHO way better, but sadly most programs dump dotfiles in the home directory.</p>
 
-<p>Apple trees are cultivated worldwide, and are the most widely grown species in
-the genus Malus. The tree originated in Central Asia, where its wild ancestor,
-Malus sieversii, is still found today. Apples have been grown for thousands of
-years in Asia and Europe, and were brought to North America by European
-colonists.</p>
+<p>These dotfiles are in the root of the git repo.
+Installing them is as easy as copying to the home directory.
+This is what <a href="https://github.com/kessl/dotfiles/blob/main/bootstrap.sh"><code class="language-plaintext highlighter-rouge">bootstrap.sh</code></a> does.</p>
 
-<p>Apple trees are cultivated worldwide, and are the most widely grown species in
-the genus Malus. The tree originated in Central Asia, where its wild ancestor,
-Malus sieversii, is still found today. Apples have been grown for thousands of
-years in Asia and Europe, and were brought to North America by European
-colonists.</p>]]></content><author><name>daniel</name></author><category term="apple" /><category term="post" /><category term="tag" /><category term="tag2" /><category term="tag3" /><summary type="html"><![CDATA[H2 heading]]></summary></entry><entry><title type="html">Bananas</title><link href="/bananas/" rel="alternate" type="text/html" title="Bananas" /><published>2018-08-20T00:00:00+00:00</published><updated>2018-08-20T00:00:00+00:00</updated><id>/bananas</id><content type="html" xml:base="/bananas/"><![CDATA[<p>A banana is an edible fruit – botanically a berry – produced by several kinds
-of large herbaceous flowering plants in the genus Musa.</p>
+<p>My dotfiles mostly define the behavior of <code class="language-plaintext highlighter-rouge">bash</code>, which I use as my shell, as well as the shell prompt.
+Other than the shell, there are files for <code class="language-plaintext highlighter-rouge">git</code>, <code class="language-plaintext highlighter-rouge">vim</code> and <code class="language-plaintext highlighter-rouge">curl</code>.</p>
 
-<p>In some countries, bananas used for cooking may be called “plantains”,
-distinguishing them from dessert bananas. The fruit is variable in size, color,
-and firmness, but is usually elongated and curved, with soft flesh rich in
-starch covered with a rind, which may be green, yellow, red, purple, or brown
-when ripe.</p>]]></content><author><name>daniel</name></author><category term="banana" /><category term="post" /><category term="tag" /><category term="tag2" /><summary type="html"><![CDATA[A banana is an edible fruit – botanically a berry – produced by several kinds of large herbaceous flowering plants in the genus Musa.]]></summary></entry></feed>
+<p><img src="/assets/images/prompt.png" alt="Screenshot of my shell prompt" /></p>
+
+<h2 id="new-machine-setup">New machine setup</h2>
+
+<p>The <code class="language-plaintext highlighter-rouge">setup</code> directory holds scripts which help setting up a new machine.
+They are MacOS-specific, except for <code class="language-plaintext highlighter-rouge">secrets.sh</code>, though it doesn’t make much sense to put secrets like SSH keys and configs with passwords anywhere else than on my main machine.</p>
+
+<h3 id="macossh"><a href="https://github.com/kessl/dotfiles/blob/main/setup/macos.sh">macos.sh</a></h3>
+
+<p>This script configures a new, clean MacOS installation.
+It mostly sets options you would configure in the System Preferences GUI (like wallpaper, Dock preferences), but also some more hidden settings like showing path in Finder at all times.
+There are some downright esoteric settings like disabling (unbearably slow) window animations in Apple Mail.</p>
+
+<h3 id="brewsh"><a href="https://github.com/kessl/dotfiles/blob/main/setup/brew.sh">brew.sh</a></h3>
+
+<p>Updates Homebrew and installs formulae and casks.
+Also switches the shell to less ancient, brew-installed <code class="language-plaintext highlighter-rouge">bash</code>.</p>
+
+<h3 id="vscodesh"><a href="https://github.com/kessl/dotfiles/blob/main/setup/vscode.sh">vscode.sh</a></h3>
+
+<p>Copies settings and keybindings to VSCode’s configuration folder and installs a couple of extensions.</p>
+
+<h3 id="mountsh"><a href="https://github.com/kessl/dotfiles/blob/main/setup/mount.sh">mount.sh</a></h3>
+
+<p>Extends automount config <code class="language-plaintext highlighter-rouge">/etc/auto_master</code> with <code class="language-plaintext highlighter-rouge">/etc/auto_nfs</code>, which mounts my <a href="/data-storage-with-encrypted-cloud-backup/">NAS</a> as a NFS share.
+Also comes in handy after a system update, because MacOS updates reset the <code class="language-plaintext highlighter-rouge">auto_master</code> for some reason.</p>
+
+<h3 id="sudosh"><a href="https://github.com/kessl/dotfiles/blob/main/setup/sudo.sh">sudo.sh</a></h3>
+
+<p>Allows using Touch ID for <code class="language-plaintext highlighter-rouge">sudo</code> instead of password.
+Also gets reset by a system update.</p>
+
+<h2 id="secrets">Secrets</h2>
+
+<p>Last script in the repo is <a href="https://github.com/kessl/dotfiles/blob/main/setup/secrets.sh"><code class="language-plaintext highlighter-rouge">setup/secrets.sh</code></a>.
+It takes care of decrypting and installing dotfiles which contain secrets such as private keys and passwords and cannot be commited to a git repo in plaintext.
+Before running the script, ensure you have <code class="language-plaintext highlighter-rouge">gpg</code> available (such as GnuPG on Mac, installed by <a href="https://github.com/kessl/dotfiles/blob/main/setup/brew.sh"><code class="language-plaintext highlighter-rouge">brew.sh</code></a>) and a private key that can decrypt your secrets.
+It’s important to back this private key up to a password manager.</p>
+
+<p>I prefer to keep all my dotfiles with secrets in <code class="language-plaintext highlighter-rouge">~/.secrets/</code>, which makes it easy to back them up.
+I then symlink the files to their original location:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">ln</span> <span class="nt">-s</span> <span class="nv">$SECRETS_DIR</span>/.ssh/<span class="k">*</span> ~/.ssh/
+</code></pre></div></div>
+
+<p>That’s all there is to my dotfiles so far.
+Thanks to Mathias Bynens and his awesome <a href="https://github.com/mathiasbynens/dotfiles">dotfiles repo</a> (<a href="https://news.ycombinator.com/item?id=26513528">HN discussion</a>), which were the inspiration and basis for mine.</p>]]></content><author><name>daniel</name></author><category term="homelab" /><category term="poweruser" /><summary type="html"><![CDATA[Dotfiles are configuration files, typically for command line programs. They are named after a Unix convention of starting their name with a dot .. Dotfiles hold configuration for programs like bash, zsh, vim and git.]]></summary></entry><entry><title type="html">Wireguardifying crappy work VPN</title><link href="/wireguardifying-crappy-work-vpn/" rel="alternate" type="text/html" title="Wireguardifying crappy work VPN" /><published>2021-06-28T00:00:00+00:00</published><updated>2021-06-28T00:00:00+00:00</updated><id>/wireguardifying-crappy-work-vpn</id><content type="html" xml:base="/wireguardifying-crappy-work-vpn/"><![CDATA[<p>I need to connect to a VPN to access our development environments and various tools we use at work.
+We were given <a href="https://www.fortinet.com/support/product-downloads">FortiClient</a> as the VPN client, which is utter crap and probably the worst Mac app I’ve ever had the misfortune to use.
+To give you a picture of how bad it is:</p>
+
+<ul>
+  <li>It requires root privileges to install, connect and disconnect (ok, fair enough, it’s a VPN, but it asks for password only and doesn’t allow me to use Touch ID or Apple Watch).</li>
+  <li>FortiClient positively cannot stay online over anything but the most stable of connections.
+Change networks?
+Sorry, connect again.
+Roam to a closer AP?
+No luck.
+Close your Mac for 10 seconds?
+Here, why don’t you enter your OTP for the 18th time today.</li>
+  <li>Sometimes, when quitting the app, this stupid, bug-ridden piece of critical network infrastructure code that is supposed to help sysadmins sleep at night will ask for a password and simultaneously disable all keyboard input 😠
+ The only fix I found for this is to un/plug an external keyboard.</li>
+  <li>It does this:</li>
+</ul>
+
+<p><img src="/assets/images/forticlient-solitaire.png" alt="FortClient playing Solitaire with error dialogs :(" /></p>
+
+<h2 id="way-out-of-here">Way out of here</h2>
+
+<p>I’m a spoiled computer nerd who likes to use software made in this century.
+What if I connect a remote box to the VPN using this piece of crap, and use Wireguard to connect to the box?
+Turn on IP forwarding and route traffic from my Laptop to the VPN subnet, like this:</p>
+
+<pre class="ascii-diagram">
+
+            Tailscale       openfortivpn                   ┌─────┐
+          ┌────────────┐   ┌─────────────┐                 │ DNS │
+          │            │   │             │                 └─────┘
+  ┌───────▼──┐      ┌──▼───▼──┐       ┌──▼──────────┐    10.11.12.13
+  │          │      │         │       │             │
+  │  Laptop  │  WG  │   VPS   │ IPsec │  VPN server │    VPN subnet
+  │          ◄──────┼─────────┼───────┼─────────────┼──► 10.0.0.0/8
+  └──────────┘      └─────────┘       └─────────────┘
+
+</pre>
+
+<p>Since the VPS will remain always connected and Wireguard is a lot more resilient than IPsec when it comes to roaming and reconnecting, this should solve both the disconnects and having to deal with a crappy app.
+I will still have to SSH in and manually log in with <code class="language-plaintext highlighter-rouge">openfortivpn</code> every once in a while, when the connection times out.</p>
+
+<h2 id="tailscale-to-the-rescue">Tailscale to the rescue</h2>
+
+<p>Wireguard is awesome but takes a bit of work to set up and maintain.
+<a href="https://tailscale.com/">Tailscale</a>, however, uses Wireguard internally, is even more awesome and is unbelievably easy to set up.
+It just works™.
+Also it’s free for a single account (which you can use for <del>as many devices as you like</del> 20 devices + one subnet route as of June 2021).
+It works behind <a href="https://tailscale.com/blog/how-nat-traversal-works/">all sorts of nasty NATs</a>.
+Seriously, it’s amazing.</p>
+
+<p>I used a $5 DigitalOcean VPS I have lying around for random purposes like this.
+I connected both using Tailscale, installed <a href="https://github.com/adrienverge/openfortivpn">openfortivpn</a> (an open-source CLI alternative to FortClient) and connected.</p>
+
+<p><img src="/assets/images/tailscale-machines.png" alt="Tailscale machines screen with arcane-potato (VPS) connected" /></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>daniel@macbook <span class="nv">$ </span>ssh arcane-potato
+
+<span class="c"># set bash create a new tmux session when SSHing in, so that openfortivpn doesn't terminate when I close the SSH session</span>
+daniel@arcane-potato:~<span class="nv">$ </span><span class="nb">cat</span> <span class="o">&lt;&lt;</span> <span class="sh">'</span><span class="no">EOF</span><span class="sh">' &gt;&gt; .bashrc
+if command -v tmux &amp;&gt; /dev/null &amp;&amp; [ -n "</span><span class="nv">$PS1</span><span class="sh">" ] &amp;&amp; [[ ! "</span><span class="nv">$TERM</span><span class="sh">" =~ screen ]] &amp;&amp; [[ ! "</span><span class="nv">$TERM</span><span class="sh">" =~ tmux ]] &amp;&amp; [ -z "</span><span class="nv">$TMUX</span><span class="sh">" ]; then
+  exec tmux
+fi
+</span><span class="no">EOF
+
+</span><span class="c"># configure openfortivpn</span>
+daniel@arcane-potato:~<span class="nv">$ </span><span class="nb">cat</span> <span class="o">&lt;&lt;</span> <span class="no">EOF</span><span class="sh"> &gt; /etc/openfortivpn/config
+host = 123.45.67.89
+port = 12345
+username = &lt;username&gt;
+password = &lt;password&gt;
+trusted-cert = 6f6205cddd796c6d58730df9d35f908d6c513690c6e24135dda4f662fc9997b3
+</span><span class="no">EOF
+
+</span>daniel@arcane-potato:~<span class="nv">$ </span><span class="nb">echo</span> <span class="s2">"alias vpn=</span><span class="se">\"</span><span class="s2">sudo openfortivpn -o </span><span class="se">\"</span><span class="s2">"</span> <span class="o">&gt;&gt;</span> .bashrc
+daniel@arcane-potato:~<span class="nv">$ </span><span class="nb">source</span> .bashrc
+daniel@arcane-potato:~<span class="nv">$ </span>vpn 123456
+<span class="o">[</span><span class="nb">sudo</span><span class="o">]</span> password <span class="k">for </span>daniel:
+&lt;snip&gt;
+INFO:   Tunnel is up and running.
+</code></pre></div></div>
+
+<p>VPS is now connected to VPN.
+Next, I needed to tell Tailscale to forward packets to our VPN subnet.
+Also, DNS.</p>
+
+<h2 id="forwarding-traffic">Forwarding traffic</h2>
+
+<p>I enabled IP forwarding and told Tailscale to add routes to the VPN subnet.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># enable IP forwarding</span>
+daniel@arcane-potato:~<span class="nv">$ </span><span class="nb">echo</span> <span class="s1">'net.ipv4.ip_forward = 1'</span> | <span class="nb">sudo tee</span> <span class="nt">-a</span> /etc/sysctl.conf
+daniel@arcane-potato:~<span class="nv">$ </span><span class="nb">echo</span> <span class="s1">'net.ipv6.conf.all.forwarding = 1'</span> | <span class="nb">sudo tee</span> <span class="nt">-a</span> /etc/sysctl.conf
+daniel@arcane-potato:~<span class="nv">$ </span><span class="nb">sudo </span>sysctl <span class="nt">-p</span> /etc/sysctl.conf
+
+<span class="c"># tell Tailscale that we have a route to our VPN subnet</span>
+daniel@arcane-potato:~<span class="nv">$ </span><span class="nb">sudo </span>tailscale up <span class="nt">--advertise-routes</span><span class="o">=</span>10.0.0.0/8
+</code></pre></div></div>
+
+<p>In the Tailscale control panel, <code class="language-plaintext highlighter-rouge">arcane-potato</code> now has a badge saying that it advertises routes.
+Before these routes are applied, they need to be <a href="https://tailscale.com/kb/1019/subnets/">reviewed</a> and approved.
+Once that was done, I was able to reach services behind the VPN by their IP addresses.</p>
+
+<h2 id="configuring-dns">Configuring DNS</h2>
+
+<p>To resolve domain names of services behind the VPN, I need to tell my laptop to use the DNS server on our VPN.
+I did that using Tailscale’s DNS settings panel, which supports split DNS.
+Split DNS tells Tailscale clients, “to resolve domain names in this domain, use this DNS server”.
+(If your services don’t all have a second level domain in common, you will have to add your VPN DNS as a global nameserver.
+In this case, DNS will only work when the VPS is connected to the VPN.
+You can disable Tailscale DNS in <code class="language-plaintext highlighter-rouge">Tailscale &gt; Preferences &gt; Use Tailscale DNS settings</code> without disconnecting when you don’t need it.)</p>
+
+<p><img src="/assets/images/tailscale-dns.png" alt="Tailscale split DNS configuration" /></p>
+
+<p>There’s one less distraction to ruin your flow 🎉</p>]]></content><author><name>daniel</name></author><category term="devops" /><summary type="html"><![CDATA[I need to connect to a VPN to access our development environments and various tools we use at work. We were given FortiClient as the VPN client, which is utter crap and probably the worst Mac app I’ve ever had the misfortune to use. To give you a picture of how bad it is:]]></summary></entry><entry><title type="html">Static site analytics with Nginx, GoAccess &amp;amp; no JS</title><link href="/static-site-analytics-with-nginx-goaccess-no-js/" rel="alternate" type="text/html" title="Static site analytics with Nginx, GoAccess &amp;amp; no JS" /><published>2021-03-14T00:00:00+00:00</published><updated>2021-03-14T00:00:00+00:00</updated><id>/static-site-analytics-with-nginx-goaccess-no-js</id><content type="html" xml:base="/static-site-analytics-with-nginx-goaccess-no-js/"><![CDATA[<p>I’ve been using Cloudflare analytics to get an idea if anyone visits this site
+Cloudflare tells me the number of requests, unique visitors and used bandwidth.
+Better than nothing, considering it’s free and works out of the box (if you manage DNS with Cloudflare).
+But there’s only 30 days of history, I don’t know how many of the visits are crawlers and what pages the visitors request.</p>
+
+<p><img src="/assets/images/cloudflare-analytics.png" alt="Screenshot of Cloudflare analytics" /></p>
+
+<p>I’ve been wanting to give <a href="https://goaccess.io/">GoAccess</a> a try for some time.
+GoAccess provides real-time analytics by parsing access logs of your server.
+It works entirely server-side and it’s in my opinion the most privacy-conscious analytics solution, because it only collects what the browser explicitly sends to the server.
+There’s a slight problem though – I host this site on <a href="/gitlab-pages-dev-env">Gitlab pages</a> and <a href="https://www.yourofficeanywhere.co.uk/wp-content/uploads/2019/07/Cloud-Definitionn-2.png">there’s no server</a>.</p>
+
+<h2 id="enter-the-tracking-pixel">Enter the tracking pixel</h2>
+
+<p>A tracking pixel is a 1x1 transparent pixel made infamous by Facebook, who use it to track people across third party sites.
+I’ll use the same technique here thanks to excellent writeups by <a href="https://benhoyt.com/writings/replacing-google-analytics/">Ben Hoyt</a> and <a href="https://timnash.co.uk/pixel-tracking-with-nginx-a-tiny-bit-of-javascript/">Tim Nash</a>.</p>
+
+<p>This is the plan:</p>
+
+<ul>
+  <li>set up an Nginx instance to serve a pixel</li>
+  <li>include the pixel on every page of this site</li>
+  <li>parse Nginx’s access log with GoAccess and get beautiful analytics</li>
+</ul>
+
+<p>To get any useful information out of the pixel request, we’ll need to add the data we want to log to the pixel’s query string.
+Ben and Tim used a tiny script to add the pixel to their pages, which sends over the current URL and the referrer.
+Since I’ve <a href="/making-of-this-blog#no-js">liberated</a> this site from Javascript some time ago, I won’t be using any scripts.
+Instead I’ll generate the pixel markup at build time, baking the current URL into the pixel request like this: <code class="language-plaintext highlighter-rouge">cat.gif?u=&lt;current-url&gt;</code>.
+This way I won’t need any runtime JS, but there will be no referrer data.
+Good enough for me.</p>
+
+<h2 id="serving-the-pixel">Serving the pixel</h2>
+
+<p>We’ll tell Nginx to serve an empty gif at the path <code class="language-plaintext highlighter-rouge">/cat.gif</code>.
+(Originally I used <code class="language-plaintext highlighter-rouge">t.gif</code> but it got blocked by EasyPrivacy.)</p>
+
+<div class="language-nginx highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">location</span> <span class="p">=</span> <span class="n">/cat.gif</span> <span class="p">{</span>
+    <span class="kn">empty_gif</span><span class="p">;</span>
+    <span class="kn">access_log</span> <span class="n">/var/log/nginx/pixel.log</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>If we parsed <code class="language-plaintext highlighter-rouge">pixel.log</code> with GoAccess, we would see a bunch of requests to <code class="language-plaintext highlighter-rouge">/cat.gif</code>.
+We’ll need to change the log format to use the <code class="language-plaintext highlighter-rouge">u</code> query param as the request URL.</p>
+
+<div class="language-nginx highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">events</span> <span class="p">{}</span>
+
+<span class="k">http</span> <span class="p">{</span>
+    <span class="kn">include</span> <span class="s">mime.types</span><span class="p">;</span>
+    <span class="kn">default_type</span> <span class="nc">application/octet-stream</span><span class="p">;</span>
+    <span class="kn">sendfile</span> <span class="no">on</span><span class="p">;</span>
+
+    <span class="c1"># goaccess-compatible pixel log format</span>
+    <span class="kn">log_format</span> <span class="s">pixel</span> <span class="s">'</span><span class="nv">$remote_addr</span> <span class="s">-</span> <span class="nv">$remote_user</span> <span class="s">[</span><span class="nv">$time_local</span><span class="s">]</span> <span class="s">"</span><span class="nv">$rurl</span><span class="s">"</span> <span class="nv">$status</span> <span class="nv">$body_bytes_sent</span> <span class="s">""</span> <span class="s">"</span><span class="nv">$http_user_agent</span><span class="s">"</span> <span class="s">"</span><span class="nv">$http_x_forwarded_for</span><span class="s">"'</span><span class="p">;</span>
+
+    <span class="kn">server</span> <span class="p">{</span>
+        <span class="kn">listen</span> <span class="mi">8080</span><span class="p">;</span>
+        <span class="kn">server_name</span> <span class="s">localhost</span> <span class="s">t.bitgate.cz</span><span class="p">;</span>
+
+        <span class="c1"># tracking pixel</span>
+        <span class="kn">location</span> <span class="p">=</span> <span class="n">/cat.gif</span> <span class="p">{</span>
+            <span class="kn">empty_gif</span><span class="p">;</span>
+            <span class="kn">set</span> <span class="nv">$rurl</span> <span class="nv">$arg_u</span><span class="p">;</span>
+            <span class="kn">access_log</span> <span class="n">/var/log/nginx/pixel.log</span> <span class="s">pixel</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Let’s save this as <code class="language-plaintext highlighter-rouge">nginx.conf</code> and run Nginx from the same directory as the config:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>docker run <span class="nt">-it</span> <span class="nt">--rm</span> <span class="nt">-p</span> 8080:8080 <span class="se">\</span>
+  <span class="nt">-v</span> <span class="k">${</span><span class="nv">PWD</span><span class="k">}</span>/nginx.conf:/etc/nginx/nginx.conf:ro <span class="se">\</span>
+  <span class="nt">-v</span> <span class="k">${</span><span class="nv">PWD</span><span class="k">}</span>/log:/var/log/nginx nginx:alpine
+</code></pre></div></div>
+
+<p>If you open <a href="http://localhost:8080/cat.gif"><code class="language-plaintext highlighter-rouge">http://localhost:8080/cat.gif</code></a>, there should be a record like the following in the pixel’s log:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">cat </span>log/pixel.log
+172.17.0.1 - - <span class="o">[</span>14/Mar/2021:21:13:15 +0000] <span class="s2">""</span> 200 43 <span class="s2">""</span> <span class="s2">"Mozilla/5.0 (Windows NT 10.0; rv:78.0) Gecko/20100101 Firefox/78.0"</span> <span class="s2">"-"</span>
+</code></pre></div></div>
+
+<p><em>It’s funny and sad that Firefox on OSX with resist fingerprinting on pretends it runs on Windows and is <strong>8 versions</strong> old.</em></p>
+
+<h2 id="parsing-logs-with-goaccess">Parsing logs with GoAccess</h2>
+
+<p>Create a config and run GoAccess:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">mkdir </span>goaccess
+<span class="nv">$ </span>vi goaccess/goaccess.conf
+</code></pre></div></div>
+
+<div class="language-conf highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">log</span>-<span class="n">format</span> <span class="n">COMBINED</span>
+<span class="n">log</span>-<span class="n">file</span> /<span class="n">goaccess</span>/<span class="n">access</span>.<span class="n">log</span>
+<span class="n">output</span> /<span class="n">goaccess</span>/<span class="n">index</span>.<span class="n">html</span>
+<span class="n">real</span>-<span class="n">time</span>-<span class="n">html</span> <span class="n">true</span>
+</code></pre></div></div>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>docker run <span class="nt">-it</span> <span class="nt">--rm</span> <span class="nt">-p</span> 7890:7890 <span class="se">\</span>
+  <span class="nt">-v</span> <span class="k">${</span><span class="nv">PWD</span><span class="k">}</span>/goaccess:/goaccess <span class="se">\</span>
+  <span class="nt">-v</span> <span class="k">${</span><span class="nv">PWD</span><span class="k">}</span>/log/pixel.log:/goaccess/access.log <span class="se">\</span>
+  allinurl/goaccess <span class="nt">--config-file</span><span class="o">=</span>/goaccess/goaccess.conf
+</code></pre></div></div>
+
+<p>Open <code class="language-plaintext highlighter-rouge">goaccess/index.html</code> in your browser and there it is!
+If you make another request for <code class="language-plaintext highlighter-rouge">/cat.gif</code>, the report should update in real time.</p>
+
+<p><img src="/assets/images/goaccess-report.png" alt="Screenshot of GoAccess report" /></p>
+
+<h2 id="compose-for-deployment">Compose for deployment</h2>
+
+<p>I want to deploy this to my Raspberry at home, so I’ll need a way to access the report over the network.
+We already have an Nginx up and running; let’s add a <code class="language-plaintext highlighter-rouge">server</code> section to serve the report on another port so that I can port forward only the pixel:</p>
+
+<div class="language-nginx highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">server</span> <span class="p">{</span>
+    <span class="kn">listen</span> <span class="mi">8081</span><span class="p">;</span>
+    <span class="kn">server_name</span> <span class="s">localhost</span><span class="p">;</span>
+
+    <span class="c1"># goaccess report</span>
+    <span class="kn">root</span> <span class="n">/var/www</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>To have it work with the docker command from earlier, we need to map the report to <code class="language-plaintext highlighter-rouge">/var/www</code> and expose port 8081:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">-v</span> <span class="k">${</span><span class="nv">PWD</span><span class="k">}</span>/goaccess/index.html:/var/www/index.html <span class="nt">-p</span> 8081:8081
+</code></pre></div></div>
+
+<p>You should now find the report at <a href="http://localhost:8081"><code class="language-plaintext highlighter-rouge">http://localhost:8081</code></a>.</p>
+
+<p>To make deployment easier, I created a <code class="language-plaintext highlighter-rouge">docker-compose.yml</code>.
+I mapped the ports differently so that the pixel is available at port 80, 7890 is GoAccess’s default websocket port and 7891 is the report.
+<code class="language-plaintext highlighter-rouge">--ignore-panel</code>s hide sections we don’t have data for.</p>
+
+<p>I added a Let’s Encrypt config to enable HTTPS.
+Without HTTPS, the numbers would be skewed, because recent versions of Chrome will not load mixed content.
+See the <a href="https://github.com/kessl/static-pixel-tracking">readme</a> for the necessary steps to get it all up and running.</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">version</span><span class="pi">:</span> <span class="s1">'</span><span class="s">3.8'</span>
+
+<span class="na">services</span><span class="pi">:</span>
+  <span class="na">goaccess</span><span class="pi">:</span>
+    <span class="na">container_name</span><span class="pi">:</span> <span class="s">goaccess</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">memphisx/rpi-goaccess</span>
+    <span class="na">command</span><span class="pi">:</span> <span class="s">--config-file=/goaccess/goaccess.conf --ignore-panel=REQUESTS_STATIC --ignore-panel=REFERRERS --ignore-panel=REFERRING_SITES --ignore-panel=KEYPHRASES --ignore-panel=STATUS_CODES --ignore-panel=NOT_FOUND</span>
+    <span class="na">environment</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">TZ=Europe/Prague</span>
+    <span class="na">volumes</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">${PWD}/goaccess:/goaccess</span>
+      <span class="pi">-</span> <span class="s">${PWD}/log:/log</span>
+    <span class="na">ports</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">7890:7890</span> <span class="c1"># goaccess websocket</span>
+
+  <span class="na">goaccess-nginx</span><span class="pi">:</span>
+    <span class="na">container_name</span><span class="pi">:</span> <span class="s">goaccess-nginx</span>
+    <span class="na">command</span><span class="pi">:</span> <span class="s1">'</span><span class="s">/bin/sh</span><span class="nv"> </span><span class="s">-c</span><span class="nv"> </span><span class="s">'</span><span class="s1">'</span><span class="s">while</span><span class="nv"> </span><span class="s">:;</span><span class="nv"> </span><span class="s">do</span><span class="nv"> </span><span class="s">sleep</span><span class="nv"> </span><span class="s">6h</span><span class="nv"> </span><span class="s">&amp;</span><span class="nv"> </span><span class="s">wait</span><span class="nv"> </span><span class="s">$${!};</span><span class="nv"> </span><span class="s">nginx</span><span class="nv"> </span><span class="s">-s</span><span class="nv"> </span><span class="s">reload;</span><span class="nv"> </span><span class="s">done</span><span class="nv"> </span><span class="s">&amp;</span><span class="nv"> </span><span class="s">nginx</span><span class="nv"> </span><span class="s">-g</span><span class="nv"> </span><span class="s">"daemon</span><span class="nv"> </span><span class="s">off;"'</span><span class="s1">'</span><span class="s">'</span>
+    <span class="na">volumes</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">${PWD}/nginx.conf:/etc/nginx/nginx.conf:ro</span>
+      <span class="pi">-</span> <span class="s">${PWD}/log:/var/log/nginx</span>
+      <span class="pi">-</span> <span class="s">${PWD}/goaccess/html:/var/www</span>
+      <span class="pi">-</span> <span class="s">${PWD}/certbot/conf:/etc/letsencrypt</span>
+      <span class="pi">-</span> <span class="s">${PWD}/certbot/www:/var/www/certbot</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">tobi312/rpi-nginx:alpine</span>
+    <span class="na">ports</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">80:80</span> <span class="c1"># certbot</span>
+      <span class="pi">-</span> <span class="s">443:443</span> <span class="c1"># tracking pixel</span>
+      <span class="pi">-</span> <span class="s">7891:8081</span> <span class="c1"># goaccess report</span>
+
+  <span class="na">goaccess-certbot</span><span class="pi">:</span>
+    <span class="na">container_name</span><span class="pi">:</span> <span class="s">goaccess-certbot</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">certbot/certbot:arm32v6-latest</span>
+    <span class="na">entrypoint</span><span class="pi">:</span> <span class="s2">"</span><span class="s">/bin/sh</span><span class="nv"> </span><span class="s">-c</span><span class="nv"> </span><span class="s">'trap</span><span class="nv"> </span><span class="s">exit</span><span class="nv"> </span><span class="s">TERM;</span><span class="nv"> </span><span class="s">while</span><span class="nv"> </span><span class="s">:;</span><span class="nv"> </span><span class="s">do</span><span class="nv"> </span><span class="s">certbot</span><span class="nv"> </span><span class="s">renew;</span><span class="nv"> </span><span class="s">sleep</span><span class="nv"> </span><span class="s">12h</span><span class="nv"> </span><span class="s">&amp;</span><span class="nv"> </span><span class="s">wait</span><span class="nv"> </span><span class="s">$${!};</span><span class="nv"> </span><span class="s">done;'"</span>
+    <span class="na">volumes</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">./certbot/conf:/etc/letsencrypt</span>
+      <span class="pi">-</span> <span class="s">./certbot/www:/var/www/certbot</span>
+</code></pre></div></div>
+
+<h2 id="embed-the-pixel">Embed the pixel</h2>
+
+<p>I added this component to my layout to appear in every page.</p>
+
+<div class="language-tsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span> <span class="nx">useRouter</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">next/dist/client/router</span><span class="dl">'</span>
+
+<span class="kd">const</span> <span class="nx">PIXEL_URL</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">https://t.bitgate.cz/cat.gif?u=</span><span class="dl">'</span>
+
+<span class="k">export</span> <span class="kd">const</span> <span class="nx">Pixel</span><span class="p">:</span> <span class="nx">React</span><span class="p">.</span><span class="nx">FC</span> <span class="o">=</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="kd">const</span> <span class="nx">router</span> <span class="o">=</span> <span class="nx">useRouter</span><span class="p">()</span>
+  <span class="kd">const</span> <span class="nx">currentUrl</span> <span class="o">=</span> <span class="nb">encodeURIComponent</span><span class="p">(</span><span class="s2">`</span><span class="p">${</span><span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">NEXT_PUBLIC_BASE_URL</span><span class="p">}${</span><span class="nx">router</span><span class="p">.</span><span class="nx">asPath</span><span class="p">}</span><span class="s2">`</span><span class="p">)</span>
+
+  <span class="k">return</span> <span class="p">(</span>
+    <span class="p">&lt;</span><span class="nt">img</span>
+      <span class="na">src</span><span class="p">=</span><span class="si">{</span><span class="s2">`</span><span class="p">${</span><span class="nx">PIXEL_URL</span><span class="p">}${</span><span class="nx">currentUrl</span><span class="p">}</span><span class="s2">`</span><span class="si">}</span>
+      <span class="na">decoding</span><span class="p">=</span><span class="s">"async"</span>
+      <span class="na">loading</span><span class="p">=</span><span class="s">"eager"</span>
+      <span class="na">style</span><span class="p">=</span><span class="si">{</span><span class="p">{</span> <span class="na">visibility</span><span class="p">:</span> <span class="dl">'</span><span class="s1">hidden</span><span class="dl">'</span> <span class="p">}</span><span class="si">}</span>
+    <span class="p">/&gt;</span>
+  <span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>That’s it!</p>]]></content><author><name>daniel</name></author><category term="devops" /><summary type="html"><![CDATA[I’ve been using Cloudflare analytics to get an idea if anyone visits this site Cloudflare tells me the number of requests, unique visitors and used bandwidth. Better than nothing, considering it’s free and works out of the box (if you manage DNS with Cloudflare). But there’s only 30 days of history, I don’t know how many of the visits are crawlers and what pages the visitors request.]]></summary></entry><entry><title type="html">Home data storage with encrypted cloud backup</title><link href="/data-storage-with-encrypted-cloud-backup/" rel="alternate" type="text/html" title="Home data storage with encrypted cloud backup" /><published>2021-01-13T00:00:00+00:00</published><updated>2021-01-13T00:00:00+00:00</updated><id>/data-storage-with-encrypted-cloud-backup</id><content type="html" xml:base="/data-storage-with-encrypted-cloud-backup/"><![CDATA[<p>I thought it would be a good idea to consolidate all my data to a central storage.
+Before I set this up, I had data all over the place: photos and documents on iCloud and OneDrive, old programming projects and very old documents scattered on random hard drives, games and music on my PC.</p>
+
+<p>I had a few requirements:</p>
+
+<ul>
+  <li>Central location for all my devices: I want to mount a share and copy files</li>
+  <li>Backups: the central location should have versioned backups</li>
+  <li>No proprietary solutions: I want to be in control of my data</li>
+  <li>No vendor lock-in: There should be an option to switch cloud storage providers</li>
+  <li>Encryption: The cloud backups need to be encrypted</li>
+</ul>
+
+<p>I decided to use an Odroid HC1 with an HDD.
+The Odroid will advertise an NFS share and periodically back up its contents to a cloud storage.
+I chose to go with <a href="https://www.backblaze.com/b2/cloud-storage.html">Backblaze</a>, which offers an S3-compatible object store at $0.005/GB.
+First 10 GB are free.</p>
+
+<h2 id="odroid-setup">Odroid setup</h2>
+
+<p>I downloaded Armbian for the HC1 here: <a href="https://www.armbian.com/odroid-hc1/">https://www.armbian.com/odroid-hc1/</a> and wrote the image to an SD card using <a href="https://www.balena.io/etcher/">Etcher</a>.
+I’m using OSX on my machine.
+If you’re on Windows, <a href="https://rufus.ie/">Rufus</a> is a good choice.</p>
+
+<p>Once the Odroid boots up, find its MAC address in your router config and configure a static IP lease.
+Mine has <code class="language-plaintext highlighter-rouge">192.168.0.11</code>. Then SSH in:</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>ssh root@192.168.0.11
+</code></pre></div></div>
+
+<p>It will ask you to change the root password and create a new user.
+Once done, add your user to the <code class="language-plaintext highlighter-rouge">sudo</code> group and update:</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>usermod <span class="nt">-aG</span> <span class="nb">sudo</span> &lt;username&gt;
+<span class="nv">$ </span>apt update
+<span class="nv">$ </span>apt upgrade
+</code></pre></div></div>
+
+<p>You should probably <code class="language-plaintext highlighter-rouge">su &lt;username&gt;</code>, but then you will have to <code class="language-plaintext highlighter-rouge">sudo</code> everything. ¯\_(ツ)_/¯</p>
+
+<h3 id="mount-the-disk">Mount the disk</h3>
+
+<p>Now is a good time to mount the HDD in <code class="language-plaintext highlighter-rouge">/mnt/hdd</code> and set it to mount on boot.</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># find out where your disk is</span>
+<span class="nv">$ </span>fdisk <span class="nt">-l</span>
+
+<span class="c"># create a fresh partition</span>
+<span class="nv">$ </span>parted /dev/sda
+  <span class="o">&gt;</span> mklabel gpt <span class="c"># beware: this will erase all data on the drive</span>
+  <span class="o">&gt;</span> mkpart primary 0TB 1TB <span class="c"># or however large your disk is</span>
+  <span class="o">&gt;</span> quit
+
+<span class="c"># create an Ext4 filesystem</span>
+<span class="nv">$ </span>mkfs.ext4 /dev/sda1
+
+<span class="c"># create the mount point</span>
+<span class="nv">$ </span><span class="nb">mkdir</span> /mnt/hdd
+
+<span class="c"># mount it to verify it works</span>
+<span class="nv">$ </span>mount /dev/sda1 /mnt/hdd
+
+<span class="c"># find your disk's UUID</span>
+<span class="nv">$ </span>blkid <span class="nt">-o</span> list
+
+<span class="c"># add this line to /etc/fstab to mount on boot</span>
+<span class="nv">$ </span>vi /etc/fstab
+  <span class="c"># ...snip...</span>
+  <span class="nv">UUID</span><span class="o">=</span>&lt;uuid&gt; /mnt/hdd ext4 defaults 0 2
+
+<span class="c"># after reboot, disk should be mounted in /mnt/hdd</span>
+<span class="nv">$ </span>reboot
+</code></pre></div></div>
+
+<h2 id="nfs-setup">NFS setup</h2>
+
+<p>Install the NFS server:</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>apt <span class="nb">install </span>autofs nfs-kernel-server nfs-common <span class="nt">--install-recommends</span> <span class="nt">-f</span> <span class="nt">-y</span>
+<span class="nv">$ </span>reboot
+</code></pre></div></div>
+
+<p>Configure the share:</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># the share will live in a subdirectory. That way you can add data to the disk that will not be shared</span>
+<span class="nv">$ </span><span class="nb">mkdir</span> /mnt/hdd/data
+
+<span class="c"># back up default NFS config</span>
+<span class="nv">$ </span><span class="nb">cp</span> <span class="nt">-a</span> /etc/exports /etc/exports.backup
+
+<span class="c"># configure the share</span>
+<span class="nv">$ </span>vi /etc/exports
+  <span class="c"># data_directory  host(attributes)</span>
+  /mnt/hdd/data <span class="k">*</span><span class="o">(</span>rw,async,insecure,all_squash,no_subtree_check,nohide,anonuid<span class="o">=</span>1000,anongid<span class="o">=</span>1000<span class="o">)</span>
+</code></pre></div></div>
+
+<p>Attributes:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">rw</code> - read/write</li>
+  <li><code class="language-plaintext highlighter-rouge">async</code> - allows the server to buffer writes</li>
+  <li><code class="language-plaintext highlighter-rouge">insecure</code> - allows clients (eg. Mac OS X) to use non-reserved ports to connect to the share</li>
+  <li><code class="language-plaintext highlighter-rouge">no_subtree_check</code> - improves speed and reliability by eliminating permission checks on parent directories</li>
+  <li><code class="language-plaintext highlighter-rouge">nohide</code> - not a hidden share</li>
+  <li><code class="language-plaintext highlighter-rouge">all_squash</code> - treats all users as anonymous and assigns them uid=anonuid &amp; gid=anongid</li>
+  <li><code class="language-plaintext highlighter-rouge">anonuid=1000</code> - assigns anonymous users uid 1000</li>
+  <li><code class="language-plaintext highlighter-rouge">anongid=1000</code> - assigns anonymous users gid 1000</li>
+</ul>
+
+<p>Change the <code class="language-plaintext highlighter-rouge">uid</code> and <code class="language-plaintext highlighter-rouge">gid</code> to match the owner of the <code class="language-plaintext highlighter-rouge">/mnt/hdd/data</code> directory.
+That way every client will have full access to the share.
+Use this only on your private network!</p>
+
+<p>Restart to apply changes:</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># if you make additional changes, run this first</span>
+<span class="nv">$ </span>exportfs <span class="nt">-ra</span>
+
+<span class="c"># restart the server</span>
+<span class="nv">$ </span>service nfs-kernel-server restart
+</code></pre></div></div>
+
+<h3 id="add-a-test-nfs-client">Add a test NFS client</h3>
+
+<p>Mount the NFS share on your computer to verify it works.</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># find out if the share is advertised</span>
+<span class="nv">$ </span>showmount <span class="nt">-e</span> 192.168.0.11
+
+<span class="c"># mount it to /Users/&lt;username&gt;/odroid</span>
+<span class="nv">$ </span>mount <span class="nt">-t</span> nfs <span class="nt">-o</span> <span class="nv">rsize</span><span class="o">=</span>65536,wsize<span class="o">=</span>65536,intr,hard,tcp,locallocks,rdirplus,readahead<span class="o">=</span>128 192.168.0.11:/mnt/hdd/data /Users/&lt;username&gt;/odroid
+</code></pre></div></div>
+
+<p>Check if you see it in Finder and copy some files.
+If it works, unmount and set up an auto mount:</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># unmount</span>
+<span class="nv">$ </span>umount /Users/&lt;username&gt;/odroid
+
+<span class="c"># add auto_nfs to auto_master</span>
+<span class="nv">$ </span><span class="nb">sudo </span>vi /etc/auto_master
+  /-          auto_nfs    <span class="nt">-nobrowse</span>,nosuid
+
+<span class="c"># add the share to auto_nfs</span>
+<span class="nv">$ </span><span class="nb">sudo </span>vi /etc/auto_nfs
+  /System/Volumes/Data/Users/&lt;username&gt;/odroid <span class="nt">-fstype</span><span class="o">=</span>nfs,noowners,nolockd,locallocks,rdirplus,hard,intr,rw,tcp,nfc,rsize<span class="o">=</span>65536,wsize<span class="o">=</span>65536 nfs://192.168.0.11:/mnt/hdd/data
+
+<span class="c"># set proper permissions: a+rwx,u-x,g-wx,o-wx</span>
+<span class="nv">$ </span><span class="nb">sudo chmod </span>644 /etc/auto_nfs
+
+<span class="c"># mount everything in auto_master</span>
+<span class="nv">$ </span><span class="nb">sudo </span>automount <span class="nt">-cv</span>
+</code></pre></div></div>
+
+<p>You should find the volume in <code class="language-plaintext highlighter-rouge">/Users/&lt;username&gt;/odroid</code>.
+Verify it still works.</p>
+
+<h2 id="backup-setup">Backup setup</h2>
+
+<p>Register for a Backblaze account at <a href="https://www.backblaze.com/b2/cloud-storage.html">https://www.backblaze.com/b2/cloud-storage.html</a>.
+(You can use any other cloud storage provider supported by <code class="language-plaintext highlighter-rouge">rclone</code>, which is most of them.)
+Create a private bucket with versioning on (it’s the default for B2).</p>
+
+<p>Side note: if you create a public bucket, you can <a href="https://help.backblaze.com/hc/en-us/articles/217666928-Using-Backblaze-B2-with-the-Cloudflare-CDN">proxy traffic</a> to it through Cloudflare to create your own private CDN.</p>
+
+<p>Next, create an app key with permissions to your bucket and save the app key ID and the key to configure <code class="language-plaintext highlighter-rouge">rclone</code>.</p>
+
+<h3 id="install--configure-rclone">Install &amp; configure rclone</h3>
+
+<p>Rclone is an amazing CLI utility that supports a lot of cloud storage providers.
+It’s basically rsync for the cloud. Let’s install rclone and add B2 as a remote:</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># install rclone</span>
+<span class="nv">$ </span>apt <span class="nb">install </span>rclone
+
+<span class="c"># add a remote</span>
+<span class="nv">$ </span>rclone config
+  No remotes found - make a new one
+  n<span class="o">)</span> New remote
+  s<span class="o">)</span> Set configuration password
+  q<span class="o">)</span> Quit config
+
+  n/s/q&gt; n
+
+  name&gt; b2
+
+  Type of storage to configure.
+  Enter a string value. Press Enter <span class="k">for </span>the default <span class="o">(</span><span class="s2">""</span><span class="o">)</span><span class="nb">.</span>
+  Choose a number from below, or <span class="nb">type </span><span class="k">in </span>your own value
+  ...snip...
+  4 / Amazon S3 Compliant Storage Providers <span class="o">(</span>AWS, Ceph, Dreamhost, IBM COS, Minio<span class="o">)</span>
+    <span class="se">\ </span><span class="s2">"s3"</span>
+  5 / Backblaze B2
+    <span class="se">\ </span><span class="s2">"b2"</span>
+  ...snip...
+
+  Storage&gt; b2
+
+  <span class="k">**</span> See <span class="nb">help </span><span class="k">for </span>b2 backend at: https://rclone.org/b2/ <span class="k">**</span>
+
+  Account ID or Application Key ID
+  Enter a string value. Press Enter <span class="k">for </span>the default <span class="o">(</span><span class="s2">""</span><span class="o">)</span><span class="nb">.</span>
+  account&gt; 0000000000000000000
+  Application Key
+  Enter a string value. Press Enter <span class="k">for </span>the default <span class="o">(</span><span class="s2">""</span><span class="o">)</span><span class="nb">.</span>
+
+  key&gt; <span class="k">*</span>876FD87SFGadsfSD08F6fD087Fadf07SF608D6fdsfzgjhsdfgd76<span class="k">*</span>
+
+  Permanently delete files on remote removal, otherwise hide files.
+  Enter a boolean value <span class="o">(</span><span class="nb">true </span>or <span class="nb">false</span><span class="o">)</span><span class="nb">.</span> Press Enter <span class="k">for </span>the default <span class="o">(</span><span class="s2">"false"</span><span class="o">)</span><span class="nb">.</span>
+
+  hard_delete&gt; <span class="nb">false
+
+  </span>Edit advanced config? <span class="o">(</span>y/n<span class="o">)</span>
+  y<span class="o">)</span> Yes
+  n<span class="o">)</span> No
+  y/n&gt; n
+
+  Remote config
+  <span class="nt">--------------------</span>
+  <span class="o">[</span>b2]
+  account <span class="o">=</span> 0000000000000000000
+  key <span class="o">=</span> 876FD87SFGadsfSD08F6fD087Fadf07SF608D6fdsfzgjhsdfgd76
+  hard_delete <span class="o">=</span> <span class="nb">false</span>
+  <span class="nt">--------------------</span>
+
+  y<span class="o">)</span> Yes this is OK
+  e<span class="o">)</span> Edit this remote
+  d<span class="o">)</span> Delete this remote
+
+  y/e/d&gt; y
+</code></pre></div></div>
+
+<p>To test that it worked, create a file in <code class="language-plaintext highlighter-rouge">/mnt/hdd/data</code> and run rclone:</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># create a file</span>
+<span class="nv">$ </span><span class="nb">touch</span> /mnt/hdd/data/test-file
+
+<span class="c"># sync to B2</span>
+<span class="nv">$ </span>rclone <span class="nb">sync</span> /mnt/hdd/data b2:&lt;bucket-name&gt;
+</code></pre></div></div>
+
+<p>See if the file was uploaded in B2 management console.</p>
+
+<h3 id="enable-encryption">Enable encryption</h3>
+
+<p>To enable encryption, rclone has a <code class="language-plaintext highlighter-rouge">crypt</code> remote type that encrypts files uploaded to it.
+Most of the configuration is straightforward and uses the defaults, except for filename and directory name encryption, which <a href="https://github.com/rclone/rclone/issues/1627#issuecomment-371625277">does not work with B2 versioning system</a>, so we will disable it.
+If you insist on encrypting file and directory names, you could disable versioning and use the <code class="language-plaintext highlighter-rouge">--backup-dir</code> option instead.</p>
+
+<p>Let’s add another remote:</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>rclone config
+  n<span class="o">)</span> New remote
+  s<span class="o">)</span> Set configuration password
+  q<span class="o">)</span> Quit config
+
+  n/s/q&gt; n
+
+  name&gt; b2-crypt-backup
+
+  Type of storage to configure.
+  Enter a string value. Press Enter <span class="k">for </span>the default <span class="o">(</span><span class="s2">""</span><span class="o">)</span><span class="nb">.</span>
+  Choose a number from below, or <span class="nb">type </span><span class="k">in </span>your own value
+  ...snip...
+  9 / Encrypt/Decrypt a remote
+    <span class="se">\ </span><span class="s2">"crypt"</span>
+  ...snip...
+
+  Storage&gt; crypt
+
+  <span class="k">**</span> See <span class="nb">help </span><span class="k">for </span>crypt backend at: https://rclone.org/crypt/ <span class="k">**</span>
+
+  Remote to encrypt/decrypt.
+  Normally should contain a <span class="s1">':'</span> and a path, eg <span class="s2">"myremote:path/to/dir"</span>,
+  <span class="s2">"myremote:bucket"</span> or maybe <span class="s2">"myremote:"</span> <span class="o">(</span>not recommended<span class="o">)</span><span class="nb">.</span>
+  Enter a string value. Press Enter <span class="k">for </span>the default <span class="o">(</span><span class="s2">""</span><span class="o">)</span><span class="nb">.</span>
+
+  remote&gt; b2:&lt;bucket-name&gt;
+
+  How to encrypt the filenames.
+  Enter a string value. Press Enter <span class="k">for </span>the default <span class="o">(</span><span class="s2">"standard"</span><span class="o">)</span><span class="nb">.</span>
+  Choose a number from below, or <span class="nb">type </span><span class="k">in </span>your own value
+  1 / Don<span class="s1">'t encrypt the file names.  Adds a ".bin" extension only.
+    \ "off"
+  2 / Encrypt the filenames see the docs for the details.
+    \ "standard"
+  3 / Very simple filename obfuscation.
+    \ "obfuscate"
+
+  filename_encryption&gt; off
+
+  Option to either encrypt directory names or leave them intact.
+  Enter a boolean value (true or false). Press Enter for the default ("true").
+  Choose a number from below, or type in your own value
+  1 / Encrypt directory names.
+    \ "true"
+  2 / Don'</span>t encrypt directory names, leave them intact.
+    <span class="se">\ </span><span class="s2">"false"</span>
+
+  directory_name_encryption&gt; <span class="nb">false
+
+  </span>Password or pass phrase <span class="k">for </span>encryption.
+  y<span class="o">)</span> Yes <span class="nb">type </span><span class="k">in </span>my own password
+  g<span class="o">)</span> Generate random password
+  n<span class="o">)</span> No leave this optional password blank
+
+  y/g/n&gt; g
+
+  Password strength <span class="k">in </span>bits.
+  64 is just about memorable
+  128 is secure
+  1024 is the maximum
+
+  Bits&gt; 1024
+
+  Your password is: zFpNRENxx75Eks3GftRzhDdRYFO8U8oAWTIwezf5Qnj5HPwAxypXDZb4LGy1wJSUGPo4c9aj4GLhQ87Gcw3ar6ve7TET77NORkAyhKwkR6BwPk4jVGRi-YMkjIf6oqDPdRRB3RQUhtFKp5VtBQl-txe-luOQlHR2-zQ_YiamuAg
+  Use this password? Please note that an obscured version of this
+  password <span class="o">(</span>and not the password itself<span class="o">)</span> will be stored under your
+  configuration file, so keep this generated password <span class="k">in </span>a safe place.
+  y<span class="o">)</span> Yes
+  n<span class="o">)</span> No
+
+  y/n&gt; y
+
+  Password or pass phrase <span class="k">for </span>salt. Optional but recommended.
+  Should be different to the previous password.
+  y<span class="o">)</span> Yes <span class="nb">type </span><span class="k">in </span>my own password
+  g<span class="o">)</span> Generate random password
+  n<span class="o">)</span> No leave this optional password blank
+
+  y/g/n&gt; g
+
+  Password strength <span class="k">in </span>bits.
+  64 is just about memorable
+  128 is secure
+  1024 is the maximum
+
+  Bits&gt; 1024
+
+  Your password is: CadSQrSUqAAGOfNzr6-__Rsdv8Bauj2lG8Ee2Q7oFZh7MByhnRFyUGLoX5yXX1dKRKKxMCpoG5-OQlKgascKd-aU9p9sGAeVpzs301zzwrRI8ngE8XtPE8Qzx_HZvZAMqVSy1gl-zGhqqnsdCLuty5VbBtk2PJwQ9Hlq1XygxCA
+  Use this password? Please note that an obscured version of this
+  password <span class="o">(</span>and not the password itself<span class="o">)</span> will be stored under your
+  configuration file, so keep this generated password <span class="k">in </span>a safe place.
+  y<span class="o">)</span> Yes
+  n<span class="o">)</span> No
+
+  y/n&gt; y
+
+  Edit advanced config? <span class="o">(</span>y/n<span class="o">)</span>
+  y<span class="o">)</span> Yes
+  n<span class="o">)</span> No
+
+  y/n&gt; n
+
+  Remote config
+  <span class="nt">--------------------</span>
+  <span class="o">[</span>b2-crypt-backup]
+  remote <span class="o">=</span> b2:&lt;bucket-name&gt;
+  filename_encryption <span class="o">=</span> off
+  directory_name_encryption <span class="o">=</span> <span class="nb">false
+  </span>password <span class="o">=</span> <span class="k">***</span> ENCRYPTED <span class="k">***</span>
+  password2 <span class="o">=</span> <span class="k">***</span> ENCRYPTED <span class="k">***</span>
+  <span class="nt">--------------------</span>
+  y<span class="o">)</span> Yes this is OK
+  e<span class="o">)</span> Edit this remote
+  d<span class="o">)</span> Delete this remote
+
+  y/e/d&gt; y
+</code></pre></div></div>
+
+<p><strong>Save the keys to your password manager.</strong>
+You will need them to restore your files.</p>
+
+<p>Check that the encrypted remote works the same way we checked the B2 remote:</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># create a file</span>
+<span class="nv">$ </span><span class="nb">echo</span> <span class="s2">"unencrypted text"</span> <span class="o">&gt;</span> /mnt/hdd/data/test-plain-file
+
+<span class="c"># sync to B2</span>
+<span class="nv">$ </span>rclone <span class="nb">sync</span> /mnt/hdd/data b2-crypt-backup:/
+</code></pre></div></div>
+
+<p>The file should show up in the management console with a <code class="language-plaintext highlighter-rouge">.bin</code> extension and encrypted contents.</p>
+
+<p><strong>Test that you’re able to restore the data.</strong>
+This step is crucial, without it you’re uploading random bytes to the cloud.
+On the Odroid:</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># copy your config</span>
+<span class="nv">$ </span><span class="nb">cat</span> <span class="si">$(</span>rclone config file | <span class="nb">tail</span> <span class="nt">-n1</span><span class="si">)</span>
+</code></pre></div></div>
+
+<p>On another machine:</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># paste your config</span>
+<span class="nv">$ </span>rclone config edit
+
+<span class="c"># restore the files, decrypting them in the process</span>
+<span class="nv">$ </span>rclone <span class="nb">sync </span>b2-crypt-backup:/ /Users/&lt;username&gt;/test
+</code></pre></div></div>
+
+<p>Confirm that the file is restored and its contents have been decrypted.</p>
+
+<h2 id="schedule-rclone-to-sync-periodically">Schedule rclone to sync periodically</h2>
+
+<p>I used <code class="language-plaintext highlighter-rouge">cron</code> to automate running <code class="language-plaintext highlighter-rouge">rclone</code> every 30 minutes.
+Create a bash script in <code class="language-plaintext highlighter-rouge">/home/&lt;username&gt;/rclone-cron.sh</code>:</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/bin/bash</span>
+<span class="k">if </span>pidof <span class="nt">-o</span> %PPID <span class="nt">-x</span> “rclone-cron.sh”<span class="p">;</span> <span class="k">then
+</span><span class="nb">exit </span>1
+<span class="k">fi
+</span>rclone <span class="nb">sync</span> <span class="nt">--fast-list</span> <span class="nt">--stats-log-level</span> NOTICE <span class="nt">--stats-one-line</span> <span class="nt">--log-file</span><span class="o">=</span>/var/log/rclone.log /mnt/hdd/data b2-crypt-backup:/
+<span class="nb">exit</span>
+</code></pre></div></div>
+
+<p>If your storage provider bills you for every transaction (B2 does), I recommend to use <code class="language-plaintext highlighter-rouge">--fast-list</code>, which will minimize the amount of transactions at the expense of higher memory usage and result in a lower monthly payment.</p>
+
+<p>I enabled logging to file for easier monitoring with <code class="language-plaintext highlighter-rouge">--stats-log-level NOTICE --stats-one-line --log-file=/var/log/rclone.log</code>.</p>
+
+<p>The script runs <code class="language-plaintext highlighter-rouge">rclone sync</code>, but only if another instance of the script is not already running.</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># set the executable bit</span>
+<span class="nv">$ </span><span class="nb">chmod </span>a+x rclone-cron.sh
+
+<span class="c"># add this line to crontab</span>
+<span class="nv">$ </span>crontab <span class="nt">-e</span>
+  0,30 <span class="k">*</span> <span class="k">*</span> <span class="k">*</span> <span class="k">*</span> /home/&lt;username&gt;/rclone-cron.sh <span class="o">&gt;</span>/dev/null 2&gt;&amp;1
+</code></pre></div></div>
+
+<p>If you’d like to change the schedule, <a href="https://crontab.guru/#0,30_*_*_*_*">crontab.guru</a> is handy when editing crontab.</p>
+
+<p>That’s it! Anything you store on the Odroid will be backed up to Backblaze every 30 minutes.
+Previous versions of edited or deleted files will remain in Backblaze.
+You can recover them using <code class="language-plaintext highlighter-rouge">rclone --b2-versions</code>.
+You’ll find more about that in the <a href="https://rclone.org/b2/#versions">docs</a>.</p>]]></content><author><name>daniel</name></author><category term="homelab" /><summary type="html"><![CDATA[I thought it would be a good idea to consolidate all my data to a central storage. Before I set this up, I had data all over the place: photos and documents on iCloud and OneDrive, old programming projects and very old documents scattered on random hard drives, games and music on my PC.]]></summary></entry><entry><title type="html">My humble homelab beginnings</title><link href="/my-humble-homelab-beginnings/" rel="alternate" type="text/html" title="My humble homelab beginnings" /><published>2020-05-06T00:00:00+00:00</published><updated>2020-05-06T00:00:00+00:00</updated><id>/my-humble-homelab-beginnings</id><content type="html" xml:base="/my-humble-homelab-beginnings/"><![CDATA[<p>Hi, I’m Daniel and I’m an absolute newb when it comes to kubernetes.
+I also really like the idea of having a homelab to experiment on, self-host some apps and look at pretty lights and cables.
+My original plan to rack-mount a HP DL380 G6 in my living room I <a href="https://youtu.be/eBTPKBm4vA4?t=36">abandoned rather quickly</a> in hopes of remaining in a relationship.</p>
+
+<p>The next best thing I have is a random assortment of mostly ARM hardware, which I’ll try to coerce into homelab stuff with the help of kubernetes.</p>
+
+<p>I know next to nothing about kubernetes, so my setup will be a mashup of these great kubernetes guides:</p>
+
+<ul>
+  <li>https://blog.alexellis.io/test-drive-k3s-on-raspberry-pi/</li>
+  <li>https://blog.quickbird.uk/domesticating-kubernetes-d49c178ebc41</li>
+  <li>https://kauri.io/38-install-and-configure-a-kubernetes-cluster-with/418b3bc1e0544fbc955a4bbba6fff8a9/a</li>
+</ul>
+
+<h2 id="the-goal">The goal</h2>
+
+<p>The ultimate goal is to set up a homelab kubernetes environment on hardware that I have lying around.
+I should be able to deploy apps to the cluster and have them be reachable on a subdomain of bitgate.cz over HTTPS.</p>
+
+<p>I have a few apps in mind that I’d like to eventually host:</p>
+
+<ul>
+  <li><strong><a href="https://nextcloud.com/">NextCloud</a></strong> - self-hosted file sharing &amp; document tools</li>
+  <li><strong><a href="https://jellyfin.org/">Jellyfin</a>, Sonarr, Radarr,</strong> etc - home theater with automated media management</li>
+  <li><strong>nginx &amp; <a href="https://goaccess.io/">goaccess</a> analytics</strong> - something to tell me if anyone reads this blog</li>
+  <li><strong>storage</strong> with off-site backup - a NAS backed up to B2</li>
+</ul>
+
+<h2 id="the-hardware">The hardware</h2>
+
+<p>I have a Raspberry Pi 3B+, a 2011 Raspberry Pi, an old Windows laptop and two Odroid HC1s.
+All devices are very low-end for kubernetes.
+I will therefore be going for <a href="https://k3s.io/">k3s</a>, a lightweight, stripped-down kubernetes distribution crammed in a single binary.</p>
+
+<p>The 2011 is apparently way too slow and not supported by k3s.
+The 3B+ is supported but slow, needs to run off an SD card and is limited to USB2.0 and 100Mb ethernet.
+It should do its job as master node.</p>
+
+<p>The Odroids are better specced with an 8-core CPU, 2GB RAM and a SATA port.
+They will serve as agent nodes doing the heavy lifting, as well as storage hosts.</p>
+
+<h2 id="the-path">The path</h2>
+
+<p>Since my current knowledge of kubernetes is that it’s something I somehow deploy things to at work, this should be a pretty fun ride.</p>
+
+<p>Based on the excellent guides linked above, I plan to tackle the setup in this order:</p>
+
+<ol>
+  <li>prepare hardware and operating systems, install k3s</li>
+  <li>configure load balancer, ingress controller, certificate management and DNS</li>
+  <li>add persistent storage</li>
+  <li>deploy apps</li>
+</ol>
+
+<p>It will probably take a lot of my time to understand how it all works, so I’ll split this endeavor into multiple posts.
+Let’s do this!</p>]]></content><author><name>daniel</name></author><category term="homelab" /><summary type="html"><![CDATA[Hi, I’m Daniel and I’m an absolute newb when it comes to kubernetes. I also really like the idea of having a homelab to experiment on, self-host some apps and look at pretty lights and cables. My original plan to rack-mount a HP DL380 G6 in my living room I abandoned rather quickly in hopes of remaining in a relationship.]]></summary></entry><entry><title type="html">Content Security Policy, inline scripts and Next.js</title><link href="/content-security-policy-inline-scripts-and-next-js/" rel="alternate" type="text/html" title="Content Security Policy, inline scripts and Next.js" /><published>2020-04-29T00:00:00+00:00</published><updated>2020-04-29T00:00:00+00:00</updated><id>/content-security-policy-inline-scripts-and-next-js</id><content type="html" xml:base="/content-security-policy-inline-scripts-and-next-js/"><![CDATA[<p><strong>TL;DR</strong> Use CSP with nonce &amp; <code class="language-plaintext highlighter-rouge">strict-dynamic</code> to secure the origin of inline scripts.</p>
+
+<p><em>Updated 2021-02-17 for Helmet v4</em></p>
+
+<p>Next includes client-side scripts in <code class="language-plaintext highlighter-rouge">&lt;script&gt;</code> tags in <code class="language-plaintext highlighter-rouge">Document</code>, so usually, a <code class="language-plaintext highlighter-rouge">script-src 'self';</code> would be sufficient.
+However, I also needed to execute inline scripts, which meant that I either had to use <code class="language-plaintext highlighter-rouge">unsafe-inline</code> (which is only marginally better than no CSP), a hash of the scripts’ content, or a nonce.
+I went with nonce, and even though it turned out to be pretty straightforward in the end, it still ended up eating most of my afternoon today.</p>
+
+<h2 id="setting-up-security-headers">Setting up security headers</h2>
+
+<p>I used <a href="https://helmetjs.github.io/"><code class="language-plaintext highlighter-rouge">helmet</code></a>, an <code class="language-plaintext highlighter-rouge">express</code> middleware that makes setting security headers easier.
+The types make it convenient to see all the configuration options.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>yarn add helmet
+<span class="nv">$ </span>yarn add <span class="nt">-D</span> @types/helmet
+</code></pre></div></div>
+
+<h2 id="setting-up-csp-with-nonce">Setting up CSP with nonce</h2>
+
+<p>The idea is to generate a random nonce on every request, send it to the browser in the CSP header and make sure all scripts have a matching value: <code class="language-plaintext highlighter-rouge">&lt;script nonce={nonce}&gt;</code>.
+See <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP">MDN</a> for all possible CSP options.</p>
+
+<p><code class="language-plaintext highlighter-rouge">'strict-dynamic'</code> tells the browser to trust any other code executed by already trusted code.
+If you specify <code class="language-plaintext highlighter-rouge">'strict-dynamic'</code>, the browser will disregard other options such as <code class="language-plaintext highlighter-rouge">'self' *.3rdparty.com</code>.
+Every script will then need to have the nonce.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nx">express</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">express</span><span class="dl">'</span>
+<span class="k">import</span> <span class="nx">helmet</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">helmet</span><span class="dl">'</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">v4</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">uuid</span><span class="dl">'</span>
+
+<span class="kd">const</span> <span class="nx">server</span> <span class="o">=</span> <span class="nx">express</span><span class="p">()</span>
+
+<span class="kd">const</span> <span class="nx">options</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="na">directives</span><span class="p">:</span> <span class="p">{</span>
+    <span class="dl">'</span><span class="s1">default-src</span><span class="dl">'</span><span class="p">:</span> <span class="p">[</span><span class="dl">"</span><span class="s2">'self'</span><span class="dl">"</span><span class="p">],</span>
+    <span class="dl">'</span><span class="s1">script-src</span><span class="dl">'</span><span class="p">:</span> <span class="p">[(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="s2">`'nonce-</span><span class="p">${</span><span class="nx">res</span><span class="p">.</span><span class="nx">locals</span><span class="p">.</span><span class="nx">nonce</span><span class="p">}</span><span class="s2">' 'strict-dynamic'`</span><span class="p">],</span>
+  <span class="p">},</span>
+  <span class="c1">// ... more config options</span>
+<span class="p">}</span>
+
+<span class="c1">// generate a nonce on every request and save it</span>
+<span class="nx">server</span><span class="p">.</span><span class="nx">use</span><span class="p">((</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">res</span><span class="p">.</span><span class="nx">locals</span><span class="p">.</span><span class="nx">nonce</span> <span class="o">=</span> <span class="nx">v4</span><span class="p">()</span>
+  <span class="nx">helmet</span><span class="p">.</span><span class="nx">contentSecurityPolicy</span><span class="p">(</span><span class="nx">options</span><span class="p">)(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+<p>We will need to pass the nonce to Next as well as any other scripts.
+Let’s create a custom <code class="language-plaintext highlighter-rouge">Document</code> in <code class="language-plaintext highlighter-rouge">pages/_document.tsx</code>, retrieve the nonce from context and pass it down:</p>
+
+<div class="language-jsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nx">Document</span><span class="p">,</span> <span class="p">{</span>
+  <span class="nx">Head</span><span class="p">,</span>
+  <span class="nx">Html</span><span class="p">,</span>
+  <span class="nx">Main</span><span class="p">,</span>
+  <span class="nx">NextScript</span><span class="p">,</span>
+  <span class="nx">DocumentContext</span><span class="p">,</span>
+<span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">next/document</span><span class="dl">'</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">ServerResponse</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">http</span><span class="dl">'</span>
+
+<span class="nx">type</span> <span class="nx">ResponseWithNonce</span> <span class="o">=</span> <span class="nx">ServerResponse</span> <span class="o">&amp;</span> <span class="p">{</span> <span class="na">locals</span><span class="p">:</span> <span class="p">{</span> <span class="nx">nonce</span><span class="p">?:</span> <span class="nx">string</span> <span class="p">}</span> <span class="p">}</span>
+
+<span class="nx">type</span> <span class="nx">CustomDocumentProps</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">nonce</span><span class="p">?:</span> <span class="nx">string</span>
+<span class="p">}</span>
+
+<span class="kd">class</span> <span class="nx">CustomDocument</span> <span class="kd">extends</span> <span class="nx">Document</span><span class="o">&lt;</span><span class="nx">CustomDocumentProps</span><span class="o">&gt;</span> <span class="p">{</span>
+  <span class="kd">static</span> <span class="k">async</span> <span class="nx">getInitialProps</span><span class="p">(</span><span class="na">ctx</span><span class="p">:</span> <span class="nx">DocumentContext</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// get the nonce from res.locals.nonce</span>
+    <span class="kd">const</span> <span class="nx">nonce</span> <span class="o">=</span> <span class="p">(</span><span class="nx">ctx</span><span class="p">.</span><span class="nx">res</span> <span class="k">as</span> <span class="nx">ResponseWithNonce</span><span class="p">).</span><span class="nx">locals</span><span class="p">.</span><span class="nx">nonce</span>
+    <span class="kd">const</span> <span class="nx">initialProps</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">Document</span><span class="p">.</span><span class="nx">getInitialProps</span><span class="p">(</span><span class="nx">ctx</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span> <span class="p">...</span><span class="nx">initialProps</span><span class="p">,</span> <span class="nx">nonce</span> <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span>
+      <span class="p">&lt;</span><span class="nc">Html</span><span class="p">&gt;</span>
+        <span class="si">{</span><span class="cm">/* pass it to Next Head */</span><span class="si">}</span>
+        <span class="p">&lt;</span><span class="nc">Head</span> <span class="na">nonce</span><span class="p">=</span><span class="si">{</span><span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">nonce</span><span class="si">}</span> <span class="p">/&gt;</span>
+        <span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+          <span class="p">&lt;</span><span class="nc">Main</span> <span class="p">/&gt;</span>
+          <span class="si">{</span><span class="cm">/* pass it to Next scripts */</span><span class="si">}</span>
+          <span class="p">&lt;</span><span class="nc">NextScript</span> <span class="na">nonce</span><span class="p">=</span><span class="si">{</span><span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">nonce</span><span class="si">}</span> <span class="p">/&gt;</span>
+
+          <span class="si">{</span><span class="cm">/* as well as any other scripts */</span><span class="si">}</span>
+          <span class="p">&lt;</span><span class="nt">script</span>
+            <span class="na">src</span><span class="p">=</span><span class="s">"https://trustworthy-conglomerate.com/vacuum.js"</span>
+            <span class="na">nonce</span><span class="p">=</span><span class="si">{</span><span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">nonce</span><span class="si">}</span>
+          <span class="p">/&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+      <span class="p">&lt;/</span><span class="nc">Html</span><span class="p">&gt;</span>
+    <span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">export</span> <span class="k">default</span> <span class="nx">CustomDocument</span>
+</code></pre></div></div>
+
+<h2 id="easier-option">Easier option</h2>
+
+<p>If you don’t need to execute inline scripts, you don’t need this nonce stuff.
+It will suffice to specify trusted origins: <code class="language-plaintext highlighter-rouge">script-src 'self' *.3rdparty.com;</code>.</p>]]></content><author><name>daniel</name></author><category term="frontend" /><summary type="html"><![CDATA[TL;DR Use CSP with nonce &amp; strict-dynamic to secure the origin of inline scripts.]]></summary></entry><entry><title type="html">Making-of this blog</title><link href="/making-of-this-blog/" rel="alternate" type="text/html" title="Making-of this blog" /><published>2020-04-27T00:00:00+00:00</published><updated>2020-04-27T00:00:00+00:00</updated><id>/making-of-this-blog</id><content type="html" xml:base="/making-of-this-blog/"><![CDATA[<p><strong>TL;DR</strong> You’re looking at a static site generated by Next.js, hosted on GitLab pages.</p>
+
+<p>I wanted a place to store thoughts and ideas.
+This site is the overengineered result of procrastinating from actually writing the content.</p>
+
+<h2 id="why-nextjs">Why Next.js?</h2>
+
+<p>A static site was an obvious choice.
+The content won’t change very often, it’s fast, I can host it on <code class="language-plaintext highlighter-rouge">Git(Lab|Hub)</code> pages for free.
+There are dedicated static site generators like Gatsby, but I decided to go with Next’s static HTML export (introduced in Next 9.3).
+Next has a lot of awesome features that make development (and writing posts locally) much easier, like out of the box support for hot reloading and CSS modules.</p>
+
+<p><del>The result is an SPA with a 73 KB first load. Subsequent page transitions are client-side and only fetch JSON data.
+Still works flawlessly with Javascript turned off.</del></p>
+
+<p><a name="no-js"><em>Update 2021-01-15:</em></a> I found an <a href="https://github.com/vercel/next.js/pull/11949">unstable Next.js page-level config option</a> to turn off all runtime JS.
+The result is 7.54 KB transferred (compressed) on first load.</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">export</span> <span class="kd">const</span> <span class="nx">config</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="na">unstable_runtimeJS</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="how-this-works">How this works</h3>
+
+<p>Next.js pages fetch data from Markdown files at build time with the use of <a href="https://nextjs.org/docs/basic-features/data-fetching#getstaticprops-static-generation"><code class="language-plaintext highlighter-rouge">getStaticProps</code></a>.
+Next exports all pages static and dynamic (as defined in <a href="https://nextjs.org/docs/basic-features/data-fetching#getstaticpaths-static-generation"><code class="language-plaintext highlighter-rouge">getStaticPaths</code></a>) as HTML files which I deploy to GitLab pages through a CI pipeline.</p>
+
+<h3 id="try-it-for-yourself">Try it for yourself</h3>
+
+<p>Clone <a href="https://gitlab.com/kessl/blog"><code class="language-plaintext highlighter-rouge">https://gitlab.com/kessl/blog</code></a>, install, add a new post, run dev server.</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>git clone https://gitlab.com/kessl/blog
+<span class="nv">$ </span><span class="nb">cd </span>blog <span class="o">&amp;&amp;</span> yarn <span class="nb">install</span>
+<span class="nv">$ </span>yarn add-post <span class="s2">"New post title"</span> tag tag2 ... <span class="c"># add a new post</span>
+<span class="nv">$ </span>yarn dev
+</code></pre></div></div>
+
+<p>You can continue editing the newly created post in <code class="language-plaintext highlighter-rouge">posts/new-post-title.md</code>.
+Once you’re done writing, commit the changes and push to GitLab to deploy the piece to pages.</p>
+
+<p>If you’d like to base your own site on this without the color scheme and posts, clone a more barebones version from <code class="language-plaintext highlighter-rouge">v1.1.0</code>:</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>git clone <span class="nt">--branch</span> v1.1.0 <span class="nt">--single-branch</span> https://gitlab.com/kessl/blog
+<span class="nv">$ </span><span class="nb">cd </span>blog <span class="o">&amp;&amp;</span> git switch <span class="nt">-c</span> master
+</code></pre></div></div>
+
+<h2 id="deploying-to-gitlab-pages">Deploying to GitLab pages</h2>
+
+<p>The deploy to GitLab pages was pretty straightforward.
+I ended up with 3 stages in the pipeline:</p>
+
+<ul>
+  <li>install dependencies</li>
+  <li>build &amp; export HTML (needs git installed to determine last commit date per post)</li>
+  <li>gzip, copy to <code class="language-plaintext highlighter-rouge">public</code> folder, deploy to pages</li>
+</ul>
+
+<p>GitLab pages can serve gzip and brotli <a href="https://gitlab.com/gitlab-org/gitlab-pages/-/merge_requests/25">compressed files</a>, if you pre-compress them prior to deploying.
+See the pipeline config in <a href="https://gitlab.com/kessl/blog/-/blob/master/.gitlab-ci.yml#L49"><code class="language-plaintext highlighter-rouge">.gitlab.ci</code></a> for how I did it here.</p>
+
+<p>I’m using a <a href="https://gist.github.com/kessl/d5ec24894833f7af5d10101128145b0d">simple Cloudflare worker</a> to add basic security headers.</p>
+
+<h2 id="thats-it">That’s it!</h2>
+
+<p>I’m pretty happy with the setup.
+I find writing in Markdown very convenient, the site is fast <del>(landing page is 73 KB gzipped, 212 KB uncompressed), responsive and works with Javascript off.</del>
+(landing page is 7.54 KB brotli, 29.56 KB uncompressed) and there’s no JS.</p>
+
+<p>What I’m missing is some sort of usage statistics.
+GitLab unfortunately does not provide any access logs for pages, and I’m not going to ruin a static site with a JS tracking script.
+A tracking pixel would work but still need to be hosted somewhere.</p>
+
+<p><em>Update: I got around to setting up a <a href="/static-site-analytics-with-nginx-goaccess-no-js">GoAccess tracking pixel</a>.</em></p>]]></content><author><name>daniel</name></author><category term="frontend" /><category term="devops" /><summary type="html"><![CDATA[TL;DR You’re looking at a static site generated by Next.js, hosted on GitLab pages.]]></summary></entry><entry><title type="html">Getting rid of Redux / apollo-link-rest with Next.js</title><link href="/bye-redux-hello-apollo-link-rest/" rel="alternate" type="text/html" title="Getting rid of Redux / apollo-link-rest with Next.js" /><published>2020-03-26T00:00:00+00:00</published><updated>2020-03-26T00:00:00+00:00</updated><id>/bye-redux-hello-apollo-link-rest</id><content type="html" xml:base="/bye-redux-hello-apollo-link-rest/"><![CDATA[<p><strong>TL;DR</strong> I ditched Redux in favor of Apollo. This is how I set up <code class="language-plaintext highlighter-rouge">apollo-link-rest</code>.</p>
+
+<p>Having worked with a Next.js setup with Apollo, Redux and a ton of other libraries recently, I grew somewhat impatient with the seconds-long hot-reload build times, minutes-long production builds and a 500 MB+ Docker context.
+So, while setting up a frontend stack for a work project recently, my #1 aim was to make it as light-weight as possible.
+This led me to reconsider every dependency in my setup.</p>
+
+<p>Now Redux is not a great example of a bloated library, with its 348 KB including all dependencies.
+But it does add complexity when mixed together with Apollo and SSR.
+I reviewed what I actually used Redux for in my last project and decided to cut it.</p>
+
+<h2 id="redux-use-cases">Redux use cases</h2>
+
+<p>I found that I had these two use-cases for Redux:</p>
+
+<ul>
+  <li>managing global state</li>
+  <li>separating async logic into thunks</li>
+</ul>
+
+<p>For global state, Apollo was an obvious choice.
+Apollo supports client-side state management out of the box since Apollo Client 2.5.
+At first I found using queries and mutations to manage state somewhat cumbersome, but it’s not too too bad and there are bright sides as well: no actions, resolvers instead of reducers, being able to query local state in the same query as remote data.
+And from my (brief) experience, there is only so much global state to manage anyways.
+Authentication, global notifications, and… that’s it?
+Most of the time I try to keep state in components.</p>
+
+<p>As for async logic - most of my thunks did not need access to Redux store anyway and could therefore be replaced with async event handlers.
+A custom hook will take care of the rest.</p>
+
+<h2 id="handling-rest-requests">Handling REST requests</h2>
+
+<p>I decided to give <code class="language-plaintext highlighter-rouge">apollo-link-rest</code> a try, since I had Apollo already set up.
+<code class="language-plaintext highlighter-rouge">Apollo-link-rest</code> allows you to write GraphQL queries against REST endpoints.
+Because it’s an Apollo link, there is no need for separate error and authorization handling in addition to your GraphQL queries — <code class="language-plaintext highlighter-rouge">apollo-link-error</code> and <code class="language-plaintext highlighter-rouge">apollo-link-context</code> work for both GraphQL and <code class="language-plaintext highlighter-rouge">apollo-link-rest</code> requests.</p>
+
+<h2 id="setting-up-apollo-link-rest">Setting up <code class="language-plaintext highlighter-rouge">apollo-link-rest</code></h2>
+
+<p>The setup is as simple as creating a <code class="language-plaintext highlighter-rouge">RestLink</code> and adding it to you Apollo client.
+I’m using Next.js <code class="language-plaintext highlighter-rouge">^9.3.1</code> with <code class="language-plaintext highlighter-rouge">@apollo/client ^3.0.0-beta</code>.
+This is my <code class="language-plaintext highlighter-rouge">createApolloClient</code> function based on the <a href="https://github.com/zeit/next.js/tree/canary/examples/with-apollo">with-apollo</a> example by Next:</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span> <span class="nx">RestLink</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">apollo-link-rest</span><span class="dl">'</span>
+
+<span class="c1">// …</span>
+
+<span class="kd">const</span> <span class="nx">restLink</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">RestLink</span><span class="p">({</span>
+  <span class="na">uri</span><span class="p">:</span> <span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">REST_URL</span><span class="p">,</span>
+<span class="p">})</span>
+
+<span class="c1">// …</span>
+
+<span class="k">return</span> <span class="k">new</span> <span class="nx">ApolloClient</span><span class="p">({</span>
+  <span class="na">ssrMode</span><span class="p">:</span> <span class="nb">Boolean</span><span class="p">(</span><span class="nx">ctx</span><span class="p">),</span>
+  <span class="na">link</span><span class="p">:</span> <span class="nx">ApolloLink</span><span class="p">.</span><span class="k">from</span><span class="p">([</span><span class="nx">authLink</span><span class="p">,</span> <span class="nx">errorLink</span><span class="p">,</span> <span class="nx">restLink</span><span class="p">,</span> <span class="nx">graphqlLink</span><span class="p">]),</span>
+  <span class="nx">cache</span><span class="p">,</span>
+  <span class="nx">typeDefs</span><span class="p">,</span>
+  <span class="na">resolvers</span><span class="p">:</span> <span class="p">{},</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+<p>This is the example Next.js + Apollo setup with an extra <code class="language-plaintext highlighter-rouge">authLink</code> and <code class="language-plaintext highlighter-rouge">errorLink</code>, and <code class="language-plaintext highlighter-rouge">typeDefs</code> and <code class="language-plaintext highlighter-rouge">resolvers</code> for local state management.</p>
+
+<p>Beware of ordering of the links — <code class="language-plaintext highlighter-rouge">HttpLink</code> eats everything thrown at it and therefore needs to be last in the list.
+We want to have <code class="language-plaintext highlighter-rouge">AuthLink</code> and <code class="language-plaintext highlighter-rouge">ErrorLink</code> applied to the other two, so they go first.</p>
+
+<p>Aaaand it just works! Great.</p>
+
+<p><img src="/assets/images/headers.png" alt="Screenshot of ReferenceError: Headers is not defined" /></p>
+
+<p>Turns out SSR can reliably break just about anything at all.
+<code class="language-plaintext highlighter-rouge">Apollo-link-rest</code> is apparently <a href="https://github.com/apollographql/apollo-link-rest/issues/182#issuecomment-453181542">not intended</a> for SSR use and relies on the browser <a href="https://developer.mozilla.org/en-US/docs/Web/API/Headers">Headers API</a> which is missing in our Node.js environment.
+Let’s use <code class="language-plaintext highlighter-rouge">Header</code> from <code class="language-plaintext highlighter-rouge">node-fetch</code> as a polyfill: <code class="language-plaintext highlighter-rouge">yarn add node-fetch</code></p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// polyfill Headers API server-side for apollo-link-rest</span>
+<span class="c1">// https://github.com/apollographql/apollo-link-rest/issues/182#issuecomment-453209304</span>
+<span class="k">if</span> <span class="p">((</span><span class="nb">global</span> <span class="k">as</span> <span class="kr">any</span><span class="p">).</span><span class="nx">Headers</span> <span class="o">===</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">// eslint-disable-next-line @typescript-eslint/no-var-requires</span>
+  <span class="kd">const</span> <span class="nx">fetch</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">node-fetch</span><span class="dl">'</span><span class="p">)</span>
+  <span class="p">;(</span><span class="nb">global</span> <span class="k">as</span> <span class="kr">any</span><span class="p">).</span><span class="nx">Headers</span> <span class="o">=</span> <span class="nx">fetch</span><span class="p">.</span><span class="nx">Headers</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>And there we have it 🥳 We can now do this:</p>
+
+<pre><code class="language-gql">query TestRestQuery {
+  healthcheck @rest(type: "Healthcheck", path: "/healthcheck") {
+    status
+  }
+}
+</code></pre>]]></content><author><name>daniel</name></author><category term="frontend" /><summary type="html"><![CDATA[TL;DR I ditched Redux in favor of Apollo. This is how I set up apollo-link-rest.]]></summary></entry><entry><title type="html">Setting up a dev environment on GitLab pages</title><link href="/gitlab-pages-dev-env/" rel="alternate" type="text/html" title="Setting up a dev environment on GitLab pages" /><published>2020-03-21T00:00:00+00:00</published><updated>2020-03-21T00:00:00+00:00</updated><id>/gitlab-pages-dev-env</id><content type="html" xml:base="/gitlab-pages-dev-env/"><![CDATA[<p><strong>TL;DR</strong> Preview changes to your GitLab pages by directly accessing job artifacts, without overwriting your pages deployment.</p>
+
+<p>I recently needed to make a few changes to a static site hosted on GitLab pages.
+I was looking for a way to deploy a work-in-progress version to a temporary location, without interfering with the production site.
+I <a href="https://stackoverflow.com/a/58402821">found</a> a nifty way to do it using CI job artifacts, from a new branch in the same repo.</p>
+
+<h2 id="basic-pages-deploy-setup">Basic pages deploy setup</h2>
+
+<p>First, let’s set up the production environment.
+We’ll add a job named <code class="language-plaintext highlighter-rouge">pages</code> to our <code class="language-plaintext highlighter-rouge">.gitlab-ci.yml</code>, which tells GitLab to deploy the contents of the public folder in the master branch after the job succeeds:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">pages</span><span class="pi">:</span>
+  <span class="na">stage</span><span class="pi">:</span> <span class="s">deploy</span>
+  <span class="na">artifacts</span><span class="pi">:</span>
+    <span class="na">paths</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">public</span>
+  <span class="na">only</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="s">master</span>
+  <span class="na">script</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="s">mkdir .public</span>
+    <span class="pi">-</span> <span class="s">cp -r * .public</span>
+    <span class="pi">-</span> <span class="s">mv .public public</span>
+</code></pre></div></div>
+
+<p>Since I keep all the files in the repository root, I move them to the public directory in this job – you might not need to do this.
+By limiting this job to master only, we make sure that pushing to any other branch does not overwrite the production deployment.</p>
+
+<h2 id="deploying-a-dev-branch">“Deploying” a dev branch</h2>
+
+<p>GitLab only supports deploying pages from the public folder, but we’re already using that for production.
+Instead of an actual pages deploy, let’s add a new job that will run on branches other than master.
+We’ll save its artifacts, which GitLab makes accessible on a specific URL.
+We’ll set that URL to an environment named <code class="language-plaintext highlighter-rouge">dev</code>:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">dev-deploy</span><span class="pi">:</span>
+  <span class="na">stage</span><span class="pi">:</span> <span class="s">deploy</span>
+  <span class="na">artifacts</span><span class="pi">:</span>
+    <span class="na">paths</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">public</span>
+  <span class="na">except</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="s">master</span>
+  <span class="na">environment</span><span class="pi">:</span>
+    <span class="na">name</span><span class="pi">:</span> <span class="s">dev</span>
+    <span class="na">url</span><span class="pi">:</span> <span class="s1">'</span><span class="s">https://$CI_PROJECT_NAMESPACE.gitlab.io/-/$CI_PROJECT_NAME/-/jobs/$CI_JOB_ID/artifacts/public/index.html'</span>
+  <span class="na">script</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="s">mkdir .public</span>
+    <span class="pi">-</span> <span class="s">cp -r * .public</span>
+    <span class="pi">-</span> <span class="s">mv .public public</span>
+</code></pre></div></div>
+
+<p>We define the public folder as an artifact, so that it’s not removed after the job finishes.
+After the job succeeds, the dev branch deployment can be found at <code class="language-plaintext highlighter-rouge">https://$CI_PROJECT_NAMESPACE.gitlab.io/-/$CI_PROJECT_NAME/-/jobs/$CI_JOB_ID/</code> or more conveniently, in the <code class="language-plaintext highlighter-rouge">Operations &gt; Environments</code> menu, under the <code class="language-plaintext highlighter-rouge">View deployment</code> button.</p>
+
+<h3 id="permissions">Permissions</h3>
+
+<p>By default, only members of the project with access to CI pipelines will have permission to view job artifacts.
+This can be changed in <code class="language-plaintext highlighter-rouge">Settings &gt; General</code>, section <code class="language-plaintext highlighter-rouge">Visibility &gt; Repository &gt; Pipelines</code>.
+If you’d like the dev site to be public, you’ll have to set the visibility of the entire project to public.</p>]]></content><author><name>daniel</name></author><category term="devops" /><summary type="html"><![CDATA[TL;DR Preview changes to your GitLab pages by directly accessing job artifacts, without overwriting your pages deployment.]]></summary></entry></feed>

@@ -1,0 +1,195 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="/assets/css/default.css">
+    <link rel="stylesheet" href="/assets/css/fonts.css">
+    <link rel="icon" href="/assets/favicon.png" type="image/png">
+    <link type="application/atom+xml" rel="alternate" href="/feed.xml" />
+    <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Wireguardifying crappy work VPN</title>
+<meta name="generator" content="Jekyll v4.2.2" />
+<meta property="og:title" content="Wireguardifying crappy work VPN" />
+<meta name="author" content="daniel" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="I need to connect to a VPN to access our development environments and various tools we use at work. We were given FortiClient as the VPN client, which is utter crap and probably the worst Mac app I’ve ever had the misfortune to use. To give you a picture of how bad it is:" />
+<meta property="og:description" content="I need to connect to a VPN to access our development environments and various tools we use at work. We were given FortiClient as the VPN client, which is utter crap and probably the worst Mac app I’ve ever had the misfortune to use. To give you a picture of how bad it is:" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2021-06-28T00:00:00+00:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Wireguardifying crappy work VPN" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"daniel"},"dateModified":"2021-06-28T00:00:00+00:00","datePublished":"2021-06-28T00:00:00+00:00","description":"I need to connect to a VPN to access our development environments and various tools we use at work. We were given FortiClient as the VPN client, which is utter crap and probably the worst Mac app I’ve ever had the misfortune to use. To give you a picture of how bad it is:","headline":"Wireguardifying crappy work VPN","mainEntityOfPage":{"@type":"WebPage","@id":"/wireguardifying-crappy-work-vpn/"},"url":"/wireguardifying-crappy-work-vpn/"}</script>
+<!-- End Jekyll SEO tag -->
+
+  </head>
+  <body class="overflow-x-hidden">
+    <button id="theme-toggle" class="hidden sm:block absolute top-30 right-30 border-none rounded-sm -mx-[5px] px-[5px] hover:bg-dark/10 dark:hover:bg-light/10">
+  <span class="hidden dark:inline" title="switch to light theme">☀️</span>
+  <span class="dark:hidden" title="switch to dark theme">🌑</span>
+</button>
+
+    <div class="golden bg-grid">
+      <nav class="flex justify-center space-x-30 sm:space-x-60 underline">
+  
+    <a href="/">/</a>
+  
+    <a href="/about">/about</a>
+  
+    <a href="/archive">/archive</a>
+  
+    <a href="/tags">/tags</a>
+  
+</nav>
+
+      <main class="mt-30 md:mt-60 max-w-none prose">
+        <h1>Wireguardifying crappy work VPN</h1>
+<p class="text-sm text-muted">
+  written by daniel in
+  
+    <a href="/tags/devops"><code>devops</code></a>
+  
+  on 28 Jun 2021
+</p>
+<p>I need to connect to a VPN to access our development environments and various tools we use at work.
+We were given <a href="https://www.fortinet.com/support/product-downloads">FortiClient</a> as the VPN client, which is utter crap and probably the worst Mac app I’ve ever had the misfortune to use.
+To give you a picture of how bad it is:</p>
+
+<ul>
+  <li>It requires root privileges to install, connect and disconnect (ok, fair enough, it’s a VPN, but it asks for password only and doesn’t allow me to use Touch ID or Apple Watch).</li>
+  <li>FortiClient positively cannot stay online over anything but the most stable of connections.
+Change networks?
+Sorry, connect again.
+Roam to a closer AP?
+No luck.
+Close your Mac for 10 seconds?
+Here, why don’t you enter your OTP for the 18th time today.</li>
+  <li>Sometimes, when quitting the app, this stupid, bug-ridden piece of critical network infrastructure code that is supposed to help sysadmins sleep at night will ask for a password and simultaneously disable all keyboard input 😠
+ The only fix I found for this is to un/plug an external keyboard.</li>
+  <li>It does this:</li>
+</ul>
+
+<p><img src="/assets/images/forticlient-solitaire.png" alt="FortClient playing Solitaire with error dialogs :(" /></p>
+
+<h2 id="way-out-of-here">Way out of here</h2>
+
+<p>I’m a spoiled computer nerd who likes to use software made in this century.
+What if I connect a remote box to the VPN using this piece of crap, and use Wireguard to connect to the box?
+Turn on IP forwarding and route traffic from my Laptop to the VPN subnet, like this:</p>
+
+<pre class="ascii-diagram">
+
+            Tailscale       openfortivpn                   ┌─────┐
+          ┌────────────┐   ┌─────────────┐                 │ DNS │
+          │            │   │             │                 └─────┘
+  ┌───────▼──┐      ┌──▼───▼──┐       ┌──▼──────────┐    10.11.12.13
+  │          │      │         │       │             │
+  │  Laptop  │  WG  │   VPS   │ IPsec │  VPN server │    VPN subnet
+  │          ◄──────┼─────────┼───────┼─────────────┼──► 10.0.0.0/8
+  └──────────┘      └─────────┘       └─────────────┘
+
+</pre>
+
+<p>Since the VPS will remain always connected and Wireguard is a lot more resilient than IPsec when it comes to roaming and reconnecting, this should solve both the disconnects and having to deal with a crappy app.
+I will still have to SSH in and manually log in with <code class="language-plaintext highlighter-rouge">openfortivpn</code> every once in a while, when the connection times out.</p>
+
+<h2 id="tailscale-to-the-rescue">Tailscale to the rescue</h2>
+
+<p>Wireguard is awesome but takes a bit of work to set up and maintain.
+<a href="https://tailscale.com/">Tailscale</a>, however, uses Wireguard internally, is even more awesome and is unbelievably easy to set up.
+It just works™.
+Also it’s free for a single account (which you can use for <del>as many devices as you like</del> 20 devices + one subnet route as of June 2021).
+It works behind <a href="https://tailscale.com/blog/how-nat-traversal-works/">all sorts of nasty NATs</a>.
+Seriously, it’s amazing.</p>
+
+<p>I used a $5 DigitalOcean VPS I have lying around for random purposes like this.
+I connected both using Tailscale, installed <a href="https://github.com/adrienverge/openfortivpn">openfortivpn</a> (an open-source CLI alternative to FortClient) and connected.</p>
+
+<p><img src="/assets/images/tailscale-machines.png" alt="Tailscale machines screen with arcane-potato (VPS) connected" /></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>daniel@macbook <span class="nv">$ </span>ssh arcane-potato
+
+<span class="c"># set bash create a new tmux session when SSHing in, so that openfortivpn doesn't terminate when I close the SSH session</span>
+daniel@arcane-potato:~<span class="nv">$ </span><span class="nb">cat</span> <span class="o">&lt;&lt;</span> <span class="sh">'</span><span class="no">EOF</span><span class="sh">' &gt;&gt; .bashrc
+if command -v tmux &amp;&gt; /dev/null &amp;&amp; [ -n "</span><span class="nv">$PS1</span><span class="sh">" ] &amp;&amp; [[ ! "</span><span class="nv">$TERM</span><span class="sh">" =~ screen ]] &amp;&amp; [[ ! "</span><span class="nv">$TERM</span><span class="sh">" =~ tmux ]] &amp;&amp; [ -z "</span><span class="nv">$TMUX</span><span class="sh">" ]; then
+  exec tmux
+fi
+</span><span class="no">EOF
+
+</span><span class="c"># configure openfortivpn</span>
+daniel@arcane-potato:~<span class="nv">$ </span><span class="nb">cat</span> <span class="o">&lt;&lt;</span> <span class="no">EOF</span><span class="sh"> &gt; /etc/openfortivpn/config
+host = 123.45.67.89
+port = 12345
+username = &lt;username&gt;
+password = &lt;password&gt;
+trusted-cert = 6f6205cddd796c6d58730df9d35f908d6c513690c6e24135dda4f662fc9997b3
+</span><span class="no">EOF
+
+</span>daniel@arcane-potato:~<span class="nv">$ </span><span class="nb">echo</span> <span class="s2">"alias vpn=</span><span class="se">\"</span><span class="s2">sudo openfortivpn -o </span><span class="se">\"</span><span class="s2">"</span> <span class="o">&gt;&gt;</span> .bashrc
+daniel@arcane-potato:~<span class="nv">$ </span><span class="nb">source</span> .bashrc
+daniel@arcane-potato:~<span class="nv">$ </span>vpn 123456
+<span class="o">[</span><span class="nb">sudo</span><span class="o">]</span> password <span class="k">for </span>daniel:
+&lt;snip&gt;
+INFO:   Tunnel is up and running.
+</code></pre></div></div>
+
+<p>VPS is now connected to VPN.
+Next, I needed to tell Tailscale to forward packets to our VPN subnet.
+Also, DNS.</p>
+
+<h2 id="forwarding-traffic">Forwarding traffic</h2>
+
+<p>I enabled IP forwarding and told Tailscale to add routes to the VPN subnet.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># enable IP forwarding</span>
+daniel@arcane-potato:~<span class="nv">$ </span><span class="nb">echo</span> <span class="s1">'net.ipv4.ip_forward = 1'</span> | <span class="nb">sudo tee</span> <span class="nt">-a</span> /etc/sysctl.conf
+daniel@arcane-potato:~<span class="nv">$ </span><span class="nb">echo</span> <span class="s1">'net.ipv6.conf.all.forwarding = 1'</span> | <span class="nb">sudo tee</span> <span class="nt">-a</span> /etc/sysctl.conf
+daniel@arcane-potato:~<span class="nv">$ </span><span class="nb">sudo </span>sysctl <span class="nt">-p</span> /etc/sysctl.conf
+
+<span class="c"># tell Tailscale that we have a route to our VPN subnet</span>
+daniel@arcane-potato:~<span class="nv">$ </span><span class="nb">sudo </span>tailscale up <span class="nt">--advertise-routes</span><span class="o">=</span>10.0.0.0/8
+</code></pre></div></div>
+
+<p>In the Tailscale control panel, <code class="language-plaintext highlighter-rouge">arcane-potato</code> now has a badge saying that it advertises routes.
+Before these routes are applied, they need to be <a href="https://tailscale.com/kb/1019/subnets/">reviewed</a> and approved.
+Once that was done, I was able to reach services behind the VPN by their IP addresses.</p>
+
+<h2 id="configuring-dns">Configuring DNS</h2>
+
+<p>To resolve domain names of services behind the VPN, I need to tell my laptop to use the DNS server on our VPN.
+I did that using Tailscale’s DNS settings panel, which supports split DNS.
+Split DNS tells Tailscale clients, “to resolve domain names in this domain, use this DNS server”.
+(If your services don’t all have a second level domain in common, you will have to add your VPN DNS as a global nameserver.
+In this case, DNS will only work when the VPS is connected to the VPN.
+You can disable Tailscale DNS in <code class="language-plaintext highlighter-rouge">Tailscale &gt; Preferences &gt; Use Tailscale DNS settings</code> without disconnecting when you don’t need it.)</p>
+
+<p><img src="/assets/images/tailscale-dns.png" alt="Tailscale split DNS configuration" /></p>
+
+<p>There’s one less distraction to ruin your flow 🎉</p>
+
+
+      </main>
+    </div>
+    <script>
+      function applyTheme(theme) {
+  document.documentElement.classList.toggle('dark', theme === 'dark')
+}
+
+const isDark = localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
+applyTheme(isDark ? 'dark' : 'light')
+
+document.getElementById('theme-toggle').addEventListener('click', function() {
+  let newTheme
+  if (!('theme' in localStorage)) {
+    newTheme = document.documentElement.classList.contains('dark') ? 'light' : 'dark'
+  } else {
+    newTheme = localStorage.theme === 'dark' ? 'light' : 'dark'
+  }
+
+  localStorage.theme = newTheme
+  applyTheme(newTheme)
+})
+
+    </script>
+  </body>
+</html>
