@@ -30,10 +30,28 @@ layout: null
   }
 
   .golden {
-    @apply min-h-screen;
-    max-width: 930px;
-    padding: 30px 120px 90px 90px;
-    margin-left: calc(61.8% - 720px);
+    @apply min-h-screen max-w-[930px];
+    padding: 30px 90px 90px 90px;
+    margin: 0 -60px;
+  }
+
+  @media screen(md) {
+    .golden {
+      padding: 30px 120px 90px 90px;
+      margin: 0 -30px;
+    }
+  }
+
+  @media screen(lg) {
+    .golden {
+      margin: 0 auto;
+    }
+  }
+
+  @media screen(xl) {
+    .golden {
+      margin: 0 0 0 calc(61.8% - 720px);
+    }
   }
 
   .bg-grid {
@@ -42,7 +60,7 @@ layout: null
   }
 
   .dark .bg-grid {
-    background: linear-gradient(90deg, theme(colors.light / 5%) 1%, transparent 1%) 0 0, theme(colors.dark);
+    background: linear-gradient(90deg, theme(colors.light / 10%) 1%, transparent 1%) 0 0, theme(colors.dark);
     background-size: 90px 90px;
   }
 
@@ -56,12 +74,16 @@ layout: null
   }
 
   pre {
-    @apply -mx-[20px] px-[20px] mb-[15px] py-[15px] bg-dark-80 dark:bg-dark-80/50 text-light rounded-sm overflow-x-auto;
+    @apply -mx-30 sm:-mx-[20px] px-[20px] mb-[15px] py-[15px] bg-dark-80 dark:bg-dark-80/50 text-light rounded-sm overflow-x-auto;
   }
 
   .ascii-diagram {
     line-height: 1;
     font-family: monospace;
     overflow-x: auto;
+  }
+
+  .text-muted {
+    @apply text-dark/70 dark:text-light/70;
   }
 }

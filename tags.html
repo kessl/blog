@@ -8,14 +8,14 @@ prose: false
 </div>
 <ul class="text-lg">
   {% for tag in site.tags %}
-    <li class="mt-60">
+    <li class="mt-30 sm:mt-60">
       <code>{{ tag[0] }}</code>
       <ul>
         {% for post in tag[1] %}
         <a href="{{ post.url }}">
-          <li class="my-[10px] flex justify-between">
-            <span class="underline">{{ post.title }}</span>
-            <time datetime="{{ post.date }}" class="text-sm">{{ post.date | date_to_string}}</time>
+          <li class="my-[15px] sm:my-[10px] flex flex-col sm:flex-row justify-between items-baseline">
+            <span class="underline mr-[10px]">{{ post.title }}</span>
+            <time datetime="{{ post.date }}" class="text-sm whitespace-nowrap">{{ post.date | date_to_string }}</time>
           </li>
         </a>
         {% endfor %}

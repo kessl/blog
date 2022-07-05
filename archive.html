@@ -6,12 +6,12 @@ prose: false
   <p>all posts since the beginning of time here</p>
   <h1>Post archive</h1>
 </div>
-<ul class="mt-60 text-lg">
+<ul class="mt-30 md:mt-60 text-lg">
   {% for post in site.posts %}
     <a href="{{ post.url }}">
-      <li class="my-[10px] flex justify-between">
-        <span class="underline">{{ post.title }}</span>
-        <time datetime="{{ post.date }}" class="text-sm">{{ post.date | date_to_string}}</time>
+      <li class="my-[15px] sm:my-[10px] flex flex-col sm:flex-row justify-between items-baseline">
+        <span class="underline mr-[10px]">{{ post.title }}</span>
+        <time datetime="{{ post.date }}" class="text-sm whitespace-nowrap">{{ post.date | date_to_string }}</time>
       </li>
     </a>
   {% endfor %}

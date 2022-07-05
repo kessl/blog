@@ -8,11 +8,11 @@
     {% feed_meta %}
     {% seo %}
   </head>
-  <body>
+  <body class="overflow-x-hidden">
     {% include themeToggle.html %}
     <div class="golden bg-grid">
       {% include navigation.html %}
-      <main class="mt-60 max-w-none {% if page.prose %}prose{% endif %}">
+      <main class="mt-30 md:mt-60 max-w-none {% if page.prose %}prose{% endif %}">
         {{ content }}
       </main>
     </div>
