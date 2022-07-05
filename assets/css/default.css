@@ -78,7 +78,7 @@ layout: null
   }
 
   pre {
-    @apply -mx-30 sm:-mx-[20px] px-[20px] mb-[15px] py-[15px] bg-dark-80 dark:bg-dark-80/50 text-light rounded-sm overflow-x-auto;
+    @apply -mx-30 sm:-mx-[20px] px-[20px] mb-[15px] py-[15px] bg-dark-80/50 text-light rounded-sm overflow-x-auto;
   }
 
   .ascii-diagram {
