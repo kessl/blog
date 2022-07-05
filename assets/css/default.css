@@ -25,6 +25,10 @@ layout: null
     @apply text-dark dark:text-light;
   }
 
+  .prose a {
+    @apply underline;
+  }
+
   h1, h2, h3, h4, h5, h6 {
     @apply font-heading text-dark dark:text-light;
   }

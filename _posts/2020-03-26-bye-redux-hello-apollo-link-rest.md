@@ -40,7 +40,7 @@ Because it’s an Apollo link, there is no need for separate error and authoriza
 
 The setup is as simple as creating a `RestLink` and adding it to you Apollo client.
 I’m using Next.js `^9.3.1` with `@apollo/client ^3.0.0-beta`.
-This is my `createApolloClient` function based on the [with-apollo](https://github.com/zeit/next.js/tree/canary/examples/with-apollo) example by Next:
+This is my `createApolloClient` function based on the [with-apollo](https://github.com/zeit/next.js/tree/canary/examples/with-apollo){:target="_blank"} example by Next:
 
 ```ts
 import { RestLink } from 'apollo-link-rest'
@@ -72,7 +72,7 @@ Aaaand it just works! Great.
 ![Screenshot of ReferenceError: Headers is not defined](/assets/images/headers.png)
 
 Turns out SSR can reliably break just about anything at all.
-`Apollo-link-rest` is apparently [not intended](https://github.com/apollographql/apollo-link-rest/issues/182#issuecomment-453181542) for SSR use and relies on the browser [Headers API](https://developer.mozilla.org/en-US/docs/Web/API/Headers) which is missing in our Node.js environment.
+`Apollo-link-rest` is apparently [not intended](https://github.com/apollographql/apollo-link-rest/issues/182#issuecomment-453181542){:target="_blank"} for SSR use and relies on the browser [Headers API](https://developer.mozilla.org/en-US/docs/Web/API/Headers) which is missing in our Node.js environment.
 Let’s use `Header` from `node-fetch` as a polyfill: `yarn add node-fetch`
 
 ```ts

@@ -4,7 +4,7 @@ tags:
   - devops
 ---
 I need to connect to a VPN to access our development environments and various tools we use at work.
-We were given [FortiClient](https://www.fortinet.com/support/product-downloads) as the VPN client, which is utter crap and probably the worst Mac app I've ever had the misfortune to use.
+We were given [FortiClient](https://www.fortinet.com/support/product-downloads){:target="_blank",:rel="nofollow"} as the VPN client, which is utter crap and probably the worst Mac app I've ever had the misfortune to use.
 To give you a picture of how bad it is:
 
 - It requires root privileges to install, connect and disconnect (ok, fair enough, it's a VPN, but it asks for password only and doesn't allow me to use Touch ID or Apple Watch).
@@ -46,14 +46,14 @@ I will still have to SSH in and manually log in with `openfortivpn` every once i
 ## Tailscale to the rescue
 
 Wireguard is awesome but takes a bit of work to set up and maintain.
-[Tailscale](https://tailscale.com/), however, uses Wireguard internally, is even more awesome and is unbelievably easy to set up.
+[Tailscale](https://tailscale.com/){:target="_blank"}, however, uses Wireguard internally, is even more awesome and is unbelievably easy to set up.
 It just works&trade;.
 Also it's free for a single account (which you can use for ~~as many devices as you like~~ 20 devices + one subnet route as of June 2021).
-It works behind [all sorts of nasty NATs](https://tailscale.com/blog/how-nat-traversal-works/).
+It works behind [all sorts of nasty NATs](https://tailscale.com/blog/how-nat-traversal-works/){:target="_blank"}.
 Seriously, it's amazing.
 
 I used a $5 DigitalOcean VPS I have lying around for random purposes like this.
-I connected both using Tailscale, installed [openfortivpn](https://github.com/adrienverge/openfortivpn) (an open-source CLI alternative to FortClient) and connected.
+I connected both using Tailscale, installed [openfortivpn](https://github.com/adrienverge/openfortivpn){:target="_blank"} (an open-source CLI alternative to FortClient) and connected.
 
 ![Tailscale machines screen with arcane-potato (VPS) connected](/assets/images/tailscale-machines.png)
 
@@ -103,7 +103,7 @@ daniel@arcane-potato:~$ sudo tailscale up --advertise-routes=10.0.0.0/8
 ```
 
 In the Tailscale control panel, `arcane-potato` now has a badge saying that it advertises routes.
-Before these routes are applied, they need to be [reviewed](https://tailscale.com/kb/1019/subnets/) and approved.
+Before these routes are applied, they need to be [reviewed](https://tailscale.com/kb/1019/subnets/){:target="_blank"} and approved.
 Once that was done, I was able to reach services behind the VPN by their IP addresses.
 
 ## Configuring DNS

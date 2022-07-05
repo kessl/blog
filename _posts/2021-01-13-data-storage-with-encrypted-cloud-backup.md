@@ -16,14 +16,14 @@ I had a few requirements:
 
 I decided to use an Odroid HC1 with an HDD.
 The Odroid will advertise an NFS share and periodically back up its contents to a cloud storage.
-I chose to go with [Backblaze](https://www.backblaze.com/b2/cloud-storage.html), which offers an S3-compatible object store at \$0.005/GB.
+I chose to go with [Backblaze](https://www.backblaze.com/b2/cloud-storage.html){:target="_blank"}, which offers an S3-compatible object store at \$0.005/GB.
 First 10 GB are free.
 
 ## Odroid setup
 
-I downloaded Armbian for the HC1 here: [https://www.armbian.com/odroid-hc1/](https://www.armbian.com/odroid-hc1/) and wrote the image to an SD card using [Etcher](https://www.balena.io/etcher/).
+I downloaded Armbian for the HC1 here: [https://www.armbian.com/odroid-hc1/](https://www.armbian.com/odroid-hc1/){:target="_blank"} and wrote the image to an SD card using [Etcher](https://www.balena.io/etcher/).
 I'm using OSX on my machine.
-If you're on Windows, [Rufus](https://rufus.ie/) is a good choice.
+If you're on Windows, [Rufus](https://rufus.ie/){:target="_blank"} is a good choice.
 
 Once the Odroid boots up, find its MAC address in your router config and configure a static IP lease.
 Mine has `192.168.0.11`. Then SSH in:
@@ -166,11 +166,11 @@ Verify it still works.
 
 ## Backup setup
 
-Register for a Backblaze account at [https://www.backblaze.com/b2/cloud-storage.html](https://www.backblaze.com/b2/cloud-storage.html).
+Register for a Backblaze account at [https://www.backblaze.com/b2/cloud-storage.html](https://www.backblaze.com/b2/cloud-storage.html){:target="_blank"}.
 (You can use any other cloud storage provider supported by `rclone`, which is most of them.)
 Create a private bucket with versioning on (it's the default for B2).
 
-Side note: if you create a public bucket, you can [proxy traffic](https://help.backblaze.com/hc/en-us/articles/217666928-Using-Backblaze-B2-with-the-Cloudflare-CDN) to it through Cloudflare to create your own private CDN.
+Side note: if you create a public bucket, you can [proxy traffic](https://help.backblaze.com/hc/en-us/articles/217666928-Using-Backblaze-B2-with-the-Cloudflare-CDN){:target="_blank"} to it through Cloudflare to create your own private CDN.
 
 Next, create an app key with permissions to your bucket and save the app key ID and the key to configure `rclone`.
 
@@ -256,7 +256,7 @@ See if the file was uploaded in B2 management console.
 ### Enable encryption
 
 To enable encryption, rclone has a `crypt` remote type that encrypts files uploaded to it.
-Most of the configuration is straightforward and uses the defaults, except for filename and directory name encryption, which [does not work with B2 versioning system](https://github.com/rclone/rclone/issues/1627#issuecomment-371625277), so we will disable it.
+Most of the configuration is straightforward and uses the defaults, except for filename and directory name encryption, which [does not work with B2 versioning system](https://github.com/rclone/rclone/issues/1627#issuecomment-371625277){:target="_blank"}, so we will disable it.
 If you insist on encrypting file and directory names, you could disable versioning and use the `--backup-dir` option instead.
 
 Let's add another remote:
@@ -446,9 +446,9 @@ $ crontab -e
   0,30 * * * * /home/<username>/rclone-cron.sh >/dev/null 2>&1
 ```
 
-If you'd like to change the schedule, [crontab.guru](https://crontab.guru/#0,30_*_*_*_*) is handy when editing crontab.
+If you'd like to change the schedule, [crontab.guru](https://crontab.guru/#0,30_*_*_*_*){:target="_blank"} is handy when editing crontab.
 
 That's it! Anything you store on the Odroid will be backed up to Backblaze every 30 minutes.
 Previous versions of edited or deleted files will remain in Backblaze.
 You can recover them using `rclone --b2-versions`.
-You'll find more about that in the [docs](https://rclone.org/b2/#versions).
+You'll find more about that in the [docs](https://rclone.org/b2/#versions){:target="_blank"}.

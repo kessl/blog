@@ -10,15 +10,15 @@ But there's only 30 days of history, I don't know how many of the visits are cra
 
 ![Screenshot of Cloudflare analytics](/assets/images/cloudflare-analytics.png)
 
-I've been wanting to give [GoAccess](https://goaccess.io/) a try for some time.
+I've been wanting to give [GoAccess](https://goaccess.io/){:target="_blank"} a try for some time.
 GoAccess provides real-time analytics by parsing access logs of your server.
 It works entirely server-side and it's in my opinion the most privacy-conscious analytics solution, because it only collects what the browser explicitly sends to the server.
-There's a slight problem though -- I host this site on [Gitlab pages](/gitlab-pages-dev-env) and [there's no server](https://www.yourofficeanywhere.co.uk/wp-content/uploads/2019/07/Cloud-Definitionn-2.png).
+There's a slight problem though -- I host this site on [Gitlab pages](/gitlab-pages-dev-env) and [there's no server](https://www.yourofficeanywhere.co.uk/wp-content/uploads/2019/07/Cloud-Definitionn-2.png){:target="_blank"}.
 
 ## Enter the tracking pixel
 
 A tracking pixel is a 1x1 transparent pixel made infamous by Facebook, who use it to track people across third party sites.
-I'll use the same technique here thanks to excellent writeups by [Ben Hoyt](https://benhoyt.com/writings/replacing-google-analytics/) and [Tim Nash](https://timnash.co.uk/pixel-tracking-with-nginx-a-tiny-bit-of-javascript/).
+I'll use the same technique here thanks to excellent writeups by [Ben Hoyt](https://benhoyt.com/writings/replacing-google-analytics/){:target="_blank"} and [Tim Nash](https://timnash.co.uk/pixel-tracking-with-nginx-a-tiny-bit-of-javascript/){:target="_blank"}.
 
 This is the plan:
 
@@ -81,7 +81,7 @@ $ docker run -it --rm -p 8080:8080 \
   -v ${PWD}/log:/var/log/nginx nginx:alpine
 ```
 
-If you open [`http://localhost:8080/cat.gif`](http://localhost:8080/cat.gif), there should be a record like the following in the pixel's log:
+If you open [`http://localhost:8080/cat.gif`](http://localhost:8080/cat.gif){:target="_blank"}, there should be a record like the following in the pixel's log:
 
 ```bash
 $ cat log/pixel.log
@@ -139,7 +139,7 @@ To have it work with the docker command from earlier, we need to map the report 
 -v ${PWD}/goaccess/index.html:/var/www/index.html -p 8081:8081
 ```
 
-You should now find the report at [`http://localhost:8081`](http://localhost:8081).
+You should now find the report at [`http://localhost:8081`](http://localhost:8081){:target="_blank"}.
 
 To make deployment easier, I created a `docker-compose.yml`.
 I mapped the ports differently so that the pixel is available at port 80, 7890 is GoAccess's default websocket port and 7891 is the report.
@@ -147,7 +147,7 @@ I mapped the ports differently so that the pixel is available at port 80, 7890 i
 
 I added a Let's Encrypt config to enable HTTPS.
 Without HTTPS, the numbers would be skewed, because recent versions of Chrome will not load mixed content.
-See the [readme](https://github.com/kessl/static-pixel-tracking) for the necessary steps to get it all up and running.
+See the [readme](https://github.com/kessl/static-pixel-tracking){:target="_blank"} for the necessary steps to get it all up and running.
 
 ```yaml
 version: '3.8'

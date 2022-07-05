@@ -5,7 +5,7 @@ tags:
 ---
 Hi, I'm Daniel and I'm an absolute newb when it comes to kubernetes.
 I also really like the idea of having a homelab to experiment on, self-host some apps and look at pretty lights and cables.
-My original plan to rack-mount a HP DL380 G6 in my living room I [abandoned rather quickly](https://youtu.be/eBTPKBm4vA4?t=36) in hopes of remaining in a relationship.
+My original plan to rack-mount a HP DL380 G6 in my living room I [abandoned rather quickly](https://youtu.be/eBTPKBm4vA4?t=36){:target="_blank"} in hopes of remaining in a relationship.
 
 The next best thing I have is a random assortment of mostly ARM hardware, which I'll try to coerce into homelab stuff with the help of kubernetes.
 
@@ -22,16 +22,16 @@ I should be able to deploy apps to the cluster and have them be reachable on a s
 
 I have a few apps in mind that I'd like to eventually host:
 
-- **[NextCloud](https://nextcloud.com/)** - self-hosted file sharing & document tools
-- **[Jellyfin](https://jellyfin.org/), Sonarr, Radarr,** etc - home theater with automated media management
-- **nginx & [goaccess](https://goaccess.io/) analytics** - something to tell me if anyone reads this blog
+- **[NextCloud](https://nextcloud.com/){:target="_blank"}** - self-hosted file sharing & document tools
+- **[Jellyfin](https://jellyfin.org/){:target="_blank"}, Sonarr, Radarr,** etc - home theater with automated media management
+- **nginx & [goaccess](https://goaccess.io/){:target="_blank"} analytics** - something to tell me if anyone reads this blog
 - **storage** with off-site backup - a NAS backed up to B2
 
 ## The hardware
 
 I have a Raspberry Pi 3B+, a 2011 Raspberry Pi, an old Windows laptop and two Odroid HC1s.
 All devices are very low-end for kubernetes.
-I will therefore be going for [k3s](https://k3s.io/), a lightweight, stripped-down kubernetes distribution crammed in a single binary.
+I will therefore be going for [k3s](https://k3s.io/){:target="_blank"}, a lightweight, stripped-down kubernetes distribution crammed in a single binary.
 
 The 2011 is apparently way too slow and not supported by k3s.
 The 3B+ is supported but slow, needs to run off an SD card and is limited to USB2.0 and 100Mb ethernet.

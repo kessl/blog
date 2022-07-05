@@ -7,7 +7,7 @@ tags:
 
 I recently needed to make a few changes to a static site hosted on GitLab pages.
 I was looking for a way to deploy a work-in-progress version to a temporary location, without interfering with the production site.
-I [found](https://stackoverflow.com/a/58402821) a nifty way to do it using CI job artifacts, from a new branch in the same repo.
+I [found](https://stackoverflow.com/a/58402821){:target="_blank"} a nifty way to do it using CI job artifacts, from a new branch in the same repo.
 
 ## Basic pages deploy setup
 

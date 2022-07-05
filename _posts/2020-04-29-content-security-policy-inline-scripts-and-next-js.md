@@ -13,7 +13,7 @@ I went with nonce, and even though it turned out to be pretty straightforward in
 
 ## Setting up security headers
 
-I used [`helmet`](https://helmetjs.github.io/), an `express` middleware that makes setting security headers easier.
+I used [`helmet`](https://helmetjs.github.io/){:target="_blank"}, an `express` middleware that makes setting security headers easier.
 The types make it convenient to see all the configuration options.
 
 ```bash
@@ -24,7 +24,7 @@ $ yarn add -D @types/helmet
 ## Setting up CSP with nonce
 
 The idea is to generate a random nonce on every request, send it to the browser in the CSP header and make sure all scripts have a matching value: `<script nonce={nonce}>`.
-See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) for all possible CSP options.
+See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP){:target="_blank"} for all possible CSP options.
 
 `'strict-dynamic'` tells the browser to trust any other code executed by already trusted code.
 If you specify `'strict-dynamic'`, the browser will disregard other options such as `'self' *.3rdparty.com`.

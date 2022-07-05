@@ -82,7 +82,7 @@ module.exports = {
       typography: {
         DEFAULT: {
           css: {
-            a: 'dark:text-light',
+            a: 'dark:text-light underline',
             strong: 'dark:text-light',
             pre: null,
             code: null,
