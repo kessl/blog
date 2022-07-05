@@ -2,14 +2,12 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <link rel="stylesheet" href="/assets/css/default.css?1657035504604269076">
-    <link rel="stylesheet" href="/assets/css/fonts.css">
-    <link rel="stylesheet" href="/assets/css/monokai.css">
+    <link rel="stylesheet" href="/assets/css/default.css?1657054867538513887">
     <link rel="icon" href="/assets/favicon.png" type="image/png">
     <meta name="viewport" content="width=device-width">
+    <title>Home data storage with encrypted cloud backup &middot; bitgate</title>
     <link type="application/atom+xml" rel="alternate" href="/feed.xml" />
     <!-- Begin Jekyll SEO tag v2.8.0 -->
-<title>Home data storage with encrypted cloud backup</title>
 <meta name="generator" content="Jekyll v4.2.2" />
 <meta property="og:title" content="Home data storage with encrypted cloud backup" />
 <meta name="author" content="daniel" />
@@ -46,7 +44,7 @@
 
       <main class="mt-30 md:mt-60 max-w-none prose">
         <h1>Home data storage with encrypted cloud backup</h1>
-<p class="text-sm text-muted">
+<p class="text-sm text-muted my-15">
   written by daniel in
   
     <a href="/tags/homelab"><code>homelab</code></a>
@@ -503,13 +501,9 @@ const isDark = localStorage.theme === 'dark' || (!('theme' in localStorage) && w
 applyTheme(isDark ? 'dark' : 'light')
 
 document.getElementById('theme-toggle').addEventListener('click', function() {
-  let newTheme
-  if (!('theme' in localStorage)) {
-    newTheme = document.documentElement.classList.contains('dark') ? 'light' : 'dark'
-  } else {
-    newTheme = localStorage.theme === 'dark' ? 'light' : 'dark'
-  }
-
+  const newTheme = !('theme' in localStorage) ?
+    document.documentElement.classList.contains('dark') ? 'light' : 'dark' :
+    localStorage.theme === 'dark' ? 'light' : 'dark'
   localStorage.theme = newTheme
   applyTheme(newTheme)
 })

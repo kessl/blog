@@ -2,14 +2,12 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <link rel="stylesheet" href="/assets/css/default.css?1657035504604269076">
-    <link rel="stylesheet" href="/assets/css/fonts.css">
-    <link rel="stylesheet" href="/assets/css/monokai.css">
+    <link rel="stylesheet" href="/assets/css/default.css?1657054867538513887">
     <link rel="icon" href="/assets/favicon.png" type="image/png">
     <meta name="viewport" content="width=device-width">
+    <title>About &middot; bitgate</title>
     <link type="application/atom+xml" rel="alternate" href="/feed.xml" />
     <!-- Begin Jekyll SEO tag v2.8.0 -->
-<title>About</title>
 <meta name="generator" content="Jekyll v4.2.2" />
 <meta property="og:title" content="About" />
 <meta property="og:locale" content="en_US" />
@@ -46,11 +44,13 @@
 <p>I’m a software developer.
 I make machines do things.</p>
 
+<p>The following are projects I worked on during my software engineering journey.</p>
+
 <p>Write me an <a href="mailto:dan@kessl.net">email</a> or let’s connect on <a href="https://linkedin.com/in/kessl/" target="_blank">LinkedIn</a> if you’d like to get in touch.</p>
 
 <h3 id="better-stack">Better Stack</h3>
 
-<p>Currently I work with <a href="https://betterstack.com" target="_blank">Better Stack</a> on developing next-generation observability tools that enable developers to create more reliable software faster.</p>
+<p>Currently, I work with <a href="https://betterstack.com" target="_blank">Better Stack</a> on developing next-generation observability tools that enable developers to create more reliable software faster.</p>
 
 <p><code class="language-plaintext highlighter-rouge">Ruby</code> <code class="language-plaintext highlighter-rouge">Rails</code> <code class="language-plaintext highlighter-rouge">Javascript</code> <code class="language-plaintext highlighter-rouge">REST</code> <code class="language-plaintext highlighter-rouge">Tailwind</code> <code class="language-plaintext highlighter-rouge">Rust</code> <code class="language-plaintext highlighter-rouge">Unix</code></p>
 
@@ -59,7 +59,7 @@ I make machines do things.</p>
 <p>I helped create BankID while working with <a href="https://applifting.cz" target="_blank">Applifting</a>, a digital products agency and <a href="https://en.wikipedia.org/wiki/Teal_organisation" target="_blank">teal organization</a>.
 BankID enables users to seamlessly log in to third party services through their bank.</p>
 
-<p>I developed the <a href="https://developer.bankid.cz" target="_blank">BankID developer portal</a>, end user bank selection screen, self-care portal and backoffice interface, and provisioned a CMS and an image resizing tool.</p>
+<p>I developed the <a href="https://developer.bankid.cz" target="_blank">BankID developer portal frontend</a>, end user bank selection screen, self-care portal and backoffice interface, and provisioned a CMS and an image resizing tool.</p>
 
 <p><code class="language-plaintext highlighter-rouge">Typescript</code> <code class="language-plaintext highlighter-rouge">React</code> <code class="language-plaintext highlighter-rouge">Next.js</code> <code class="language-plaintext highlighter-rouge">GraphQL</code> <code class="language-plaintext highlighter-rouge">REST</code> <code class="language-plaintext highlighter-rouge">Tailwind</code> <code class="language-plaintext highlighter-rouge">Docker</code> <code class="language-plaintext highlighter-rouge">Kubernetes</code> <code class="language-plaintext highlighter-rouge">GitLab CI</code> <code class="language-plaintext highlighter-rouge">OAuth2</code> <code class="language-plaintext highlighter-rouge">Node.js</code></p>
 
@@ -80,13 +80,9 @@ const isDark = localStorage.theme === 'dark' || (!('theme' in localStorage) && w
 applyTheme(isDark ? 'dark' : 'light')
 
 document.getElementById('theme-toggle').addEventListener('click', function() {
-  let newTheme
-  if (!('theme' in localStorage)) {
-    newTheme = document.documentElement.classList.contains('dark') ? 'light' : 'dark'
-  } else {
-    newTheme = localStorage.theme === 'dark' ? 'light' : 'dark'
-  }
-
+  const newTheme = !('theme' in localStorage) ?
+    document.documentElement.classList.contains('dark') ? 'light' : 'dark' :
+    localStorage.theme === 'dark' ? 'light' : 'dark'
   localStorage.theme = newTheme
   applyTheme(newTheme)
 })

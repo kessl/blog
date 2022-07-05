@@ -2,14 +2,12 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <link rel="stylesheet" href="/assets/css/default.css?1657035504604269076">
-    <link rel="stylesheet" href="/assets/css/fonts.css">
-    <link rel="stylesheet" href="/assets/css/monokai.css">
+    <link rel="stylesheet" href="/assets/css/default.css?1657054867538513887">
     <link rel="icon" href="/assets/favicon.png" type="image/png">
     <meta name="viewport" content="width=device-width">
+    <title>Post archive &middot; bitgate</title>
     <link type="application/atom+xml" rel="alternate" href="/feed.xml" />
     <!-- Begin Jekyll SEO tag v2.8.0 -->
-<title>Post archive</title>
 <meta name="generator" content="Jekyll v4.2.2" />
 <meta property="og:title" content="Post archive" />
 <meta property="og:locale" content="en_US" />
@@ -48,63 +46,63 @@
 <ul class="mt-30 md:mt-60 text-lg">
   
     <a href="/dotfiles/">
-      <li class="my-[15px] sm:my-[10px] flex flex-col sm:flex-row justify-between items-baseline">
+      <li class="my-15 sm:my-[10px] flex flex-col sm:flex-row justify-between items-baseline">
         <span class="underline mr-[10px]">Dotfiles</span>
         <time datetime="2021-10-01 00:00:00 +0000" class="text-sm whitespace-nowrap">01 Oct 2021</time>
       </li>
     </a>
   
     <a href="/wireguardifying-crappy-work-vpn/">
-      <li class="my-[15px] sm:my-[10px] flex flex-col sm:flex-row justify-between items-baseline">
+      <li class="my-15 sm:my-[10px] flex flex-col sm:flex-row justify-between items-baseline">
         <span class="underline mr-[10px]">Wireguardifying crappy work VPN</span>
         <time datetime="2021-06-28 00:00:00 +0000" class="text-sm whitespace-nowrap">28 Jun 2021</time>
       </li>
     </a>
   
     <a href="/static-site-analytics-with-nginx-goaccess-no-js/">
-      <li class="my-[15px] sm:my-[10px] flex flex-col sm:flex-row justify-between items-baseline">
+      <li class="my-15 sm:my-[10px] flex flex-col sm:flex-row justify-between items-baseline">
         <span class="underline mr-[10px]">Static site analytics with Nginx, GoAccess & no JS</span>
         <time datetime="2021-03-14 00:00:00 +0000" class="text-sm whitespace-nowrap">14 Mar 2021</time>
       </li>
     </a>
   
     <a href="/data-storage-with-encrypted-cloud-backup/">
-      <li class="my-[15px] sm:my-[10px] flex flex-col sm:flex-row justify-between items-baseline">
+      <li class="my-15 sm:my-[10px] flex flex-col sm:flex-row justify-between items-baseline">
         <span class="underline mr-[10px]">Home data storage with encrypted cloud backup</span>
         <time datetime="2021-01-13 00:00:00 +0000" class="text-sm whitespace-nowrap">13 Jan 2021</time>
       </li>
     </a>
   
     <a href="/my-humble-homelab-beginnings/">
-      <li class="my-[15px] sm:my-[10px] flex flex-col sm:flex-row justify-between items-baseline">
+      <li class="my-15 sm:my-[10px] flex flex-col sm:flex-row justify-between items-baseline">
         <span class="underline mr-[10px]">My humble homelab beginnings</span>
         <time datetime="2020-05-06 00:00:00 +0000" class="text-sm whitespace-nowrap">06 May 2020</time>
       </li>
     </a>
   
     <a href="/content-security-policy-inline-scripts-and-next-js/">
-      <li class="my-[15px] sm:my-[10px] flex flex-col sm:flex-row justify-between items-baseline">
+      <li class="my-15 sm:my-[10px] flex flex-col sm:flex-row justify-between items-baseline">
         <span class="underline mr-[10px]">Content Security Policy, inline scripts and Next.js</span>
         <time datetime="2020-04-29 00:00:00 +0000" class="text-sm whitespace-nowrap">29 Apr 2020</time>
       </li>
     </a>
   
     <a href="/making-of-this-blog/">
-      <li class="my-[15px] sm:my-[10px] flex flex-col sm:flex-row justify-between items-baseline">
+      <li class="my-15 sm:my-[10px] flex flex-col sm:flex-row justify-between items-baseline">
         <span class="underline mr-[10px]">Making-of this blog</span>
         <time datetime="2020-04-27 00:00:00 +0000" class="text-sm whitespace-nowrap">27 Apr 2020</time>
       </li>
     </a>
   
     <a href="/bye-redux-hello-apollo-link-rest/">
-      <li class="my-[15px] sm:my-[10px] flex flex-col sm:flex-row justify-between items-baseline">
+      <li class="my-15 sm:my-[10px] flex flex-col sm:flex-row justify-between items-baseline">
         <span class="underline mr-[10px]">Getting rid of Redux / apollo-link-rest with Next.js</span>
         <time datetime="2020-03-26 00:00:00 +0000" class="text-sm whitespace-nowrap">26 Mar 2020</time>
       </li>
     </a>
   
     <a href="/gitlab-pages-dev-env/">
-      <li class="my-[15px] sm:my-[10px] flex flex-col sm:flex-row justify-between items-baseline">
+      <li class="my-15 sm:my-[10px] flex flex-col sm:flex-row justify-between items-baseline">
         <span class="underline mr-[10px]">Setting up a dev environment on GitLab pages</span>
         <time datetime="2020-03-21 00:00:00 +0000" class="text-sm whitespace-nowrap">21 Mar 2020</time>
       </li>
@@ -123,13 +121,9 @@ const isDark = localStorage.theme === 'dark' || (!('theme' in localStorage) && w
 applyTheme(isDark ? 'dark' : 'light')
 
 document.getElementById('theme-toggle').addEventListener('click', function() {
-  let newTheme
-  if (!('theme' in localStorage)) {
-    newTheme = document.documentElement.classList.contains('dark') ? 'light' : 'dark'
-  } else {
-    newTheme = localStorage.theme === 'dark' ? 'light' : 'dark'
-  }
-
+  const newTheme = !('theme' in localStorage) ?
+    document.documentElement.classList.contains('dark') ? 'light' : 'dark' :
+    localStorage.theme === 'dark' ? 'light' : 'dark'
   localStorage.theme = newTheme
   applyTheme(newTheme)
 })

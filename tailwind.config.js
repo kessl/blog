@@ -4,6 +4,7 @@ module.exports = {
     './_layouts/**/*.html',
     './_posts/*.md',
     './*.html',
+    './*.md',
   ],
   darkMode: 'class',
   theme: {
@@ -16,10 +17,13 @@ module.exports = {
     },
     spacing: {
       0: '0px',
+      15: '15px',
       30: '30px',
       60: '60px',
       90: '90px',
       120: '120px',
+      150: '150px',
+      180: '180px',
     },
     colors: {
       light: '#eeeeee',
@@ -58,7 +62,7 @@ module.exports = {
         'monospace',
       ],
       heading: [
-        '"Space Mono"',
+        'Noah',
         'ui-monospace',
         'SFMono-Regular',
         'Menlo',
