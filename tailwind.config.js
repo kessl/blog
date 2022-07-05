@@ -28,6 +28,7 @@ module.exports = {
       'dark-60': '#747474',
       'dark-80': '#4b4b4b',
       dark: '#222222',
+      transparent: 'transparent',
     },
     fontSize: {
       xs: ['0.75rem', { lineHeight: '1rem' }],
@@ -82,6 +83,8 @@ module.exports = {
         DEFAULT: {
           css: {
             a: 'dark:text-light',
+            strong: 'dark:text-light',
+            pre: null,
             code: null,
             'code::before': null,
             'code::after': null,

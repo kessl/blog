@@ -48,6 +48,20 @@ layout: null
 
   code {
     padding: 2px 4px;
-    @apply whitespace-nowrap bg-dark-20 dark:bg-dark-80 dark:text-light;
+    @apply whitespace-nowrap bg-dark-20 dark:bg-dark-80 dark:text-light rounded-sm;
+  }
+
+  pre > code {
+    @apply p-0 whitespace-pre-wrap !bg-transparent;
+  }
+
+  pre {
+    @apply -mx-[20px] px-[20px] mb-[15px] py-[15px] bg-dark-80 dark:bg-dark-80/50 text-light rounded-sm overflow-x-auto;
+  }
+
+  .ascii-diagram {
+    line-height: 1;
+    font-family: monospace;
+    overflow-x: auto;
   }
 }

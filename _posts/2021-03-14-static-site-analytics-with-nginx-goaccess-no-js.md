@@ -205,7 +205,7 @@ export const Pixel: React.FC = () => {
       src={`${PIXEL_URL}${currentUrl}`}
       decoding="async"
       loading="eager"
-      style={{ visibility: 'hidden' }}
+      style={{ "{{ visibility: 'hidden' " }}}}
     />
   )
 }
