@@ -13,7 +13,7 @@ prose: false
       <ul>
         {% for post in tag[1] %}
         <a href="{{ post.url }}">
-          <li class="my-[15px] sm:my-[10px] flex flex-col sm:flex-row justify-between items-baseline">
+          <li class="my-15 sm:my-[10px] flex flex-col sm:flex-row justify-between items-baseline">
             <span class="underline mr-[10px]">{{ post.title }}</span>
             <time datetime="{{ post.date }}" class="text-sm whitespace-nowrap">{{ post.date | date_to_string }}</time>
           </li>
