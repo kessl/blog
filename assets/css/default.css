@@ -46,7 +46,7 @@ layout: null
   }
 
   .golden {
-    @apply min-h-screen max-w-[930px];
+    @apply min-h-screen;
     padding: 30px 90px 90px 90px;
     margin: 0 -60px;
   }
@@ -60,6 +60,7 @@ layout: null
 
   @media screen(lg) {
     .golden {
+      @apply max-w-[930px];
       margin: 0 auto;
     }
   }
