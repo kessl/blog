@@ -25,3 +25,10 @@ plugins:
 
 postcss:
   cache: false
+
+# jekyll-seo-tag properties
+description: Daniel's random thoughts mostly related to software engineering
+url: https://blog.bitgate.cz
+author:
+  name: Daniel Kessl
+  url: https://blog.bitgate.cz

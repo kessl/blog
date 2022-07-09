@@ -1,5 +1,6 @@
 ---
 title: About
+description: My experience in software engineering
 ---
 
 # The web is in my DNA
