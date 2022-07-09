@@ -26,12 +26,13 @@ module.exports = {
       180: '180px',
     },
     colors: {
-      light: '#eeeeee',
+      white: '#fff',
+      light: '#eee',
       'dark-20': '#c5c5c5',
       'dark-40': '#9c9c9c',
       'dark-60': '#747474',
       'dark-80': '#4b4b4b',
-      dark: '#222222',
+      dark: '#222',
       transparent: 'transparent',
     },
     fontSize: {

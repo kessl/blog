@@ -103,4 +103,36 @@ layout: null
   .text-muted {
     @apply text-dark/70 dark:text-light/70;
   }
+
+  .row {
+    @apply flex border-b border-dark-20 dark:border-dark-80;
+  }
+
+  .row :first-child {
+    @apply py-[4px] whitespace-nowrap w-180;
+  }
+
+  .row :not(:first-child) {
+    @apply py-[4px] text-right w-180;
+  }
+
+  .row [title] {
+    @apply cursor-help;
+  }
+
+  input[type=number] {
+    @apply appearance-none bg-white dark:bg-dark-80 border border-dark-20 dark:border-dark-60 px-[10px] py-[4px];
+  }
+
+  label, input[type=radio], input[type=checkbox] {
+    @apply cursor-pointer;
+  }
+
+  input[readonly] {
+    @apply opacity-60 cursor-default;
+  }
+
+  .row .error {
+    @apply bg-[orangered] text-white ml-90 w-90;
+  }
 }

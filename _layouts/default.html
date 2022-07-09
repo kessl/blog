@@ -1,5 +1,5 @@
 <!doctype html>
-<html>
+<html lang="{% if page.categories contains 'cs' %}cs{% else %}en{% endif %}">
   <head>
     <meta charset="utf-8">
     <link rel="stylesheet" href="/assets/css/default.css?{{ site.time | date: '%s%N' }}">

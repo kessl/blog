@@ -8,11 +8,29 @@ prose: false
 </div>
 <ul class="mt-30 md:mt-60 text-lg">
   {% for post in site.posts %}
-    <a href="{{ post.url }}">
-      <li class="my-15 sm:my-[10px] flex flex-col sm:flex-row justify-between items-baseline">
-        <span class="underline mr-[10px]">{{ post.title }}</span>
-        <time datetime="{{ post.date }}" class="text-sm whitespace-nowrap">{{ post.date | date_to_string }}</time>
-      </li>
-    </a>
+    {% unless post.categories contains 'cs' %}
+      <a href="{{ post.url }}">
+        <li class="my-15 sm:my-[10px] flex flex-col sm:flex-row justify-between items-baseline">
+          <span class="underline mr-[10px]">{{ post.title }}</span>
+          <time datetime="{{ post.date }}" class="text-sm whitespace-nowrap">{{ post.date | date_to_string }}</time>
+        </li>
+      </a>
+    {% endunless %}
+  {% endfor %}
+</ul>
+
+<p class="prose mt-60">
+  The following posts are in 🇨🇿 Czech. <a href="mailto:dan@kessl.net">Contact me</a> if you feel like they might be useful to you, I'll do my best to help.
+</p>
+<ul class="mt-30 text-lg">
+  {% for post in site.posts %}
+    {% if post.categories contains 'cs' %}
+      <a href="{{ post.url }}">
+        <li class="my-15 sm:my-[10px] flex flex-col sm:flex-row justify-between items-baseline">
+          <span class="underline mr-[10px]">{{ post.title }}</span>
+          <time datetime="{{ post.date }}" class="text-sm whitespace-nowrap">{{ post.date | date_to_string }}</time>
+        </li>
+      </a>
+    {% endif %}
   {% endfor %}
 </ul>
