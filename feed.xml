@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2022-07-09T15:09:00+00:00</updated><id>/feed.xml</id><entry><title type="html">OSVČ nebo SRO? 2023 edition</title><link href="/osvc-nebo-sro/" rel="alternate" type="text/html" title="OSVČ nebo SRO? 2023 edition" /><published>2022-07-09T00:00:00+00:00</published><updated>2022-07-09T00:00:00+00:00</updated><id>/osvc-nebo-sro</id><content type="html" xml:base="/osvc-nebo-sro/"><![CDATA[<p>Rok 2023 přinese <a href="https://zpravy.aktualne.cz/ekonomika/kalkulacka-pausalni-dan-2023/r~ba0dfdcad05611ec8a24ac1f6b220ee8/" target="_blank">navýšení příjmových limitů</a> OSVČ pro využití režimu paušální daně.
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2022-07-09T15:16:05+00:00</updated><id>/feed.xml</id><entry><title type="html">OSVČ nebo SRO? 2023 edition</title><link href="/osvc-nebo-sro/" rel="alternate" type="text/html" title="OSVČ nebo SRO? 2023 edition" /><published>2022-07-09T00:00:00+00:00</published><updated>2022-07-09T00:00:00+00:00</updated><id>/osvc-nebo-sro</id><content type="html" xml:base="/osvc-nebo-sro/"><![CDATA[<p>Rok 2023 přinese <a href="https://zpravy.aktualne.cz/ekonomika/kalkulacka-pausalni-dan-2023/r~ba0dfdcad05611ec8a24ac1f6b220ee8/" target="_blank">navýšení příjmových limitů</a> OSVČ pro využití režimu paušální daně.
 Paušální daň nově spadá do tří pásem podle výše příjmů a výdajového paušálu.
 Jak si vede paušální daň ve srovnání s SRO a OSVČ ve standardním režimu?</p>
 
@@ -22,7 +22,7 @@ Jak si vede paušální daň ve srovnání s SRO a OSVČ ve standardním režimu
     </div>
     <label for="fixed_expenses" class="block mt-[10px] text-sm">
       <input id="fixed_expenses" name="fixed_expenses" type="checkbox" />
-      Uplatňuji výdajový paušál
+      Uplatním výdajový paušál
     </label>
   </div>
 </div>
@@ -45,7 +45,7 @@ Jak si vede paušální daň ve srovnání s SRO a OSVČ ve standardním režimu
     </div>
     <br />
     <span class="text-xs">
-      Vyberte paušál, který lze uplatnit na 75 % vašich příjmů. Pro výpočet paušální daně v roce 2023 je nutné zvolit paušál, i pokud se chystáte uplatnit skutečné výdaje.
+      Vyberte paušál, který lze uplatnit na 75 % vašich příjmů. Pro výpočet paušální daně v roce 2023 je nutné zvolit paušál, i pokud byste ve standardním režimu uplatnili skutečné výdaje.
     </span>
   </div>
 </div>
@@ -125,7 +125,7 @@ Jak si vede paušální daň ve srovnání s SRO a OSVČ ve standardním režimu
     <div>&mdash;</div>
     <div>&mdash;</div>
     <div class="fixed_2022_fixed_tax" title="5 994 Kč měsíčně pro rok 2022"></div>
-    <div class="fixed_2023_fixed_tax" title="6 500 Kč, 16 000 Kč nebo 26 000 Kč měsíčně pro rok 2023 v závislosti na příjmech a druhu výdajů"></div>
+    <div class="fixed_2023_fixed_tax" title="6 500 Kč, 16 000 Kč nebo 26 000 Kč měsíčně pro rok 2023 v závislosti na příjmech a výdajovém paušálu, který lze aplikovat na 75 % příjmů"></div>
   </div>
   <div class="row font-bold">
     <div>Daně celkem</div>
@@ -148,7 +148,7 @@ Jak si vede paušální daň ve srovnání s SRO a OSVČ ve standardním režimu
 
 <p>Srovnávací tabulku inspirovala stránka <a href="https://osvcnebosro.cz" target="_blank">osvcnebosro.cz</a>.</p>
 
-<p>Našli jste chybu ve výpočtech? Dejte mi vědět <a href="mailto:dan@kessl.net">emailem</a> nebo navrhněte vylepšení na <a href="https://github.com/kessl/blog/blob/master/_posts/2022-07-09-osvc-nebo-sro" target="_blank">GitHubu</a>.</p>]]></content><author><name>daniel</name></author><category term="cs" /><summary type="html"><![CDATA[Rok 2023 přinese navýšení příjmových limitů OSVČ pro využití režimu paušální daně. Paušální daň nově spadá do tří pásem podle výše příjmů a výdajového paušálu. Jak si vede paušální daň ve srovnání s SRO a OSVČ ve standardním režimu?]]></summary></entry><entry><title type="html">Dotfiles</title><link href="/dotfiles/" rel="alternate" type="text/html" title="Dotfiles" /><published>2021-10-01T00:00:00+00:00</published><updated>2021-10-01T00:00:00+00:00</updated><id>/dotfiles</id><content type="html" xml:base="/dotfiles/"><![CDATA[<p>Dotfiles are configuration files, typically for command line programs.
+<p>Našli jste chybu ve výpočtech? Dejte mi vědět <a href="mailto:dan@kessl.net">emailem</a> nebo navrhněte vylepšení na <a href="https://github.com/kessl/blog/blob/master/_posts/2022-07-09-osvc-nebo-sro.md?plain=1" target="_blank">GitHubu</a>.</p>]]></content><author><name>daniel</name></author><category term="cs" /><summary type="html"><![CDATA[Rok 2023 přinese navýšení příjmových limitů OSVČ pro využití režimu paušální daně. Paušální daň nově spadá do tří pásem podle výše příjmů a výdajového paušálu. Jak si vede paušální daň ve srovnání s SRO a OSVČ ve standardním režimu?]]></summary></entry><entry><title type="html">Dotfiles</title><link href="/dotfiles/" rel="alternate" type="text/html" title="Dotfiles" /><published>2021-10-01T00:00:00+00:00</published><updated>2021-10-01T00:00:00+00:00</updated><id>/dotfiles</id><content type="html" xml:base="/dotfiles/"><![CDATA[<p>Dotfiles are configuration files, typically for command line programs.
 They are named after a Unix convention of starting their name with a dot <code class="language-plaintext highlighter-rouge">.</code>.
 Dotfiles hold configuration for programs like bash, zsh, vim and git.</p>
 
