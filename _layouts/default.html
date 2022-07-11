@@ -19,6 +19,9 @@
         <main class="mt-30 md:mt-60 max-w-none {% if page.prose %}prose{% endif %}">
           {{ content }}
         </main>
+        {% if page.footer == true or layout.footer == true %}
+          {% include footer.html %}
+        {% endif %}
       </div>
     </div>
     <script>
