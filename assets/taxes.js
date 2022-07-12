@@ -65,14 +65,6 @@ function toggleTitle(el, title, force) {
 function onChange(field, value) {
   inputs[field] = +value
 
-  expenses_input.readOnly = inputs.fixed_expenses
-  if (inputs.fixed_expenses) {
-    expenses_input.value = inputs.expenses = inputs.revenue * inputs.fixed_expenses_rate
-    expenses_label.innerHTML = `= ${inputs.revenue.toLocaleString('cs')} &times; ${inputs.fixed_expenses_rate.toLocaleString('cs', { style: 'percent' })}`
-  } else {
-    expenses_label.innerHTML = 'Zadejte vaše skutečné roční výdaje'
-  }
-
   const fixed_2022_ineligible = inputs.revenue > fixed_tax_limit_2022
   fixed_2022_revenue.classList.toggle('error', fixed_2022_ineligible)
   toggleTitle(fixed_2022_revenue, `V roce 2022 nesplňujete příjmový limit ${fixed_tax_limit_2022.toLocaleString('cs')} Kč`, fixed_2022_ineligible)
@@ -115,6 +107,7 @@ function calculateCompanyTax(inputs) {
   const total_tax = legal_person_tax + natural_person_tax
   const discounted_tax = Math.max(total_tax - base_discount_2022 - inputs.additional_discount, 0)
   return {
+    expenses: inputs.expenses,
     tax_basis,
     legal_person_tax,
     natural_person_tax,
@@ -129,7 +122,8 @@ function calculateCompanyTax(inputs) {
 }
 
 function calculateStandardTax(inputs) {
-  const tax_basis = inputs.revenue - inputs.expenses
+  const expenses = inputs.fixed_expenses ? inputs.revenue * inputs.fixed_expenses_rate : inputs.revenue - inputs.expenses
+  const tax_basis = inputs.revenue - expenses
   const insurance_basis = tax_basis / 2
   const natural_person_tax = Math.max(natural_person_tax_rate * tax_basis, 0)
   const health_insurance = Math.max(insurance_basis * health_insurance_rate, minimum_health_insurance_payment * 12)
@@ -137,6 +131,7 @@ function calculateStandardTax(inputs) {
   const total_tax = natural_person_tax + health_insurance + social_contribution
   const discounted_tax = Math.max(total_tax - base_discount_2022 - inputs.additional_discount, 0)
   return {
+    expenses,
     tax_basis,
     natural_person_tax,
     health_insurance,
@@ -152,10 +147,8 @@ function calculateStandardTax(inputs) {
 }
 
 function calculateFixed2022Tax(inputs) {
-  const tax_basis = inputs.revenue - inputs.expenses
   const fixed_tax = monthly_fixed_tax_2022 * 12
   return {
-    tax_basis,
     fixed_tax,
     total_tax: fixed_tax,
     discounted_tax: fixed_tax,
@@ -167,10 +160,8 @@ function calculateFixed2022Tax(inputs) {
 }
 
 function calculateFixed2023Tax(inputs) {
-  const tax_basis = inputs.revenue - inputs.expenses
   const fixed_tax = monthly_fixed_tax_2023(inputs.revenue, inputs.fixed_expenses_rate) * 12
   return {
-    tax_basis,
     fixed_tax,
     total_tax: fixed_tax,
     discounted_tax: fixed_tax,
