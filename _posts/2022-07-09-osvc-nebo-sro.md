@@ -88,15 +88,15 @@ _Vypočtené hodnoty jsou orientační. Nejsem váš ani ničí jiný daňový p
     <div>Výdaje</div>
     <div class="expenses"></div>
     <div class="expenses"></div>
-    <div class="expenses"></div>
-    <div class="expenses"></div>
+    <div>&mdash;</div>
+    <div>&mdash;</div>
   </div>
   <div class="row">
     <div>Základ daně</div>
     <div class="company_tax_basis" title="Rozdíl mezi příjmy a výdaji"></div>
     <div class="standard_tax_basis" title="Rozdíl mezi příjmy a výdaji"></div>
-    <div class="fixed_2022_tax_basis" title="Rozdíl mezi příjmy a výdaji"></div>
-    <div class="fixed_2023_tax_basis" title="Rozdíl mezi příjmy a výdaji"></div>
+    <div>&mdash;</div>
+    <div>&mdash;</div>
   </div>
   <div class="row">
     <div>Daň z příjmu právnické osoby</div>
@@ -134,11 +134,38 @@ _Vypočtené hodnoty jsou orientační. Nejsem váš ani ničí jiný daňový p
     <div class="fixed_2023_fixed_tax" title="6 500 Kč, 16 000 Kč nebo 26 000 Kč měsíčně pro rok 2023 v závislosti na příjmech a výdajovém paušálu, který lze aplikovat na 75 % příjmů"></div>
   </div>
   <div class="row font-bold">
-    <div>Daně celkem</div>
+    <div>Daň před uplatněním slev</div>
     <div class="company_total_tax"></div>
     <div class="standard_total_tax"></div>
     <div class="fixed_2022_total_tax"></div>
     <div class="fixed_2023_total_tax"></div>
+  </div>
+  <div class="row">
+    <div class="relative z-10">
+      Sleva na poplatníka
+      <a href="#" class="text-2xs text-dark-60" id="toggle_additional_discount">Přidat další slevu</a>
+    </div>
+    <div class="company_base_discount" title="(2022)"></div>
+    <div class="standard_base_discount" title="(2022)"></div>
+    <div>&mdash;</div>
+    <div>&mdash;</div>
+  </div>
+  <div class="row hidden" id="additional_discount_row">
+    <div class="relative z-10 !p-0 flex">
+      <label for="additional_discount" class="block !w-90 shrink-0">Sleva</label>
+      <input id="additional_discount" name="additional_discount" type="number" min="0" step="10000" value="0" class="p-0 !w-[91px] !text-left block -my-[1px]">
+    </div>
+    <div class="additional_discount"></div>
+    <div class="additional_discount"></div>
+    <div>&mdash;</div>
+    <div>&mdash;</div>
+  </div>
+  <div class="row font-bold">
+    <div>Daň po uplatnění slev</div>
+    <div class="company_discounted_tax"></div>
+    <div class="standard_discounted_tax"></div>
+    <div class="fixed_2022_discounted_tax"></div>
+    <div class="fixed_2023_discounted_tax"></div>
   </div>
   <div class="row pt-[6px] border-none text-sm text-dark-60">
     <div>Efektivní sazba daně</div>
