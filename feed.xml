@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="https://blog.bitgate.cz/feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.bitgate.cz/" rel="alternate" type="text/html" /><updated>2022-07-11T14:19:01+00:00</updated><id>https://blog.bitgate.cz/feed.xml</id><subtitle>Daniel's random thoughts mostly related to software engineering</subtitle><author><name>Daniel Kessl</name></author><entry><title type="html">OSVČ nebo SRO? 2023 edition</title><link href="https://blog.bitgate.cz/osvc-nebo-sro/" rel="alternate" type="text/html" title="OSVČ nebo SRO? 2023 edition" /><published>2022-07-09T00:00:00+00:00</published><updated>2022-07-09T00:00:00+00:00</updated><id>https://blog.bitgate.cz/osvc-nebo-sro</id><content type="html" xml:base="https://blog.bitgate.cz/osvc-nebo-sro/"><![CDATA[<p>Rok 2023 přinese <a href="https://zpravy.aktualne.cz/ekonomika/kalkulacka-pausalni-dan-2023/r~ba0dfdcad05611ec8a24ac1f6b220ee8/" target="_blank">navýšení příjmových limitů</a> OSVČ pro využití režimu paušální daně.
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="https://blog.bitgate.cz/feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.bitgate.cz/" rel="alternate" type="text/html" /><updated>2022-07-12T07:35:07+00:00</updated><id>https://blog.bitgate.cz/feed.xml</id><subtitle>Daniel's random thoughts mostly related to software engineering</subtitle><author><name>Daniel Kessl</name></author><entry><title type="html">OSVČ nebo SRO? 2023 edition</title><link href="https://blog.bitgate.cz/osvc-nebo-sro/" rel="alternate" type="text/html" title="OSVČ nebo SRO? 2023 edition" /><published>2022-07-09T00:00:00+00:00</published><updated>2022-07-09T00:00:00+00:00</updated><id>https://blog.bitgate.cz/osvc-nebo-sro</id><content type="html" xml:base="https://blog.bitgate.cz/osvc-nebo-sro/"><![CDATA[<p>Rok 2023 přinese <a href="https://zpravy.aktualne.cz/ekonomika/kalkulacka-pausalni-dan-2023/r~ba0dfdcad05611ec8a24ac1f6b220ee8/" target="_blank">navýšení příjmových limitů</a> OSVČ pro využití režimu paušální daně.
 Paušální daň nově spadá do tří pásem podle výše příjmů a výdajového paušálu.
 Jak si vede paušální daň ve srovnání s SRO a OSVČ ve standardním režimu?</p>
 
@@ -82,15 +82,15 @@ Jak si vede paušální daň ve srovnání s SRO a OSVČ ve standardním režimu
     <div>Výdaje</div>
     <div class="expenses"></div>
     <div class="expenses"></div>
-    <div class="expenses"></div>
-    <div class="expenses"></div>
+    <div>&mdash;</div>
+    <div>&mdash;</div>
   </div>
   <div class="row">
     <div>Základ daně</div>
     <div class="company_tax_basis" title="Rozdíl mezi příjmy a výdaji"></div>
     <div class="standard_tax_basis" title="Rozdíl mezi příjmy a výdaji"></div>
-    <div class="fixed_2022_tax_basis" title="Rozdíl mezi příjmy a výdaji"></div>
-    <div class="fixed_2023_tax_basis" title="Rozdíl mezi příjmy a výdaji"></div>
+    <div>&mdash;</div>
+    <div>&mdash;</div>
   </div>
   <div class="row">
     <div>Daň z příjmu právnické osoby</div>
@@ -128,11 +128,38 @@ Jak si vede paušální daň ve srovnání s SRO a OSVČ ve standardním režimu
     <div class="fixed_2023_fixed_tax" title="6 500 Kč, 16 000 Kč nebo 26 000 Kč měsíčně pro rok 2023 v závislosti na příjmech a výdajovém paušálu, který lze aplikovat na 75 % příjmů"></div>
   </div>
   <div class="row font-bold">
-    <div>Daně celkem</div>
+    <div>Daň před uplatněním slev</div>
     <div class="company_total_tax"></div>
     <div class="standard_total_tax"></div>
     <div class="fixed_2022_total_tax"></div>
     <div class="fixed_2023_total_tax"></div>
+  </div>
+  <div class="row">
+    <div class="relative z-10">
+      Sleva na poplatníka
+      <a href="#" class="text-2xs text-dark-60" id="toggle_additional_discount">Přidat další slevu</a>
+    </div>
+    <div class="company_base_discount" title="(2022)"></div>
+    <div class="standard_base_discount" title="(2022)"></div>
+    <div>&mdash;</div>
+    <div>&mdash;</div>
+  </div>
+  <div class="row hidden" id="additional_discount_row">
+    <div class="relative z-10 !p-0 flex">
+      <label for="additional_discount" class="block !w-90 shrink-0">Sleva</label>
+      <input id="additional_discount" name="additional_discount" type="number" min="0" step="10000" value="0" class="p-0 !w-[91px] !text-left block -my-[1px]" />
+    </div>
+    <div class="additional_discount"></div>
+    <div class="additional_discount"></div>
+    <div>&mdash;</div>
+    <div>&mdash;</div>
+  </div>
+  <div class="row font-bold">
+    <div>Daň po uplatnění slev</div>
+    <div class="company_discounted_tax"></div>
+    <div class="standard_discounted_tax"></div>
+    <div class="fixed_2022_discounted_tax"></div>
+    <div class="fixed_2023_discounted_tax"></div>
   </div>
   <div class="row pt-[6px] border-none text-sm text-dark-60">
     <div>Efektivní sazba daně</div>

@@ -16,6 +16,7 @@ const minimum_health_insurance_payment = 2_627 // CZK, 2022
 const minimum_social_contribution_payment = 2_841 // CZK, 2022
 const fixed_tax_limit_2022 = 1_000_000 // CZK
 const fixed_tax_limit_2023 = 2_000_000 // CZK
+const base_discount_2022 = 30_840 // CZK
 
 const expenses_input = document.querySelector('input[name=expenses]')
 const expenses_label = document.getElementById('expenses_label')
@@ -27,6 +28,7 @@ const inputs = {
   expenses: 400_000,
   fixed_expenses: false,
   fixed_expenses_rate: 0.6,
+  additional_discount: 0,
 }
 
 for (const field of Object.keys(inputs)) {
@@ -39,6 +41,18 @@ for (const field of Object.keys(inputs)) {
     })
   }
 }
+
+document.getElementById('toggle_additional_discount').addEventListener('click', function (e) {
+  e.preventDefault()
+  const row = document.getElementById("additional_discount_row")
+  row.classList.toggle('hidden')
+
+  const hidden = row.classList.contains('hidden')
+  e.target.innerHTML = hidden ? 'Přidat další slevu' : 'Odebrat slevu'
+  if (hidden) {
+    onChange('additional_discount', 0)
+  }
+})
 
 function toggleTitle(el, title, force) {
   if (force) {
@@ -99,13 +113,16 @@ function calculateCompanyTax(inputs) {
   const legal_person_tax = Math.max(legal_person_tax_rate * tax_basis, 0)
   const natural_person_tax = Math.max(natural_person_tax_rate * (1 - legal_person_tax_rate) * tax_basis, 0)
   const total_tax = legal_person_tax + natural_person_tax
+  const discounted_tax = Math.max(total_tax - base_discount_2022 - inputs.additional_discount, 0)
   return {
     tax_basis,
     legal_person_tax,
     natural_person_tax,
     total_tax,
+    discounted_tax,
+    base_discount: base_discount_2022,
     effective_tax_rate: {
-      value: total_tax / inputs.revenue,
+      value: discounted_tax / inputs.revenue,
       format: { style: 'percent', minimumFractionDigits: 1 }
     }
   }
@@ -118,14 +135,17 @@ function calculateStandardTax(inputs) {
   const health_insurance = Math.max(insurance_basis * health_insurance_rate, minimum_health_insurance_payment * 12)
   const social_contribution = Math.max(insurance_basis * social_contribution_rate, minimum_social_contribution_payment * 12)
   const total_tax = natural_person_tax + health_insurance + social_contribution
+  const discounted_tax = Math.max(total_tax - base_discount_2022 - inputs.additional_discount, 0)
   return {
     tax_basis,
     natural_person_tax,
     health_insurance,
     social_contribution,
     total_tax,
+    discounted_tax,
+    base_discount: base_discount_2022,
     effective_tax_rate: {
-      value: total_tax / inputs.revenue,
+      value: discounted_tax / inputs.revenue,
       format: { style: 'percent', minimumFractionDigits: 1 }
     }
   }
@@ -138,6 +158,7 @@ function calculateFixed2022Tax(inputs) {
     tax_basis,
     fixed_tax,
     total_tax: fixed_tax,
+    discounted_tax: fixed_tax,
     effective_tax_rate: {
       value: fixed_tax / inputs.revenue,
       format: { style: 'percent', minimumFractionDigits: 1 }
@@ -152,6 +173,7 @@ function calculateFixed2023Tax(inputs) {
     tax_basis,
     fixed_tax,
     total_tax: fixed_tax,
+    discounted_tax: fixed_tax,
     effective_tax_rate: {
       value: fixed_tax / inputs.revenue,
       format: { style: 'percent', minimumFractionDigits: 1 }
