@@ -122,7 +122,7 @@ function calculateCompanyTax(inputs) {
 }
 
 function calculateStandardTax(inputs) {
-  const expenses = inputs.fixed_expenses ? inputs.revenue * inputs.fixed_expenses_rate : inputs.revenue - inputs.expenses
+  const expenses = inputs.fixed_expenses ? inputs.revenue * inputs.fixed_expenses_rate : inputs.expenses
   const tax_basis = inputs.revenue - expenses
   const insurance_basis = tax_basis / 2
   const natural_person_tax = Math.max(natural_person_tax_rate * tax_basis, 0)
