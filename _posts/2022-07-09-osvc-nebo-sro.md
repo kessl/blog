@@ -8,9 +8,9 @@ Rok 2023 přinese [navýšení příjmových limitů](https://zpravy.aktualne.cz
 Paušální daň nově spadá do tří pásem podle výše příjmů a výdajového paušálu.
 Jak si vede paušální daň ve srovnání s SRO a OSVČ ve standardním režimu?
 
-_Vypočtené hodnoty jsou orientační. Nejsem váš ani ničí jiný daňový poradce._
+_Vypočtené hodnoty jsou orientační._
 
-<noscript>Pro správnou funkci daňové kalkulačky je potřeba mít zapnutý Javascript.</noscript>
+<noscript><strong>Pro správnou funkci daňové kalkulačky je potřeba zapnout Javascript.</strong></noscript>
 
 <div class="mt-60 sm:flex items-baseline">
   <label for="revenue" class="block w-180 font-bold">Roční příjmy</label>
@@ -19,20 +19,14 @@ _Vypočtené hodnoty jsou orientační. Nejsem váš ani ničí jiný daňový p
     <div class="text-xs md:ml-[15px] mt-[6px]">Zadejte vaše celkové roční příjmy</div>
   </div>
 </div>
-<div class="mt-30 sm:flex items-baseline">
+<div class="mt-[15px] sm:flex items-baseline">
   <label for="expenses" class="block w-180 shrink-0 font-bold">Roční výdaje</label>
-  <div class="mt-[6px]">
-    <div class="md:flex items-baseline">
-      <input id="expenses" name="expenses" type="number" min="0" step="100000" value="400000" class="w-[181px]">
-      <div id="expenses_label" class="text-xs md:ml-[15px] mt-[6px]">Zadejte vaše skutečné roční výdaje</div>
-    </div>
-    <label for="fixed_expenses" class="block mt-[10px] text-sm">
-      <input id="fixed_expenses" name="fixed_expenses" type="checkbox">
-      Uplatním výdajový paušál
-    </label>
+  <div class="mt-[6px] md:flex items-baseline">
+    <input id="expenses" name="expenses" type="number" min="0" step="100000" value="400000" class="w-[181px]">
+    <div id="expenses_label" class="text-xs md:ml-[15px] mt-[6px]">Zadejte vaše skutečné roční výdaje</div>
   </div>
 </div>
-<div class="mt-30 sm:mt-[15px] sm:flex items-baseline">
+<div class="mt-30 sm:mt-[25px] sm:flex items-baseline">
   <span class="block w-180 shrink-0 font-bold">Výdajový paušál</span>
   <div class="leading-[0.875rem]">
     <div class="mt-[10px] w-[255px] flex space-x-30">
@@ -53,6 +47,10 @@ _Vypočtené hodnoty jsou orientační. Nejsem váš ani ničí jiný daňový p
     <span class="text-xs">
       Vyberte paušál, který lze uplatnit na 75 % vašich příjmů. Pro výpočet paušální daně v roce 2023 je nutné zvolit paušál, i pokud byste ve standardním režimu uplatnili skutečné výdaje.
     </span>
+    <label for="fixed_expenses" class="block mt-[10px] text-sm">
+      <input id="fixed_expenses" name="fixed_expenses" type="checkbox">
+      Uplatním výdajový paušál
+    </label>
   </div>
 </div>
 
@@ -86,10 +84,10 @@ _Vypočtené hodnoty jsou orientační. Nejsem váš ani ničí jiný daňový p
   </div>
   <div class="row">
     <div>Výdaje</div>
-    <div class="expenses"></div>
-    <div class="expenses"></div>
-    <div>&mdash;</div>
-    <div>&mdash;</div>
+    <div class="company_expenses"></div>
+    <div class="standard_expenses"></div>
+    <div title="Výdaje nehrají při výpočtu paušální daně roli.">&mdash;</div>
+    <div title="Výdaje nehrají při výpočtu paušální daně roli. V roce 2023 se výše daně odvíjí od výše příjmů a výše daňového paušálu, který lze uplatnit na 75 % příjmů.">&mdash;</div>
   </div>
   <div class="row">
     <div>Základ daně</div>
