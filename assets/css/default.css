@@ -33,6 +33,23 @@ layout: null
     @apply font-heading text-dark dark:text-light;
   }
 
+  h1 {
+    font-variation-settings: "opsz" 32;
+    font-weight: 666;
+  }
+
+  h2 {
+    @apply mt-45 mb-15;
+    font-variation-settings: "opsz" 24;
+    font-weight: 450;
+  }
+
+  h3 {
+    @apply mt-45 mb-15;
+    font-variation-settings: "opsz" 24;
+    letter-spacing: 0.5px;
+  }
+
   .prose h1 {
     @apply text-5xl mb-0;
   }
@@ -91,17 +108,7 @@ layout: null
   }
 
   pre {
-    @apply -mx-30 sm:-mx-[20px] px-[20px] mb-15 py-15 bg-dark-80/50 text-light rounded-sm overflow-x-auto;
-  }
-
-  .ascii-diagram {
-    line-height: 1;
-    font-family: monospace;
-    overflow-x: auto;
-  }
-
-  .text-muted {
-    @apply text-dark/70 dark:text-light/70;
+    @apply -mx-30 sm:-mx-[20px] px-[20px] mb-15 py-15 bg-dark-20/50 dark:bg-dark-80/50 dark:text-light rounded-sm overflow-x-auto;
   }
 
   .row {
@@ -134,5 +141,17 @@ layout: null
 
   .row .error {
     @apply bg-[orangered] text-white ml-90 w-90;
+  }
+}
+
+@layer utilities {
+  .ascii-diagram {
+    line-height: 1;
+    font-family: monospace;
+    overflow-x: auto;
+  }
+
+  .text-muted {
+    @apply text-dark/70 dark:text-light/70;
   }
 }
