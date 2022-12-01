@@ -1,4 +1,175 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="https://blog.bitgate.cz/feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.bitgate.cz/" rel="alternate" type="text/html" /><updated>2022-10-20T09:01:14+00:00</updated><id>https://blog.bitgate.cz/feed.xml</id><subtitle>Daniel's random thoughts mostly related to software engineering</subtitle><author><name>Daniel Kessl</name></author><entry><title type="html">OSVČ nebo SRO? 2023 edition</title><link href="https://blog.bitgate.cz/osvc-nebo-sro/" rel="alternate" type="text/html" title="OSVČ nebo SRO? 2023 edition" /><published>2022-07-09T00:00:00+00:00</published><updated>2022-07-09T00:00:00+00:00</updated><id>https://blog.bitgate.cz/osvc-nebo-sro</id><content type="html" xml:base="https://blog.bitgate.cz/osvc-nebo-sro/"><![CDATA[<p>Rok 2023 přinese <a href="https://zpravy.aktualne.cz/ekonomika/kalkulacka-pausalni-dan-2023/r~ba0dfdcad05611ec8a24ac1f6b220ee8/" target="_blank">navýšení příjmových limitů</a> OSVČ pro využití režimu paušální daně.
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="https://blog.bitgate.cz/feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.bitgate.cz/" rel="alternate" type="text/html" /><updated>2022-12-01T08:31:10+00:00</updated><id>https://blog.bitgate.cz/feed.xml</id><subtitle>Daniel's random thoughts mostly related to software engineering</subtitle><author><name>Daniel Kessl</name></author><entry><title type="html">Send email at scale for free with Cloudflare workers</title><link href="https://blog.bitgate.cz/send-email-at-scale-for-free-with-cloudflare-workers/" rel="alternate" type="text/html" title="Send email at scale for free with Cloudflare workers" /><published>2022-11-30T00:00:00+00:00</published><updated>2022-11-30T00:00:00+00:00</updated><id>https://blog.bitgate.cz/send-email-at-scale-for-free-with-cloudflare-workers</id><content type="html" xml:base="https://blog.bitgate.cz/send-email-at-scale-for-free-with-cloudflare-workers/"><![CDATA[<p>I was looking for a cheap/free way to send email for a hobby project.
+At first I turned to Amazon SES, but after I tried to enable production access and received an extremely generic rejection, I got discouraged and put the project on hold.
+Recently I discovered an interesting way to <a href="https://blog.cloudflare.com/sending-email-from-workers-with-mailchannels/">send email for free using Cloudflare workers and MailChannels API</a>.</p>
+
+<p>The only requirement to use this is to have a domain name verified in Cloudflare.
+MailChannels API is able to authorize requests coming from workers based on Cloudflare verification.
+No accounts other than Cloudflare are needed.</p>
+
+<h2 id="the-worker">The worker</h2>
+
+<p>The worker receives a JSON payload representing a single email and forwards it to the MailChannels API.
+Deploy it and configure <code class="language-plaintext highlighter-rouge">TOKEN</code> and optionally <code class="language-plaintext highlighter-rouge">DKIM_PRIVATE_KEY</code> (see below) in worker settings.</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">export</span> <span class="k">default</span> <span class="p">{</span>
+  <span class="k">async</span> <span class="nx">fetch</span><span class="p">(</span><span class="nx">request</span><span class="p">,</span> <span class="nx">env</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">request</span><span class="p">.</span><span class="nx">method</span> <span class="o">!==</span> <span class="dl">'</span><span class="s1">POST</span><span class="dl">'</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="k">new</span> <span class="nx">Response</span><span class="p">(</span><span class="dl">'</span><span class="s1">Method not supported</span><span class="dl">'</span><span class="p">,</span> <span class="p">{</span> <span class="na">status</span><span class="p">:</span> <span class="mi">405</span> <span class="p">})</span>
+    <span class="p">}</span>
+
+    <span class="kd">const</span> <span class="nx">token</span> <span class="o">=</span> <span class="nx">request</span><span class="p">.</span><span class="nx">headers</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="dl">'</span><span class="s1">Authorization</span><span class="dl">'</span><span class="p">)?.</span><span class="nx">replace</span><span class="p">(</span><span class="dl">'</span><span class="s1">Bearer </span><span class="dl">'</span><span class="p">,</span> <span class="dl">''</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">token</span> <span class="o">!==</span> <span class="nx">env</span><span class="p">.</span><span class="nx">TOKEN</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="k">new</span> <span class="nx">Response</span><span class="p">(</span><span class="dl">'</span><span class="s1">Unauthorized</span><span class="dl">'</span><span class="p">,</span> <span class="p">{</span> <span class="na">status</span><span class="p">:</span> <span class="mi">403</span> <span class="p">})</span>
+    <span class="p">}</span>
+
+    <span class="kd">const</span> <span class="nx">body</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">request</span><span class="p">.</span><span class="nx">json</span><span class="p">()</span>
+    <span class="kd">const</span> <span class="nx">email_body</span> <span class="o">=</span> <span class="p">{</span>
+      <span class="na">personalizations</span><span class="p">:</span> <span class="p">[{</span>
+        <span class="na">to</span><span class="p">:</span> <span class="nx">body</span><span class="p">.</span><span class="nx">to</span><span class="p">,</span>
+        <span class="c1">// dkim_domain: 'example.com',</span>
+        <span class="c1">// dkim_selector: 'mail1',</span>
+        <span class="c1">// dkim_private_key: env.DKIM_PRIVATE_KEY,</span>
+      <span class="p">}],</span>
+      <span class="na">from</span><span class="p">:</span> <span class="nx">body</span><span class="p">.</span><span class="k">from</span><span class="p">,</span>
+      <span class="na">subject</span><span class="p">:</span> <span class="nx">body</span><span class="p">.</span><span class="nx">subject</span><span class="p">,</span>
+      <span class="na">content</span><span class="p">:</span> <span class="nx">body</span><span class="p">.</span><span class="nx">content</span><span class="p">,</span>
+      <span class="c1">// headers: {</span>
+      <span class="c1">//   'List-Unsubscribe': '&lt;mailto:daniel@example.com?subject=unsubscribe&gt;',</span>
+      <span class="c1">// },</span>
+    <span class="p">}</span>
+
+    <span class="kd">const</span> <span class="nx">email_request</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Request</span><span class="p">(</span><span class="dl">'</span><span class="s1">https://api.mailchannels.net/tx/v1/send</span><span class="dl">'</span><span class="p">,</span> <span class="p">{</span>
+      <span class="na">method</span><span class="p">:</span> <span class="dl">'</span><span class="s1">POST</span><span class="dl">'</span><span class="p">,</span>
+      <span class="na">headers</span><span class="p">:</span> <span class="p">{</span> <span class="dl">'</span><span class="s1">Content-Type</span><span class="dl">'</span><span class="p">:</span> <span class="dl">'</span><span class="s1">application/json</span><span class="dl">'</span> <span class="p">},</span>
+      <span class="na">body</span><span class="p">:</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">email_body</span><span class="p">),</span>
+    <span class="p">})</span>
+    <span class="kd">const</span> <span class="nx">res</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">fetch</span><span class="p">(</span><span class="nx">email_request</span><span class="p">)</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="nx">Response</span><span class="p">(</span><span class="s2">`</span><span class="p">${</span><span class="nx">res</span><span class="p">.</span><span class="nx">status</span><span class="p">}</span><span class="s2"> </span><span class="p">${</span><span class="nx">res</span><span class="p">.</span><span class="nx">statusText</span><span class="p">}</span><span class="s2">`</span><span class="p">,</span> <span class="p">{</span> <span class="na">status</span><span class="p">:</span> <span class="nx">res</span><span class="p">.</span><span class="nx">status</span> <span class="p">})</span>
+  <span class="p">},</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/mailchannels-worker-env.png" alt="Worker environment settings" /></p>
+
+<p>To test it, deploy the worker and call it in production.
+<em>Requests sent through Cloudflare’s Quick edit interface would not work with MailChannels</em> when I wrote this article.
+MailChannels API will return <code class="language-plaintext highlighter-rouge">403</code> if the worker is called through Quick edit.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">TOKEN</span><span class="o">=</span>&lt;token from worker <span class="nb">env</span><span class="o">&gt;</span>
+<span class="nv">WORKER_URL</span><span class="o">=</span>&lt;URL of deployed worker&gt;
+curl <span class="nt">-H</span> <span class="s1">'application/json'</span> <span class="nt">-H</span> <span class="s2">"Authorization: Bearer </span><span class="nv">$TOKEN</span><span class="s2">"</span> <span class="nt">-d</span> <span class="s2">"{</span><span class="se">\"</span><span class="s2">to</span><span class="se">\"</span><span class="s2">:[{</span><span class="se">\"</span><span class="s2">email</span><span class="se">\"</span><span class="s2">:</span><span class="se">\"</span><span class="s2">test@example.com</span><span class="se">\"</span><span class="s2">}],</span><span class="se">\"</span><span class="s2">from</span><span class="se">\"</span><span class="s2">:[{</span><span class="se">\"</span><span class="s2">email</span><span class="se">\"</span><span class="s2">:</span><span class="se">\"</span><span class="s2">sender@example.com</span><span class="se">\"</span><span class="s2">}],</span><span class="se">\"</span><span class="s2">subject</span><span class="se">\"</span><span class="s2">:</span><span class="se">\"</span><span class="s2">Test subject</span><span class="se">\"</span><span class="s2">,</span><span class="se">\"</span><span class="s2">content</span><span class="se">\"</span><span class="s2">:[{</span><span class="se">\"</span><span class="s2">type</span><span class="se">\"</span><span class="s2">:</span><span class="se">\"</span><span class="s2">text/plain</span><span class="se">\"</span><span class="s2">,</span><span class="se">\"</span><span class="s2">value</span><span class="se">\"</span><span class="s2">:</span><span class="se">\"</span><span class="s2">Test email</span><span class="se">\\</span><span class="s2">r</span><span class="se">\\</span><span class="s2">n</span><span class="se">\"</span><span class="s2">}]}"</span> <span class="nv">$WORKER_URL</span>
+</code></pre></div></div>
+
+<h2 id="deliverability-tuning">Deliverability tuning</h2>
+
+<p>It’s a good idea to configure SPF, DKIM, DMARC and an MX record to prevent emails getting caught in spam filters.
+SPF, DMARC and receiving emails (I used Cloudflare Email Routing) are configured through DNS records.</p>
+
+<h3 id="dkim">DKIM</h3>
+
+<p>Generate a DKIM private key and DNS record:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>openssl genrsa 2048 | <span class="nb">tee </span>private_key.pem | openssl rsa <span class="nt">-outform</span> der | openssl <span class="nb">base64</span> <span class="nt">-A</span> <span class="o">&gt;</span> private_key.txt
+<span class="nb">echo</span> <span class="nt">-n</span> <span class="s2">"v=DKIM1;p="</span> <span class="o">&gt;</span> dkim_record.txt <span class="o">&amp;&amp;</span> openssl rsa <span class="nt">-in</span> private_key.pem <span class="nt">-pubout</span> <span class="nt">-outform</span> der | openssl <span class="nb">base64</span> <span class="nt">-A</span> <span class="o">&gt;&gt;</span> dkim_record.txt
+</code></pre></div></div>
+
+<p>Save private key in <code class="language-plaintext highlighter-rouge">DKIM_PRIVATE_KEY</code> worker environment variable.
+Configure DKIM record with the right selector in Cloudflare DNS and uncomment DKIM config in the worker:</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">dkim_domain</span><span class="p">:</span> <span class="dl">'</span><span class="s1">example.com</span><span class="dl">'</span><span class="p">,</span>
+<span class="nx">dkim_selector</span><span class="p">:</span> <span class="dl">'</span><span class="s1">mail1</span><span class="dl">'</span><span class="p">,</span>
+<span class="nx">dkim_private_key</span><span class="p">:</span> <span class="nx">env</span><span class="p">.</span><span class="nx">DKIM_PRIVATE_KEY</span><span class="p">,</span>
+</code></pre></div></div>
+
+<h3 id="list-unsubscribe-header">List-Unsubscribe header</h3>
+
+<p>The List-Unsubscribe header should be present in mass emails (emails that are not transactional).
+Email clients that support it will show the user an unsubscribe button.
+Configure it in email headers like this:</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">headers</span><span class="p">:</span> <span class="p">{</span>
+  <span class="dl">'</span><span class="s1">List-Unsubscribe</span><span class="dl">'</span><span class="p">:</span> <span class="dl">'</span><span class="s1">&lt;mailto:daniel@example.com?subject=unsubscribe&gt;</span><span class="dl">'</span><span class="p">,</span>
+<span class="p">},</span>
+</code></pre></div></div>
+
+<p><a href="https://www.mail-tester.com/">Mail tester</a> is useful for testing deliverability. You can test ~5 emails per day for free.</p>
+
+<p><img src="/assets/images/workers-email-spam-test-result.png" alt="Screenshot of 10/10 spam test result" /></p>
+
+<h2 id="sending-emails-from-rails">Sending emails from Rails</h2>
+
+<p>To send emails from Rails using ActionMailer, add a delivery method that calls the worker:</p>
+
+<p><code class="language-plaintext highlighter-rouge">lib/mailchannels_integration/worker_delivery_method.rb</code>:</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">module</span> <span class="nn">MailchannelsIntegration</span>
+  <span class="k">class</span> <span class="nc">WorkerDeliveryMethod</span>
+    <span class="no">WORKER_EP</span> <span class="o">=</span> <span class="s1">'&lt;worker URL&gt;'</span><span class="p">.</span><span class="nf">freeze</span>
+
+    <span class="nb">attr_accessor</span> <span class="ss">:settings</span>
+
+    <span class="k">class</span> <span class="nc">WorkerDeliveryError</span> <span class="o">&lt;</span> <span class="no">StandardError</span><span class="p">;</span> <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">settings</span><span class="p">)</span>
+      <span class="nb">self</span><span class="p">.</span><span class="nf">settings</span> <span class="o">=</span> <span class="n">settings</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">deliver!</span><span class="p">(</span><span class="n">mail</span><span class="p">)</span>
+      <span class="no">Rails</span><span class="p">.</span><span class="nf">logger</span><span class="p">.</span><span class="nf">info</span><span class="p">(</span><span class="s1">'[MailChannels] Attempting to send email'</span><span class="p">)</span>
+      <span class="n">res</span> <span class="o">=</span> <span class="no">Typhoeus</span><span class="p">.</span><span class="nf">post</span><span class="p">(</span><span class="no">WORKER_EP</span><span class="p">,</span> <span class="p">{</span> <span class="ss">headers: </span><span class="n">headers</span><span class="p">,</span> <span class="ss">body: </span><span class="n">body</span><span class="p">(</span><span class="n">mail</span><span class="p">)</span> <span class="p">})</span>
+      <span class="k">raise</span> <span class="no">WorkerDeliveryError</span><span class="p">,</span> <span class="n">res</span><span class="p">.</span><span class="nf">body</span> <span class="k">unless</span> <span class="n">res</span><span class="p">.</span><span class="nf">success?</span>
+      <span class="no">Rails</span><span class="p">.</span><span class="nf">logger</span><span class="p">.</span><span class="nf">info</span><span class="p">(</span><span class="s1">'[MailChannels] Email sent'</span><span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">headers</span>
+      <span class="n">token</span> <span class="o">=</span> <span class="no">Rails</span><span class="p">.</span><span class="nf">application</span><span class="p">.</span><span class="nf">credentials</span><span class="p">.</span><span class="nf">dig</span><span class="p">(</span><span class="ss">:mailchannels_worker</span><span class="p">,</span> <span class="ss">:token</span><span class="p">)</span>
+      <span class="p">{</span>
+        <span class="no">Authorization</span><span class="p">:</span> <span class="s2">"Bearer </span><span class="si">#{</span><span class="n">token</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+        <span class="s1">'Content-Type'</span><span class="p">:</span> <span class="s1">'application/json'</span><span class="p">,</span>
+      <span class="p">}</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">body</span><span class="p">(</span><span class="n">mail</span><span class="p">)</span>
+      <span class="p">{</span>
+        <span class="ss">to: </span><span class="n">mail</span><span class="p">.</span><span class="nf">to</span><span class="p">.</span><span class="nf">map</span> <span class="p">{</span> <span class="o">|</span><span class="n">email</span><span class="o">|</span> <span class="p">{</span> <span class="ss">email: </span><span class="n">email</span><span class="p">}</span> <span class="p">},</span>
+        <span class="ss">from: </span><span class="p">{</span> <span class="ss">email: </span><span class="n">mail</span><span class="p">.</span><span class="nf">from</span><span class="p">.</span><span class="nf">first</span> <span class="p">},</span>
+        <span class="ss">subject: </span><span class="n">mail</span><span class="p">.</span><span class="nf">subject</span><span class="p">,</span>
+        <span class="ss">content: </span><span class="p">[{</span> <span class="ss">type: </span><span class="s1">'text/plain'</span><span class="p">,</span> <span class="ss">value: </span><span class="n">mail</span><span class="p">.</span><span class="nf">body</span><span class="p">.</span><span class="nf">raw_source</span> <span class="p">}],</span>
+      <span class="p">}.</span><span class="nf">to_json</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">credentials.yml</code>:</p>
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">mailchannels_worker</span><span class="pi">:</span>
+  <span class="na">token</span><span class="pi">:</span> <span class="s">&lt;token from worker env&gt;</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">config/application.rb</code>:</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">require</span> <span class="s2">"mailchannels_integration/worker_delivery_method"</span>
+<span class="no">ActionMailer</span><span class="o">::</span><span class="no">Base</span><span class="p">.</span><span class="nf">add_delivery_method</span> <span class="ss">:mailchannels_worker</span><span class="p">,</span> <span class="no">MailchannelsIntegration</span><span class="o">::</span><span class="no">WorkerDeliveryMethod</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">config/environments/(development|production).rb</code></p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">config</span><span class="p">.</span><span class="nf">action_mailer</span><span class="p">.</span><span class="nf">raise_delivery_errors</span> <span class="o">=</span> <span class="kp">true</span>
+<span class="n">config</span><span class="p">.</span><span class="nf">action_mailer</span><span class="p">.</span><span class="nf">delivery_method</span> <span class="o">=</span> <span class="ss">:mailchannels_worker</span>
+</code></pre></div></div>
+
+<p>With this configuration, you can send emails as usual using <code class="language-plaintext highlighter-rouge">mail()</code>.</p>
+
+<h2 id="scaling">Scaling</h2>
+
+<p>As far as I know, MailChannels imposes no limits on how many emails you can send this way.
+Cloudflare workers are free up to 100k requests per day and limited to 10ms of execution time per invocation.
+You could batch emails before calling the worker to squeeze out a few extra emails before having to upgrade.</p>
+
+<h2 id="useful-links">Useful links</h2>
+
+<ul>
+  <li><a href="https://mailchannels.zendesk.com/hc/en-us/articles/4565898358413-Sending-Email-from-Cloudflare-Workers-using-MailChannels-Send-API">MailChannels Cloudflare integration docs</a></li>
+  <li><a href="https://api.mailchannels.net/tx/v1/documentation">MailChannels API docs</a></li>
+  <li><a href="https://developers.cloudflare.com/pages/platform/functions/plugins/mailchannels/">MailChannels Cloudflare Pages plugin</a> for simple contact forms for static pages</li>
+</ul>]]></content><author><name>daniel</name></author><category term="devops" /><summary type="html"><![CDATA[I was looking for a cheap/free way to send email for a hobby project. At first I turned to Amazon SES, but after I tried to enable production access and received an extremely generic rejection, I got discouraged and put the project on hold. Recently I discovered an interesting way to send email for free using Cloudflare workers and MailChannels API.]]></summary></entry><entry><title type="html">OSVČ nebo SRO? 2023 edition</title><link href="https://blog.bitgate.cz/osvc-nebo-sro/" rel="alternate" type="text/html" title="OSVČ nebo SRO? 2023 edition" /><published>2022-07-09T00:00:00+00:00</published><updated>2022-07-09T00:00:00+00:00</updated><id>https://blog.bitgate.cz/osvc-nebo-sro</id><content type="html" xml:base="https://blog.bitgate.cz/osvc-nebo-sro/"><![CDATA[<p>Rok 2023 přinese <a href="https://zpravy.aktualne.cz/ekonomika/kalkulacka-pausalni-dan-2023/r~ba0dfdcad05611ec8a24ac1f6b220ee8/" target="_blank">navýšení příjmových limitů</a> OSVČ pro využití režimu paušální daně.
 Paušální daň nově spadá do tří pásem podle výše příjmů a výdajového paušálu.
 Jak si vede paušální daň ve srovnání s SRO a OSVČ ve standardním režimu?</p>
 
@@ -1315,61 +1486,4 @@ Let’s use <code class="language-plaintext highlighter-rouge">Header</code> fro
     status
   }
 }
-</code></pre>]]></content><author><name>daniel</name></author><category term="frontend" /><summary type="html"><![CDATA[TL;DR I ditched Redux in favor of Apollo. This is how I set up apollo-link-rest.]]></summary></entry><entry><title type="html">Setting up a dev environment on GitLab pages</title><link href="https://blog.bitgate.cz/gitlab-pages-dev-env/" rel="alternate" type="text/html" title="Setting up a dev environment on GitLab pages" /><published>2020-03-21T00:00:00+00:00</published><updated>2020-03-21T00:00:00+00:00</updated><id>https://blog.bitgate.cz/gitlab-pages-dev-env</id><content type="html" xml:base="https://blog.bitgate.cz/gitlab-pages-dev-env/"><![CDATA[<p><strong>TL;DR</strong> Preview changes to your GitLab pages by directly accessing job artifacts, without overwriting your pages deployment.</p>
-
-<p>I recently needed to make a few changes to a static site hosted on GitLab pages.
-I was looking for a way to deploy a work-in-progress version to a temporary location, without interfering with the production site.
-I <a href="https://stackoverflow.com/a/58402821" target="_blank">found</a> a nifty way to do it using CI job artifacts, from a new branch in the same repo.</p>
-
-<h2 id="basic-pages-deploy-setup">Basic pages deploy setup</h2>
-
-<p>First, let’s set up the production environment.
-We’ll add a job named <code class="language-plaintext highlighter-rouge">pages</code> to our <code class="language-plaintext highlighter-rouge">.gitlab-ci.yml</code>, which tells GitLab to deploy the contents of the public folder in the master branch after the job succeeds:</p>
-
-<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">pages</span><span class="pi">:</span>
-  <span class="na">stage</span><span class="pi">:</span> <span class="s">deploy</span>
-  <span class="na">artifacts</span><span class="pi">:</span>
-    <span class="na">paths</span><span class="pi">:</span>
-      <span class="pi">-</span> <span class="s">public</span>
-  <span class="na">only</span><span class="pi">:</span>
-    <span class="pi">-</span> <span class="s">master</span>
-  <span class="na">script</span><span class="pi">:</span>
-    <span class="pi">-</span> <span class="s">mkdir .public</span>
-    <span class="pi">-</span> <span class="s">cp -r * .public</span>
-    <span class="pi">-</span> <span class="s">mv .public public</span>
-</code></pre></div></div>
-
-<p>Since I keep all the files in the repository root, I move them to the public directory in this job – you might not need to do this.
-By limiting this job to master only, we make sure that pushing to any other branch does not overwrite the production deployment.</p>
-
-<h2 id="deploying-a-dev-branch">“Deploying” a dev branch</h2>
-
-<p>GitLab only supports deploying pages from the public folder, but we’re already using that for production.
-Instead of an actual pages deploy, let’s add a new job that will run on branches other than master.
-We’ll save its artifacts, which GitLab makes accessible on a specific URL.
-We’ll set that URL to an environment named <code class="language-plaintext highlighter-rouge">dev</code>:</p>
-
-<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">dev-deploy</span><span class="pi">:</span>
-  <span class="na">stage</span><span class="pi">:</span> <span class="s">deploy</span>
-  <span class="na">artifacts</span><span class="pi">:</span>
-    <span class="na">paths</span><span class="pi">:</span>
-      <span class="pi">-</span> <span class="s">public</span>
-  <span class="na">except</span><span class="pi">:</span>
-    <span class="pi">-</span> <span class="s">master</span>
-  <span class="na">environment</span><span class="pi">:</span>
-    <span class="na">name</span><span class="pi">:</span> <span class="s">dev</span>
-    <span class="na">url</span><span class="pi">:</span> <span class="s1">'</span><span class="s">https://$CI_PROJECT_NAMESPACE.gitlab.io/-/$CI_PROJECT_NAME/-/jobs/$CI_JOB_ID/artifacts/public/index.html'</span>
-  <span class="na">script</span><span class="pi">:</span>
-    <span class="pi">-</span> <span class="s">mkdir .public</span>
-    <span class="pi">-</span> <span class="s">cp -r * .public</span>
-    <span class="pi">-</span> <span class="s">mv .public public</span>
-</code></pre></div></div>
-
-<p>We define the public folder as an artifact, so that it’s not removed after the job finishes.
-After the job succeeds, the dev branch deployment can be found at <code class="language-plaintext highlighter-rouge">https://$CI_PROJECT_NAMESPACE.gitlab.io/-/$CI_PROJECT_NAME/-/jobs/$CI_JOB_ID/</code> or more conveniently, in the <code class="language-plaintext highlighter-rouge">Operations &gt; Environments</code> menu, under the <code class="language-plaintext highlighter-rouge">View deployment</code> button.</p>
-
-<h3 id="permissions">Permissions</h3>
-
-<p>By default, only members of the project with access to CI pipelines will have permission to view job artifacts.
-This can be changed in <code class="language-plaintext highlighter-rouge">Settings &gt; General</code>, section <code class="language-plaintext highlighter-rouge">Visibility &gt; Repository &gt; Pipelines</code>.
-If you’d like the dev site to be public, you’ll have to set the visibility of the entire project to public.</p>]]></content><author><name>daniel</name></author><category term="devops" /><summary type="html"><![CDATA[TL;DR Preview changes to your GitLab pages by directly accessing job artifacts, without overwriting your pages deployment.]]></summary></entry></feed>
+</code></pre>]]></content><author><name>daniel</name></author><category term="frontend" /><summary type="html"><![CDATA[TL;DR I ditched Redux in favor of Apollo. This is how I set up apollo-link-rest.]]></summary></entry></feed>
