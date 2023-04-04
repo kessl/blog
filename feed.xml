@@ -1,4 +1,123 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="https://blog.bitgate.cz/feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.bitgate.cz/" rel="alternate" type="text/html" /><updated>2022-12-01T08:31:10+00:00</updated><id>https://blog.bitgate.cz/feed.xml</id><subtitle>Daniel's random thoughts mostly related to software engineering</subtitle><author><name>Daniel Kessl</name></author><entry><title type="html">Send email at scale for free with Cloudflare workers</title><link href="https://blog.bitgate.cz/send-email-at-scale-for-free-with-cloudflare-workers/" rel="alternate" type="text/html" title="Send email at scale for free with Cloudflare workers" /><published>2022-11-30T00:00:00+00:00</published><updated>2022-11-30T00:00:00+00:00</updated><id>https://blog.bitgate.cz/send-email-at-scale-for-free-with-cloudflare-workers</id><content type="html" xml:base="https://blog.bitgate.cz/send-email-at-scale-for-free-with-cloudflare-workers/"><![CDATA[<p>I was looking for a cheap/free way to send email for a hobby project.
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="https://blog.bitgate.cz/feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.bitgate.cz/" rel="alternate" type="text/html" /><updated>2023-04-04T09:03:10+00:00</updated><id>https://blog.bitgate.cz/feed.xml</id><subtitle>Daniel's random thoughts mostly related to software engineering</subtitle><author><name>Daniel Kessl</name></author><entry><title type="html">GPT in terminal</title><link href="https://blog.bitgate.cz/terminal-gpt/" rel="alternate" type="text/html" title="GPT in terminal" /><published>2023-03-29T00:00:00+00:00</published><updated>2023-03-29T00:00:00+00:00</updated><id>https://blog.bitgate.cz/terminal-gpt</id><content type="html" xml:base="https://blog.bitgate.cz/terminal-gpt/"><![CDATA[<p>One application of GPT I found useful in software development is generating and manipulating structured data with vague instructions.</p>
+
+<p>For example: generate test fixtures</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>h generate sample yaml of 5 example <span class="nb">users</span>, not an array
+
+user1:
+  name: John Doe
+  email: john.doe@example.com
+  age: 35
+  gender: male
+  occupation: software engineer
+
+user2:
+  name: Jane Smith
+  email: jane.smith@example.com
+  age: 28
+  gender: female
+  occupation: graphic designer
+
+user3:
+  name: James Brown
+  email: james.brown@example.com
+  age: 42
+  gender: male
+  occupation: accountant
+
+user4:
+  name: Sarah Johnson
+  email: sarah.johnson@example.com
+  age: 31
+  gender: female
+  occupation: teacher
+
+user5:
+  name: Michael Lee
+  email: michael.lee@example.com
+  age: 25
+  gender: male
+  occupation: marketing specialist
+</code></pre></div></div>
+
+<p>Generate mock UI data:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>h give me a json array of 10 randomly generated sales records with timestamp, amount, description and customer <span class="nb">id</span>, <span class="k">return </span>data only <span class="o">&gt;</span> records.json
+<span class="nv">$ </span><span class="nb">cat </span>records.json
+<span class="o">{</span>
+  <span class="s2">"data"</span>: <span class="o">[</span>
+    <span class="o">{</span>
+      <span class="s2">"timestamp"</span>: <span class="s2">"2022-05-04 10:32:19"</span>,
+      <span class="s2">"amount"</span>: 135.78,
+      <span class="s2">"description"</span>: <span class="s2">"Product A"</span>,
+      <span class="s2">"customer_id"</span>: <span class="s2">"Cust_3456"</span>
+    <span class="o">}</span>,
+    <span class="o">{</span>
+      <span class="s2">"timestamp"</span>: <span class="s2">"2022-04-30 14:20:55"</span>,
+      <span class="s2">"amount"</span>: 57.99,
+      <span class="s2">"description"</span>: <span class="s2">"Product B"</span>,
+      <span class="s2">"customer_id"</span>: <span class="s2">"Cust_2238"</span>
+    <span class="o">}</span>,
+    <span class="o">{</span>
+      <span class="s2">"timestamp"</span>: <span class="s2">"2022-05-01 09:45:12"</span>,
+      <span class="s2">"amount"</span>: 89.99,
+      <span class="s2">"description"</span>: <span class="s2">"Product C"</span>,
+      <span class="s2">"customer_id"</span>: <span class="s2">"Cust_5789"</span>
+    <span class="o">}</span>,
+    ...
+  <span class="o">]</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>Generate CSV:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>h give me an example csv of 10 webpage visits with headers, <span class="k">return </span>csv only <span class="o">&gt;</span> visits.csv
+<span class="nv">$ </span><span class="nb">cat </span>visits.csv
+Timestamp,Page URL,Referrer,User Agent,IP Address
+2021-06-01T09:00:00Z,https://www.example.com/,https://www.google.com/,Mozilla/5.0 <span class="o">(</span>Windows NT 10.0<span class="p">;</span> Win64<span class="p">;</span> x64<span class="o">)</span> AppleWebKit/537.36 <span class="o">(</span>KHTML, like Gecko<span class="o">)</span> Chrome/91.0.4472.77 Safari/537.36,192.168.0.1
+2021-06-01T09:05:00Z,https://www.example.com/page1,https://www.example.com/,Mozilla/5.0 <span class="o">(</span>Windows NT 10.0<span class="p">;</span> Win64<span class="p">;</span> x64<span class="o">)</span> AppleWebKit/537.36 <span class="o">(</span>KHTML, like Gecko<span class="o">)</span> Chrome/91.0.4472.77 Safari/537.36,192.168.0.1
+2021-06-01T09:10:00Z,https://www.example.com/page2,https://www.example.com/page1,Mozilla/5.0 <span class="o">(</span>Windows NT 10.0<span class="p">;</span> Win64<span class="p">;</span> x64<span class="o">)</span> AppleWebKit/537.36 <span class="o">(</span>KHTML, like Gecko<span class="o">)</span> Chrome/91.0.4472.77 Safari/537.36,192.168.0.1
+2021-06-01T09:15:00Z,https://www.example.com/page3,https://www.example.com/page2,Mozilla/5.0 <span class="o">(</span>Windows NT 10.0<span class="p">;</span> Win64<span class="p">;</span> x64<span class="o">)</span> AppleWebKit/537.36 <span class="o">(</span>KHTML, like Gecko<span class="o">)</span> Chrome/91.0.4472.77 Safari/537.36,192.168.0.1
+2021-06-01T09:20:00Z,https://www.example.com/page4,https://www.example.com/page3,Mozilla/5.0 <span class="o">(</span>Windows NT 10.0<span class="p">;</span> Win64<span class="p">;</span> x64<span class="o">)</span> AppleWebKit/537.36 <span class="o">(</span>KHTML, like Gecko<span class="o">)</span> Chrome/91.0.4472.77 Safari/537.36,192.168.0.1
+2021-06-01T09:25:00Z,https://www.example.com/page5,https://www.example.com/page4,Mozilla/5.0 <span class="o">(</span>Windows NT 10.0<span class="p">;</span> Win64<span class="p">;</span> x64<span class="o">)</span> AppleWebKit/537.36 <span class="o">(</span>KHTML, like Gecko<span class="o">)</span> Chrome/91.0.4472.77 Safari/537.36,192.168.0.1
+2021-06-01T09:30:00Z,https://www.example.com/page6,https://www.example.com/page5,Mozilla/5.0 <span class="o">(</span>Windows NT 10.0<span class="p">;</span> Win64<span class="p">;</span> x64<span class="o">)</span> AppleWebKit/537.36 <span class="o">(</span>KHTML, like Gecko<span class="o">)</span> Chrome/91.0.4472.77 Safari/537.36,192.168.0.1
+2021-06-01T09:35:00Z,https://www.example.com/page7,https://www.example.com/page6,Mozilla/5.0 <span class="o">(</span>Windows NT 10.0<span class="p">;</span> Win64<span class="p">;</span> x64<span class="o">)</span> AppleWebKit/537.36 <span class="o">(</span>KHTML, like Gecko<span class="o">)</span> Chrome/91.0.4472.77 Safari/537.36,192.168.0.1
+2021-06-01T09:40:00Z,https://www.example.com/page8,https://www.example.com/page7,Mozilla/5.0 <span class="o">(</span>Windows NT 10.0<span class="p">;</span> Win64<span class="p">;</span> x64<span class="o">)</span> AppleWebKit/537.36 <span class="o">(</span>KHTML, like Gecko<span class="o">)</span> Chrome/91.0.4472.77 Safari/537.36,192.168.0.1
+2021-06-01T09:45:00Z,https://www.example.com/page9,https://www.example.com/page8,Mozilla/5.0 <span class="o">(</span>Windows NT 10.0<span class="p">;</span> Win64<span class="p">;</span> x64<span class="o">)</span> AppleWebKit/537.36 <span class="o">(</span>KHTML, like Gecko<span class="o">)</span> Chrome/91.0.4472.77 Safari/537.36,192.168.0.1
+</code></pre></div></div>
+
+<p>GPT can also perform ad-hoc data analyses and transformations, althought sometimes it takes a few prompts:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ h translate user agent strings to browser names with versions in the following csv dataset: $(cat visits.csv)
+Timestamp, Page URL, Referrer, User Agent, IP Address
+2021-06-01T09:00:00Z, https://www.example.com/, https://www.google.com/, Chrome 91.0.4472.77 (Windows 10), 192.168.0.1
+2021-06-01T09:05:00Z, https://www.example.com/page1, https://www.example.com/, Chrome 91.0.4472.77 (Windows 10), 192.168.0.1
+2021-06-01T09:10:00Z, https://www.example.com/page2, https://www.example.com/page1, Chrome 91.0.4472.77 (Windows 10), 192.168.0.1
+2021-06-01T09:15:00Z, https://www.example.com/page3, https://www.example.com/page2, Chrome 91.0.4472.77 (Windows 10), 192.168.0.1
+2021-06-01T09:20:00Z, https://www.example.com/page4, https://www.example.com/page3, Chrome 91.0.4472.77 (Windows 10), 192.168.0.1
+2021-06-01T09:25:00Z, https://www.example.com/page5, https://www.example.com/page4, Chrome 91.0.4472.77 (Windows 10), 192.168.0.1
+2021-06-01T09:30:00Z, https://www.example.com/page6, https://www.example.com/page5, Chrome 91.0.4472.77 (Windows 10), 192.168.0.1
+2021-06-01T09:35:00Z, https://www.example.com/page7, https://www.example.com/page6, Chrome 91.0.4472.77 (Windows 10), 192.168.0.1
+2021-06-01T09:40:00Z, https://www.example.com/page8, https://www.example.com/page7, Chrome 91.0.4472.77 (Windows 10), 192.168.0.1
+2021-06-01T09:45:00Z, https://www.example.com/page9, https://www.example.com/page8, Chrome 91.0.4472.77 (Windows 10), 192.168.0.1
+</code></pre></div></div>
+
+<hr />
+
+<p><code class="language-plaintext highlighter-rouge">h</code> is a bash function inspired by <a href="https://kadekillary.work/posts/1000x-eng/">this blog post</a>.
+You’ll need to <a href="https://platform.openai.com/loggedout">obtain an API token</a> first.
+You can change <code class="language-plaintext highlighter-rouge">model</code> to <code class="language-plaintext highlighter-rouge">gpt-4</code> instead of <code class="language-plaintext highlighter-rouge">gpt-3.5-turbo</code> if you have access.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">function </span>ask_gpt<span class="o">()</span> <span class="o">{</span>
+    curl https://api.openai.com/v1/chat/completions <span class="nt">-s</span> <span class="se">\</span>
+      <span class="nt">-H</span> <span class="s2">"Content-Type: application/json"</span> <span class="se">\</span>
+      <span class="nt">-H</span> <span class="s2">"Authorization: Bearer </span><span class="nv">$OPENAPI_TOKEN</span><span class="s2">"</span> <span class="se">\</span>
+      <span class="nt">-d</span> <span class="s2">"</span><span class="si">$(</span>jq <span class="nt">-c</span> <span class="nt">-n</span> <span class="nt">--arg</span> content <span class="s2">"</span><span class="nv">$*</span><span class="s2">"</span> <span class="s1">'{model:"gpt-3.5-turbo",messages:[{role:"user",$content}],temperature:0.7}'</span><span class="si">)</span><span class="s2">"</span> <span class="se">\</span>
+    | jq <span class="nt">-r</span> <span class="s1">'.choices[0].message.content // .error.message'</span>
+<span class="o">}</span>
+
+<span class="nb">alias </span><span class="nv">h</span><span class="o">=</span><span class="s2">"ask_gpt"</span>
+</code></pre></div></div>]]></content><author><name>daniel</name></author><category term="GPT" /><summary type="html"><![CDATA[One application of GPT I found useful in software development is generating and manipulating structured data with vague instructions.]]></summary></entry><entry><title type="html">Send email at scale for free with Cloudflare workers</title><link href="https://blog.bitgate.cz/send-email-at-scale-for-free-with-cloudflare-workers/" rel="alternate" type="text/html" title="Send email at scale for free with Cloudflare workers" /><published>2022-11-30T00:00:00+00:00</published><updated>2022-11-30T00:00:00+00:00</updated><id>https://blog.bitgate.cz/send-email-at-scale-for-free-with-cloudflare-workers</id><content type="html" xml:base="https://blog.bitgate.cz/send-email-at-scale-for-free-with-cloudflare-workers/"><![CDATA[<p>I was looking for a cheap/free way to send email for a hobby project.
 At first I turned to Amazon SES, but after I tried to enable production access and received an extremely generic rejection, I got discouraged and put the project on hold.
 Recently I discovered an interesting way to <a href="https://blog.cloudflare.com/sending-email-from-workers-with-mailchannels/">send email for free using Cloudflare workers and MailChannels API</a>.</p>
 
@@ -1397,93 +1516,4 @@ I find writing in Markdown very convenient, the site is fast <del>(landing page 
 GitLab unfortunately does not provide any access logs for pages, and I’m not going to ruin a static site with a JS tracking script.
 A tracking pixel would work but still need to be hosted somewhere.</p>
 
-<p><em>Update: I got around to setting up a <a href="/static-site-analytics-with-nginx-goaccess-no-js" target="_blank">GoAccess tracking pixel</a>.</em></p>]]></content><author><name>daniel</name></author><category term="frontend" /><category term="devops" /><summary type="html"><![CDATA[Update 2022-07-13: This post is about a previous version of this site. The current version is generated with Jekyll using a custom GitHub action and hosted on GitHub pages.]]></summary></entry><entry><title type="html">Getting rid of Redux / apollo-link-rest with Next.js</title><link href="https://blog.bitgate.cz/bye-redux-hello-apollo-link-rest/" rel="alternate" type="text/html" title="Getting rid of Redux / apollo-link-rest with Next.js" /><published>2020-03-26T00:00:00+00:00</published><updated>2020-03-26T00:00:00+00:00</updated><id>https://blog.bitgate.cz/bye-redux-hello-apollo-link-rest</id><content type="html" xml:base="https://blog.bitgate.cz/bye-redux-hello-apollo-link-rest/"><![CDATA[<p><strong>TL;DR</strong> I ditched Redux in favor of Apollo. This is how I set up <code class="language-plaintext highlighter-rouge">apollo-link-rest</code>.</p>
-
-<p>Having worked with a Next.js setup with Apollo, Redux and a ton of other libraries recently, I grew somewhat impatient with the seconds-long hot-reload build times, minutes-long production builds and a 500 MB+ Docker context.
-So, while setting up a frontend stack for a work project recently, my #1 aim was to make it as light-weight as possible.
-This led me to reconsider every dependency in my setup.</p>
-
-<p>Now Redux is not a great example of a bloated library, with its 348 KB including all dependencies.
-But it does add complexity when mixed together with Apollo and SSR.
-I reviewed what I actually used Redux for in my last project and decided to cut it.</p>
-
-<h2 id="redux-use-cases">Redux use cases</h2>
-
-<p>I found that I had these two use-cases for Redux:</p>
-
-<ul>
-  <li>managing global state</li>
-  <li>separating async logic into thunks</li>
-</ul>
-
-<p>For global state, Apollo was an obvious choice.
-Apollo supports client-side state management out of the box since Apollo Client 2.5.
-At first I found using queries and mutations to manage state somewhat cumbersome, but it’s not too too bad and there are bright sides as well: no actions, resolvers instead of reducers, being able to query local state in the same query as remote data.
-And from my (brief) experience, there is only so much global state to manage anyways.
-Authentication, global notifications, and… that’s it?
-Most of the time I try to keep state in components.</p>
-
-<p>As for async logic - most of my thunks did not need access to Redux store anyway and could therefore be replaced with async event handlers.
-A custom hook will take care of the rest.</p>
-
-<h2 id="handling-rest-requests">Handling REST requests</h2>
-
-<p>I decided to give <code class="language-plaintext highlighter-rouge">apollo-link-rest</code> a try, since I had Apollo already set up.
-<code class="language-plaintext highlighter-rouge">Apollo-link-rest</code> allows you to write GraphQL queries against REST endpoints.
-Because it’s an Apollo link, there is no need for separate error and authorization handling in addition to your GraphQL queries — <code class="language-plaintext highlighter-rouge">apollo-link-error</code> and <code class="language-plaintext highlighter-rouge">apollo-link-context</code> work for both GraphQL and <code class="language-plaintext highlighter-rouge">apollo-link-rest</code> requests.</p>
-
-<h2 id="setting-up-apollo-link-rest">Setting up <code class="language-plaintext highlighter-rouge">apollo-link-rest</code></h2>
-
-<p>The setup is as simple as creating a <code class="language-plaintext highlighter-rouge">RestLink</code> and adding it to you Apollo client.
-I’m using Next.js <code class="language-plaintext highlighter-rouge">^9.3.1</code> with <code class="language-plaintext highlighter-rouge">@apollo/client ^3.0.0-beta</code>.
-This is my <code class="language-plaintext highlighter-rouge">createApolloClient</code> function based on the <a href="https://github.com/zeit/next.js/tree/canary/examples/with-apollo" target="_blank">with-apollo</a> example by Next:</p>
-
-<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span> <span class="nx">RestLink</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">apollo-link-rest</span><span class="dl">'</span>
-
-<span class="c1">// …</span>
-
-<span class="kd">const</span> <span class="nx">restLink</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">RestLink</span><span class="p">({</span>
-  <span class="na">uri</span><span class="p">:</span> <span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">REST_URL</span><span class="p">,</span>
-<span class="p">})</span>
-
-<span class="c1">// …</span>
-
-<span class="k">return</span> <span class="k">new</span> <span class="nx">ApolloClient</span><span class="p">({</span>
-  <span class="na">ssrMode</span><span class="p">:</span> <span class="nb">Boolean</span><span class="p">(</span><span class="nx">ctx</span><span class="p">),</span>
-  <span class="na">link</span><span class="p">:</span> <span class="nx">ApolloLink</span><span class="p">.</span><span class="k">from</span><span class="p">([</span><span class="nx">authLink</span><span class="p">,</span> <span class="nx">errorLink</span><span class="p">,</span> <span class="nx">restLink</span><span class="p">,</span> <span class="nx">graphqlLink</span><span class="p">]),</span>
-  <span class="nx">cache</span><span class="p">,</span>
-  <span class="nx">typeDefs</span><span class="p">,</span>
-  <span class="na">resolvers</span><span class="p">:</span> <span class="p">{},</span>
-<span class="p">})</span>
-</code></pre></div></div>
-
-<p>This is the example Next.js + Apollo setup with an extra <code class="language-plaintext highlighter-rouge">authLink</code> and <code class="language-plaintext highlighter-rouge">errorLink</code>, and <code class="language-plaintext highlighter-rouge">typeDefs</code> and <code class="language-plaintext highlighter-rouge">resolvers</code> for local state management.</p>
-
-<p>Beware of ordering of the links — <code class="language-plaintext highlighter-rouge">HttpLink</code> eats everything thrown at it and therefore needs to be last in the list.
-We want to have <code class="language-plaintext highlighter-rouge">AuthLink</code> and <code class="language-plaintext highlighter-rouge">ErrorLink</code> applied to the other two, so they go first.</p>
-
-<p>Aaaand it just works! Great.</p>
-
-<p><img src="/assets/images/headers.png" alt="Screenshot of ReferenceError: Headers is not defined" /></p>
-
-<p>Turns out SSR can reliably break just about anything at all.
-<code class="language-plaintext highlighter-rouge">Apollo-link-rest</code> is apparently <a href="https://github.com/apollographql/apollo-link-rest/issues/182#issuecomment-453181542" target="_blank">not intended</a> for SSR use and relies on the browser <a href="https://developer.mozilla.org/en-US/docs/Web/API/Headers">Headers API</a> which is missing in our Node.js environment.
-Let’s use <code class="language-plaintext highlighter-rouge">Header</code> from <code class="language-plaintext highlighter-rouge">node-fetch</code> as a polyfill: <code class="language-plaintext highlighter-rouge">yarn add node-fetch</code></p>
-
-<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// polyfill Headers API server-side for apollo-link-rest</span>
-<span class="c1">// https://github.com/apollographql/apollo-link-rest/issues/182#issuecomment-453209304</span>
-<span class="k">if</span> <span class="p">((</span><span class="nb">global</span> <span class="k">as</span> <span class="kr">any</span><span class="p">).</span><span class="nx">Headers</span> <span class="o">===</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
-  <span class="c1">// eslint-disable-next-line @typescript-eslint/no-var-requires</span>
-  <span class="kd">const</span> <span class="nx">fetch</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">node-fetch</span><span class="dl">'</span><span class="p">)</span>
-  <span class="p">;(</span><span class="nb">global</span> <span class="k">as</span> <span class="kr">any</span><span class="p">).</span><span class="nx">Headers</span> <span class="o">=</span> <span class="nx">fetch</span><span class="p">.</span><span class="nx">Headers</span>
-<span class="p">}</span>
-</code></pre></div></div>
-
-<p>And there we have it 🥳 We can now do this:</p>
-
-<pre><code class="language-gql">query TestRestQuery {
-  healthcheck @rest(type: "Healthcheck", path: "/healthcheck") {
-    status
-  }
-}
-</code></pre>]]></content><author><name>daniel</name></author><category term="frontend" /><summary type="html"><![CDATA[TL;DR I ditched Redux in favor of Apollo. This is how I set up apollo-link-rest.]]></summary></entry></feed>
+<p><em>Update: I got around to setting up a <a href="/static-site-analytics-with-nginx-goaccess-no-js" target="_blank">GoAccess tracking pixel</a>.</em></p>]]></content><author><name>daniel</name></author><category term="frontend" /><category term="devops" /><summary type="html"><![CDATA[Update 2022-07-13: This post is about a previous version of this site. The current version is generated with Jekyll using a custom GitHub action and hosted on GitHub pages.]]></summary></entry></feed>
