@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="./world.js"></script>
+  <style>
+    body { margin: 0 }
+    #world { background: #eee; position: relative; top: -7px }
+    .hex { width: 13px }
+    .hex.even { position: relative; top: 7px }
+    .hex::before { content: '\2B23'; color: #fff; position: relative; left: -2px }
+    .hex.alive::before { color: #333 }
+    .row { display: flex; line-height: 14px }
+  </style>
+</head>
+<body>
+  <div id="world"></div>
+  <button id="start-stop">Start</button>
+  <button id="randomize">Randomize</button>
+  generation <span id="gen">0</span>
+</body>
+</html>
