@@ -56,7 +56,7 @@ function createWorld() {
 
     for (let x = 0; x < columns; x++) {
       let cell = document.createElement('div')
-      cell.classList.add('hex', 'dead')
+      cell.classList.add('hex')
       cell.classList.toggle('even', x % 2 === 0)
       cell.id = `${x},${y}`
       cell.addEventListener('click', handleClickCell)
@@ -116,13 +116,7 @@ function updateWorld() {
   for (y in currentGen) {
     for (x in currentGen[y]) {
       const cell = document.getElementById(`${x},${y}`)
-      if (currentGen[y][x] === 0) {
-        cell.classList.remove('alive')
-        cell.classList.add('dead')
-      } else {
-        cell.classList.remove('dead')
-        cell.classList.add('alive')
-      }
+      cell.classList.toggle('alive', currentGen[y][x] !== 0)
     }
   }
 }
@@ -167,16 +161,14 @@ function handleRandomize() {
 
 function handleClickCell(event) {
   const cell = event.target
-  const [row, column] = cell.id.split(',').map(Number)
+  const [x, y] = cell.id.split(',').map(Number)
 
   if (cell.classList.contains('alive')) {
     cell.classList.remove('alive')
-    cell.classList.add('dead')
-    currentGen[row][column] = 0
+    currentGen[y][x] = 0
   } else {
-    cell.classList.remove('dead')
     cell.classList.add('alive')
-    currentGen[row][column] = 1
+    currentGen[y][x] = 1
   }
 }
 

@@ -3,13 +3,35 @@
 <head>
   <script src="./world.js"></script>
   <style>
-    body { margin: 0 }
-    #world { background: #eee; position: relative; top: -7px }
-    .hex { width: 13px }
-    .hex.even { position: relative; top: 7px }
-    .hex::before { content: '\2B23'; color: #fff; position: relative; left: -2px }
-    .hex.alive::before { color: #333 }
-    .row { display: flex; line-height: 14px }
+    body { margin: 0; margin: 20px }
+    #world { background: #efefef; position: relative; top: -10px }
+    .hex.even { position: relative; top: 10px }
+    .hex:before {
+      content: '';
+      display: block;
+      width: 10px;
+      height: 17.3px;
+      background: inherit;
+      rotate: 60deg;
+    }
+    .hex {
+      width: 10px;
+      height: 17.3px;
+      margin-right: 6px;
+      background: #fff;
+    }
+    .hex:after {
+      content: "";
+      display: block;
+      position: relative;
+      top: -17.3px;
+      width: 10px;
+      height: 17.3px;
+      background: inherit;
+      rotate: -60deg;
+    }
+    .hex.alive { background: #333 }
+    .row { display: flex; height: 19px }
   </style>
 </head>
 <body>
