@@ -3,16 +3,17 @@
 <head>
   <script src="./world.js"></script>
   <style>
-    body { margin: 0; margin: 20px }
-    #world { background: #efefef; position: relative; top: -10px }
-    .hex.even { position: relative; top: 10px }
+    body { margin: 0; display: flex }
+    #world { background: #efefef; position: fixed; top: -10px; width: 100vw; height: 100vw }
+    .row { display: flex; height: 19px }
+    .hex.even { position: relative; top: 9.5px }
     .hex:before {
       content: '';
       display: block;
       width: 10px;
       height: 17.3px;
-      background: inherit;
       rotate: 60deg;
+      background: inherit;
     }
     .hex {
       width: 10px;
@@ -21,23 +22,19 @@
       background: #fff;
     }
     .hex:after {
-      content: "";
+      content: '';
       display: block;
       position: relative;
       top: -17.3px;
       width: 10px;
       height: 17.3px;
-      background: inherit;
       rotate: -60deg;
+      background: inherit;
     }
-    .hex.alive { background: #333 }
-    .row { display: flex; height: 19px }
+    .hex.alive { background: #eee }
   </style>
 </head>
 <body>
   <div id="world"></div>
-  <button id="start-stop">Start</button>
-  <button id="randomize">Randomize</button>
-  generation <span id="gen">0</span>
 </body>
 </html>
