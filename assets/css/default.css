@@ -77,8 +77,15 @@ layout: null
 
   @media screen(lg) {
     .golden {
-      @apply max-w-[930px];
       margin: 0 auto;
+    }
+
+    .w-901 {
+      max-width: 901px;
+    }
+
+    .w-930 {
+      max-width: 930px;
     }
   }
 

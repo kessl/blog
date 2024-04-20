@@ -15,22 +15,21 @@
   <body>
     {% include themeToggle.html %}
 
-    <div class="overflow-x-hidden">
-      <div class="golden bg-grid">
-        {% include navigation.html %}
-        <main class="mt-30 md:mt-60 max-w-none {% if page.prose %}prose{% endif %}">
-          {{ content }}
-        </main>
-        {% if page.footer == true or layout.footer == true %}
-          {% include footer.html %}
-        {% endif %}
-      </div>
-    </div>
-
-    <script>{% include theme.js %}</script>
     {% unless page.skip_world %}
       <div id="world"></div>
       <script src="/assets/world.js"></script>
     {% endunless %}
+
+    <div class="golden bg-grid relative z-10 {% if page.skip_world %}w-930{% else %}w-901{% endif %}">
+      {% include navigation.html %}
+      <main class="mt-30 md:mt-60 max-w-none {% if page.prose %}prose{% endif %}">
+        {{ content }}
+      </main>
+      {% if page.footer == true or layout.footer == true %}
+        {% include footer.html %}
+      {% endif %}
+    </div>
+
+    <script>{% include theme.js %}</script>
   </body>
 </html>
