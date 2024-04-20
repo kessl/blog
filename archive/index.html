@@ -2,9 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <link rel="stylesheet" href="/assets/css/default.css?1713610574812073381">
+    <link rel="stylesheet" href="/assets/css/default.css?1713614182960859851">
     <link rel="stylesheet" href="/assets/css/fonts.css">
     <link rel="stylesheet" href="/assets/css/monokai.css">
+    <link rel="stylesheet" href="/assets/css/world.css">
     <link rel="icon" href="/assets/favicon.png" type="image/png">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Post archive &middot; bitgate</title>
@@ -27,14 +28,22 @@
 
   </head>
   <body>
-    <button id="theme-toggle" class="hidden sm:block absolute top-30 right-30 border-none rounded-sm -mx-[5px] px-[5px] hover:bg-dark/10 dark:hover:bg-light/10">
+    <button id="theme-toggle" class="hidden sm:block absolute z-10 top-30 right-30 border-none rounded-sm -mx-[5px] px-[5px] hover:bg-dark/10 dark:hover:bg-light/10">
   <span class="hidden dark:inline" title="switch to light theme">☀</span>
   <span class="dark:hidden" title="switch to dark theme">☽</span>
 </button>
 
-    <div class="overflow-x-hidden">
-      <div class="golden bg-grid">
-        <nav class="flex justify-center space-x-30 sm:space-x-60 underline">
+    
+  <button id="start-stop" title="start/pause simulation" class="hidden sm:block absolute z-10 bottom-30 right-30 border-none rounded-sm -mx-[5px] px-[5px] hover:bg-dark/10 dark:hover:bg-light/10">
+    &#x23F5;
+  </button>
+  <div id="world"></div>
+  <script src="/assets/world.js"></script>
+
+
+
+    <div class="golden bg-grid relative z-10 w-901">
+      <nav class="flex justify-center space-x-30 sm:space-x-60 underline">
   
     <a href="/">/</a>
   
@@ -46,8 +55,8 @@
   
 </nav>
 
-        <main class="mt-30 md:mt-60 max-w-none ">
-          <div class="prose">
+      <main class="mt-30 md:mt-60 max-w-none ">
+        <div class="prose">
   <p>all posts since the beginning of time here</p>
   <h1>Post archive</h1>
 </div>
@@ -194,12 +203,11 @@
   
 </ul>
 
-        </main>
-        
-      </div>
+      </main>
+      
     </div>
-    <script>
-      function applyTheme(theme) {
+
+    <script>function applyTheme(theme) {
   document.documentElement.classList.toggle('dark', theme === 'dark')
 }
 
@@ -213,7 +221,6 @@ document.getElementById('theme-toggle').addEventListener('click', function() {
   localStorage.theme = newTheme
   applyTheme(newTheme)
 })
-
-    </script>
+</script>
   </body>
 </html>
