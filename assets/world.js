@@ -17,6 +17,7 @@ const evenRowNeighborCoords = [[0, -1], [-1, 0], [0, 1], [1, -1], [1, 0], [1, 1]
 //          (1, 0)
 const oddRowNeighborCoords = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [1, 0], [0, 1]]
 
+let running = false
 let lastFrameTime = 0
 
 const hoverBuffer = []
@@ -30,6 +31,8 @@ function flushHoverBuffer() {
 }
 
 function handleMouseoverCell(event) {
+  if (!running) return
+
   const cell = event.target
   const [x, y] = cell.id.split(',').map(Number)
 
@@ -72,6 +75,23 @@ function createWorld() {
     }
     world.appendChild(row)
   }
+
+  const startStopButton = document.querySelector('#start-stop')
+  startStopButton.addEventListener('click', startStop)
+}
+
+function positionWorld() {
+  const world = document.querySelector('#world')
+
+  function resizeWorld() {
+    const scaleX =  window.innerWidth / (world.offsetWidth - 15)
+    const scaleY = window.innerHeight / (world.offsetHeight - 15)
+    const scale = Math.max(scaleX, scaleY)
+    world.style.transform = `scale(${scale})`
+  }
+
+  resizeWorld()
+  window.addEventListener('resize', resizeWorld)
 }
 
 function createNextGen() {
@@ -128,21 +148,9 @@ function updateWorld() {
   }
 }
 
-function positionWorld() {
-  const world = document.querySelector('#world')
-
-  function resizeWorld() {
-    const scaleX =  window.innerWidth / (world.offsetWidth - 15)
-    const scaleY = window.innerHeight / (world.offsetHeight - 15)
-    const scale = Math.max(scaleX, scaleY)
-    world.style.transform = `scale(${scale})`
-  }
-
-  resizeWorld()
-  window.addEventListener('resize', resizeWorld)
-}
-
 function simulate(timestamp) {
+  if (!running) return
+
   const deltaTime = timestamp - lastFrameTime
   if (deltaTime > 100) {
     createNextGen()
@@ -153,9 +161,19 @@ function simulate(timestamp) {
   requestAnimationFrame(simulate)
 }
 
+function startStop() {
+  running = !running
+  if (running) simulate()
+
+  const startStopButton = document.querySelector('#start-stop')
+  startStopButton.innerHTML = running ? '&#x23F8;' : '&#x23F5;'
+}
+
 window.onload = function () {
-  createWorld()
   createGenArrays()
+  createWorld()
   positionWorld()
-  simulate()
+
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+  startStop()
 }

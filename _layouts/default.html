@@ -14,11 +14,7 @@
   </head>
   <body>
     {% include themeToggle.html %}
-
-    {% unless page.skip_world %}
-      <div id="world"></div>
-      <script src="/assets/world.js"></script>
-    {% endunless %}
+    {% include game.html %}
 
     <div class="golden bg-grid relative z-10 {% if page.skip_world %}w-930{% else %}w-901{% endif %}">
       {% include navigation.html %}
