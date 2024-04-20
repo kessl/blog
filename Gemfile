@@ -4,7 +4,7 @@ source "https://rubygems.org"
 
 git_source(:github) { |repo_name| "https://github.com/#{repo_name}" }
 
-gem "jekyll"
+gem 'jekyll', '~> 4.3'
 
 group :jekyll_plugins do
   gem 'jekyll-postcss'
@@ -13,4 +13,4 @@ group :jekyll_plugins do
   gem 'jekyll-seo-tag'
 end
 
-gem "webrick", "~> 1.7"
+gem 'webrick', '~> 1.8'
