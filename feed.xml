@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="https://blog.bitgate.cz/feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.bitgate.cz/" rel="alternate" type="text/html" /><updated>2024-04-14T20:56:24+00:00</updated><id>https://blog.bitgate.cz/feed.xml</id><subtitle>Daniel's random thoughts mostly related to software engineering</subtitle><author><name>Daniel Kessl</name></author><entry><title type="html">GPT in terminal</title><link href="https://blog.bitgate.cz/terminal-gpt/" rel="alternate" type="text/html" title="GPT in terminal" /><published>2023-03-29T00:00:00+00:00</published><updated>2023-03-29T00:00:00+00:00</updated><id>https://blog.bitgate.cz/terminal-gpt</id><content type="html" xml:base="https://blog.bitgate.cz/terminal-gpt/"><![CDATA[<p>One application of GPT I found useful in software development is generating and manipulating structured data with vague instructions.</p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.3">Jekyll</generator><link href="https://blog.bitgate.cz/feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.bitgate.cz/" rel="alternate" type="text/html" /><updated>2024-04-20T10:56:14+00:00</updated><id>https://blog.bitgate.cz/feed.xml</id><subtitle>Daniel&apos;s random thoughts mostly related to software engineering</subtitle><author><name>Daniel Kessl</name></author><entry><title type="html">GPT in terminal</title><link href="https://blog.bitgate.cz/terminal-gpt/" rel="alternate" type="text/html" title="GPT in terminal" /><published>2023-03-29T00:00:00+00:00</published><updated>2023-03-29T00:00:00+00:00</updated><id>https://blog.bitgate.cz/terminal-gpt</id><content type="html" xml:base="https://blog.bitgate.cz/terminal-gpt/"><![CDATA[<p>One application of GPT I found useful in software development is generating and manipulating structured data with vague instructions.</p>
 
 <p>For example: generate test fixtures</p>
 
@@ -131,17 +131,17 @@ No accounts other than Cloudflare are needed.</p>
 Deploy it and configure <code class="language-plaintext highlighter-rouge">TOKEN</code> and optionally <code class="language-plaintext highlighter-rouge">DKIM_PRIVATE_KEY</code> (see below) in worker settings.</p>
 
 <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">export</span> <span class="k">default</span> <span class="p">{</span>
-  <span class="k">async</span> <span class="nx">fetch</span><span class="p">(</span><span class="nx">request</span><span class="p">,</span> <span class="nx">env</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="nx">request</span><span class="p">.</span><span class="nx">method</span> <span class="o">!==</span> <span class="dl">'</span><span class="s1">POST</span><span class="dl">'</span><span class="p">)</span> <span class="p">{</span>
-      <span class="k">return</span> <span class="k">new</span> <span class="nx">Response</span><span class="p">(</span><span class="dl">'</span><span class="s1">Method not supported</span><span class="dl">'</span><span class="p">,</span> <span class="p">{</span> <span class="na">status</span><span class="p">:</span> <span class="mi">405</span> <span class="p">})</span>
+  <span class="k">async</span> <span class="nf">fetch</span><span class="p">(</span><span class="nx">request</span><span class="p">,</span> <span class="nx">env</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if </span><span class="p">(</span><span class="nx">request</span><span class="p">.</span><span class="nx">method</span> <span class="o">!==</span> <span class="dl">'</span><span class="s1">POST</span><span class="dl">'</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="k">new</span> <span class="nc">Response</span><span class="p">(</span><span class="dl">'</span><span class="s1">Method not supported</span><span class="dl">'</span><span class="p">,</span> <span class="p">{</span> <span class="na">status</span><span class="p">:</span> <span class="mi">405</span> <span class="p">})</span>
     <span class="p">}</span>
 
-    <span class="kd">const</span> <span class="nx">token</span> <span class="o">=</span> <span class="nx">request</span><span class="p">.</span><span class="nx">headers</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="dl">'</span><span class="s1">Authorization</span><span class="dl">'</span><span class="p">)?.</span><span class="nx">replace</span><span class="p">(</span><span class="dl">'</span><span class="s1">Bearer </span><span class="dl">'</span><span class="p">,</span> <span class="dl">''</span><span class="p">)</span>
-    <span class="k">if</span> <span class="p">(</span><span class="nx">token</span> <span class="o">!==</span> <span class="nx">env</span><span class="p">.</span><span class="nx">TOKEN</span><span class="p">)</span> <span class="p">{</span>
-      <span class="k">return</span> <span class="k">new</span> <span class="nx">Response</span><span class="p">(</span><span class="dl">'</span><span class="s1">Unauthorized</span><span class="dl">'</span><span class="p">,</span> <span class="p">{</span> <span class="na">status</span><span class="p">:</span> <span class="mi">403</span> <span class="p">})</span>
+    <span class="kd">const</span> <span class="nx">token</span> <span class="o">=</span> <span class="nx">request</span><span class="p">.</span><span class="nx">headers</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="dl">'</span><span class="s1">Authorization</span><span class="dl">'</span><span class="p">)?.</span><span class="nf">replace</span><span class="p">(</span><span class="dl">'</span><span class="s1">Bearer </span><span class="dl">'</span><span class="p">,</span> <span class="dl">''</span><span class="p">)</span>
+    <span class="k">if </span><span class="p">(</span><span class="nx">token</span> <span class="o">!==</span> <span class="nx">env</span><span class="p">.</span><span class="nx">TOKEN</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="k">new</span> <span class="nc">Response</span><span class="p">(</span><span class="dl">'</span><span class="s1">Unauthorized</span><span class="dl">'</span><span class="p">,</span> <span class="p">{</span> <span class="na">status</span><span class="p">:</span> <span class="mi">403</span> <span class="p">})</span>
     <span class="p">}</span>
 
-    <span class="kd">const</span> <span class="nx">body</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">request</span><span class="p">.</span><span class="nx">json</span><span class="p">()</span>
+    <span class="kd">const</span> <span class="nx">body</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">request</span><span class="p">.</span><span class="nf">json</span><span class="p">()</span>
     <span class="kd">const</span> <span class="nx">email_body</span> <span class="o">=</span> <span class="p">{</span>
       <span class="na">personalizations</span><span class="p">:</span> <span class="p">[{</span>
         <span class="na">to</span><span class="p">:</span> <span class="nx">body</span><span class="p">.</span><span class="nx">to</span><span class="p">,</span>
@@ -157,13 +157,13 @@ Deploy it and configure <code class="language-plaintext highlighter-rouge">TOKEN
       <span class="c1">// },</span>
     <span class="p">}</span>
 
-    <span class="kd">const</span> <span class="nx">email_request</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Request</span><span class="p">(</span><span class="dl">'</span><span class="s1">https://api.mailchannels.net/tx/v1/send</span><span class="dl">'</span><span class="p">,</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="nx">email_request</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Request</span><span class="p">(</span><span class="dl">'</span><span class="s1">https://api.mailchannels.net/tx/v1/send</span><span class="dl">'</span><span class="p">,</span> <span class="p">{</span>
       <span class="na">method</span><span class="p">:</span> <span class="dl">'</span><span class="s1">POST</span><span class="dl">'</span><span class="p">,</span>
       <span class="na">headers</span><span class="p">:</span> <span class="p">{</span> <span class="dl">'</span><span class="s1">Content-Type</span><span class="dl">'</span><span class="p">:</span> <span class="dl">'</span><span class="s1">application/json</span><span class="dl">'</span> <span class="p">},</span>
-      <span class="na">body</span><span class="p">:</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">email_body</span><span class="p">),</span>
+      <span class="na">body</span><span class="p">:</span> <span class="nx">JSON</span><span class="p">.</span><span class="nf">stringify</span><span class="p">(</span><span class="nx">email_body</span><span class="p">),</span>
     <span class="p">})</span>
-    <span class="kd">const</span> <span class="nx">res</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">fetch</span><span class="p">(</span><span class="nx">email_request</span><span class="p">)</span>
-    <span class="k">return</span> <span class="k">new</span> <span class="nx">Response</span><span class="p">(</span><span class="s2">`</span><span class="p">${</span><span class="nx">res</span><span class="p">.</span><span class="nx">status</span><span class="p">}</span><span class="s2"> </span><span class="p">${</span><span class="nx">res</span><span class="p">.</span><span class="nx">statusText</span><span class="p">}</span><span class="s2">`</span><span class="p">,</span> <span class="p">{</span> <span class="na">status</span><span class="p">:</span> <span class="nx">res</span><span class="p">.</span><span class="nx">status</span> <span class="p">})</span>
+    <span class="kd">const</span> <span class="nx">res</span> <span class="o">=</span> <span class="k">await</span> <span class="nf">fetch</span><span class="p">(</span><span class="nx">email_request</span><span class="p">)</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="nc">Response</span><span class="p">(</span><span class="s2">`</span><span class="p">${</span><span class="nx">res</span><span class="p">.</span><span class="nx">status</span><span class="p">}</span><span class="s2"> </span><span class="p">${</span><span class="nx">res</span><span class="p">.</span><span class="nx">statusText</span><span class="p">}</span><span class="s2">`</span><span class="p">,</span> <span class="p">{</span> <span class="na">status</span><span class="p">:</span> <span class="nx">res</span><span class="p">.</span><span class="nx">status</span> <span class="p">})</span>
   <span class="p">},</span>
 <span class="p">}</span>
 </code></pre></div></div>
@@ -833,10 +833,10 @@ See the <a href="https://github.com/kessl/static-pixel-tracking" target="_blank"
 <span class="kd">const</span> <span class="nx">PIXEL_URL</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">https://t.bitgate.cz/cat.gif?u=</span><span class="dl">'</span>
 
 <span class="k">export</span> <span class="kd">const</span> <span class="nx">Pixel</span><span class="p">:</span> <span class="nx">React</span><span class="p">.</span><span class="nx">FC</span> <span class="o">=</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
-  <span class="kd">const</span> <span class="nx">router</span> <span class="o">=</span> <span class="nx">useRouter</span><span class="p">()</span>
-  <span class="kd">const</span> <span class="nx">currentUrl</span> <span class="o">=</span> <span class="nb">encodeURIComponent</span><span class="p">(</span><span class="s2">`</span><span class="p">${</span><span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">NEXT_PUBLIC_BASE_URL</span><span class="p">}${</span><span class="nx">router</span><span class="p">.</span><span class="nx">asPath</span><span class="p">}</span><span class="s2">`</span><span class="p">)</span>
+  <span class="kd">const</span> <span class="nx">router</span> <span class="o">=</span> <span class="nf">useRouter</span><span class="p">()</span>
+  <span class="kd">const</span> <span class="nx">currentUrl</span> <span class="o">=</span> <span class="nf">encodeURIComponent</span><span class="p">(</span><span class="s2">`</span><span class="p">${</span><span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">NEXT_PUBLIC_BASE_URL</span><span class="p">}${</span><span class="nx">router</span><span class="p">.</span><span class="nx">asPath</span><span class="p">}</span><span class="s2">`</span><span class="p">)</span>
 
-  <span class="k">return</span> <span class="p">(</span>
+  <span class="k">return </span><span class="p">(</span>
     <span class="p">&lt;</span><span class="nt">img</span>
       <span class="na">src</span><span class="p">=</span><span class="si">{</span><span class="s2">`</span><span class="p">${</span><span class="nx">PIXEL_URL</span><span class="p">}${</span><span class="nx">currentUrl</span><span class="p">}</span><span class="s2">`</span><span class="si">}</span>
       <span class="na">decoding</span><span class="p">=</span><span class="s">"async"</span>
@@ -1368,7 +1368,7 @@ Every script will then need to have the nonce.</p>
 <span class="k">import</span> <span class="nx">helmet</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">helmet</span><span class="dl">'</span>
 <span class="k">import</span> <span class="p">{</span> <span class="nx">v4</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">uuid</span><span class="dl">'</span>
 
-<span class="kd">const</span> <span class="nx">server</span> <span class="o">=</span> <span class="nx">express</span><span class="p">()</span>
+<span class="kd">const</span> <span class="nx">server</span> <span class="o">=</span> <span class="nf">express</span><span class="p">()</span>
 
 <span class="kd">const</span> <span class="nx">options</span> <span class="o">=</span> <span class="p">{</span>
   <span class="na">directives</span><span class="p">:</span> <span class="p">{</span>
@@ -1379,9 +1379,9 @@ Every script will then need to have the nonce.</p>
 <span class="p">}</span>
 
 <span class="c1">// generate a nonce on every request and save it</span>
-<span class="nx">server</span><span class="p">.</span><span class="nx">use</span><span class="p">((</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
-  <span class="nx">res</span><span class="p">.</span><span class="nx">locals</span><span class="p">.</span><span class="nx">nonce</span> <span class="o">=</span> <span class="nx">v4</span><span class="p">()</span>
-  <span class="nx">helmet</span><span class="p">.</span><span class="nx">contentSecurityPolicy</span><span class="p">(</span><span class="nx">options</span><span class="p">)(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span>
+<span class="nx">server</span><span class="p">.</span><span class="nf">use</span><span class="p">((</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">res</span><span class="p">.</span><span class="nx">locals</span><span class="p">.</span><span class="nx">nonce</span> <span class="o">=</span> <span class="nf">v4</span><span class="p">()</span>
+  <span class="nx">helmet</span><span class="p">.</span><span class="nf">contentSecurityPolicy</span><span class="p">(</span><span class="nx">options</span><span class="p">)(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span>
 <span class="p">})</span>
 </code></pre></div></div>
 
@@ -1403,16 +1403,16 @@ Let’s create a custom <code class="language-plaintext highlighter-rouge">Docum
   <span class="nx">nonce</span><span class="p">?:</span> <span class="nx">string</span>
 <span class="p">}</span>
 
-<span class="kd">class</span> <span class="nx">CustomDocument</span> <span class="kd">extends</span> <span class="nx">Document</span><span class="o">&lt;</span><span class="nx">CustomDocumentProps</span><span class="o">&gt;</span> <span class="p">{</span>
-  <span class="kd">static</span> <span class="k">async</span> <span class="nx">getInitialProps</span><span class="p">(</span><span class="na">ctx</span><span class="p">:</span> <span class="nx">DocumentContext</span><span class="p">)</span> <span class="p">{</span>
+<span class="kd">class</span> <span class="nc">CustomDocument</span> <span class="kd">extends</span> <span class="nc">Document</span><span class="o">&lt;</span><span class="nx">CustomDocumentProps</span><span class="o">&gt;</span> <span class="p">{</span>
+  <span class="kd">static</span> <span class="k">async</span> <span class="nf">getInitialProps</span><span class="p">(</span><span class="na">ctx</span><span class="p">:</span> <span class="nx">DocumentContext</span><span class="p">)</span> <span class="p">{</span>
     <span class="c1">// get the nonce from res.locals.nonce</span>
     <span class="kd">const</span> <span class="nx">nonce</span> <span class="o">=</span> <span class="p">(</span><span class="nx">ctx</span><span class="p">.</span><span class="nx">res</span> <span class="k">as</span> <span class="nx">ResponseWithNonce</span><span class="p">).</span><span class="nx">locals</span><span class="p">.</span><span class="nx">nonce</span>
-    <span class="kd">const</span> <span class="nx">initialProps</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">Document</span><span class="p">.</span><span class="nx">getInitialProps</span><span class="p">(</span><span class="nx">ctx</span><span class="p">)</span>
+    <span class="kd">const</span> <span class="nx">initialProps</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">Document</span><span class="p">.</span><span class="nf">getInitialProps</span><span class="p">(</span><span class="nx">ctx</span><span class="p">)</span>
     <span class="k">return</span> <span class="p">{</span> <span class="p">...</span><span class="nx">initialProps</span><span class="p">,</span> <span class="nx">nonce</span> <span class="p">}</span>
   <span class="p">}</span>
 
-  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="p">(</span>
+  <span class="nf">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return </span><span class="p">(</span>
       <span class="p">&lt;</span><span class="nc">Html</span><span class="p">&gt;</span>
         <span class="si">{</span><span class="cm">/* pass it to Next Head */</span><span class="si">}</span>
         <span class="p">&lt;</span><span class="nc">Head</span> <span class="na">nonce</span><span class="p">=</span><span class="si">{</span><span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">nonce</span><span class="si">}</span> <span class="p">/&gt;</span>

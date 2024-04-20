@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <link rel="stylesheet" href="/assets/css/default.css?1713128184511254649">
+    <link rel="stylesheet" href="/assets/css/default.css?1713610574812073381">
     <link rel="stylesheet" href="/assets/css/fonts.css">
     <link rel="stylesheet" href="/assets/css/monokai.css">
     <link rel="icon" href="/assets/favicon.png" type="image/png">
@@ -10,7 +10,7 @@
     <title>Getting rid of Redux / apollo-link-rest with Next.js &middot; bitgate</title>
     <link type="application/atom+xml" rel="alternate" href="https://blog.bitgate.cz/feed.xml" />
     <!-- Begin Jekyll SEO tag v2.8.0 -->
-<meta name="generator" content="Jekyll v4.2.2" />
+<meta name="generator" content="Jekyll v4.3.3" />
 <meta property="og:title" content="Getting rid of Redux / apollo-link-rest with Next.js" />
 <meta name="author" content="daniel" />
 <meta property="og:locale" content="en_US" />
@@ -101,14 +101,14 @@ This is my <code class="language-plaintext highlighter-rouge">createApolloClient
 
 <span class="c1">// …</span>
 
-<span class="kd">const</span> <span class="nx">restLink</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">RestLink</span><span class="p">({</span>
+<span class="kd">const</span> <span class="nx">restLink</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">RestLink</span><span class="p">({</span>
   <span class="na">uri</span><span class="p">:</span> <span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">REST_URL</span><span class="p">,</span>
 <span class="p">})</span>
 
 <span class="c1">// …</span>
 
-<span class="k">return</span> <span class="k">new</span> <span class="nx">ApolloClient</span><span class="p">({</span>
-  <span class="na">ssrMode</span><span class="p">:</span> <span class="nb">Boolean</span><span class="p">(</span><span class="nx">ctx</span><span class="p">),</span>
+<span class="k">return</span> <span class="k">new</span> <span class="nc">ApolloClient</span><span class="p">({</span>
+  <span class="na">ssrMode</span><span class="p">:</span> <span class="nc">Boolean</span><span class="p">(</span><span class="nx">ctx</span><span class="p">),</span>
   <span class="na">link</span><span class="p">:</span> <span class="nx">ApolloLink</span><span class="p">.</span><span class="k">from</span><span class="p">([</span><span class="nx">authLink</span><span class="p">,</span> <span class="nx">errorLink</span><span class="p">,</span> <span class="nx">restLink</span><span class="p">,</span> <span class="nx">graphqlLink</span><span class="p">]),</span>
   <span class="nx">cache</span><span class="p">,</span>
   <span class="nx">typeDefs</span><span class="p">,</span>
@@ -131,9 +131,9 @@ Let’s use <code class="language-plaintext highlighter-rouge">Header</code> fro
 
 <div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// polyfill Headers API server-side for apollo-link-rest</span>
 <span class="c1">// https://github.com/apollographql/apollo-link-rest/issues/182#issuecomment-453209304</span>
-<span class="k">if</span> <span class="p">((</span><span class="nb">global</span> <span class="k">as</span> <span class="kr">any</span><span class="p">).</span><span class="nx">Headers</span> <span class="o">===</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
+<span class="k">if </span><span class="p">((</span><span class="nb">global</span> <span class="k">as</span> <span class="kr">any</span><span class="p">).</span><span class="nx">Headers</span> <span class="o">===</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
   <span class="c1">// eslint-disable-next-line @typescript-eslint/no-var-requires</span>
-  <span class="kd">const</span> <span class="nx">fetch</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">node-fetch</span><span class="dl">'</span><span class="p">)</span>
+  <span class="kd">const</span> <span class="nx">fetch</span> <span class="o">=</span> <span class="nf">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">node-fetch</span><span class="dl">'</span><span class="p">)</span>
   <span class="p">;(</span><span class="nb">global</span> <span class="k">as</span> <span class="kr">any</span><span class="p">).</span><span class="nx">Headers</span> <span class="o">=</span> <span class="nx">fetch</span><span class="p">.</span><span class="nx">Headers</span>
 <span class="p">}</span>
 </code></pre></div></div>
@@ -182,11 +182,5 @@ document.getElementById('theme-toggle').addEventListener('click', function() {
 })
 
     </script>
-    <!-- 
-      <script>
-        !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.async=!0,p.src=s.api_host+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="capture identify alias people.set people.set_once set_config register register_once unregister opt_out_capturing has_opted_out_capturing opt_in_capturing reset isFeatureEnabled onFeatureFlags".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
-        posthog.init('phc_cVJo2tGiiFFbFwb0KJW9ABoI6c4UcPtTBum41wI3Vkp',{api_host:'https://t.bitgate.cz'})
-      </script>
-     -->
   </body>
 </html>

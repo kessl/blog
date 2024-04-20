@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <link rel="stylesheet" href="/assets/css/default.css?1713128184511254649">
+    <link rel="stylesheet" href="/assets/css/default.css?1713610574812073381">
     <link rel="stylesheet" href="/assets/css/fonts.css">
     <link rel="stylesheet" href="/assets/css/monokai.css">
     <link rel="icon" href="/assets/favicon.png" type="image/png">
@@ -10,7 +10,7 @@
     <title>Content Security Policy, inline scripts and Next.js &middot; bitgate</title>
     <link type="application/atom+xml" rel="alternate" href="https://blog.bitgate.cz/feed.xml" />
     <!-- Begin Jekyll SEO tag v2.8.0 -->
-<meta name="generator" content="Jekyll v4.2.2" />
+<meta name="generator" content="Jekyll v4.3.3" />
 <meta property="og:title" content="Content Security Policy, inline scripts and Next.js" />
 <meta name="author" content="daniel" />
 <meta property="og:locale" content="en_US" />
@@ -86,7 +86,7 @@ Every script will then need to have the nonce.</p>
 <span class="k">import</span> <span class="nx">helmet</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">helmet</span><span class="dl">'</span>
 <span class="k">import</span> <span class="p">{</span> <span class="nx">v4</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">uuid</span><span class="dl">'</span>
 
-<span class="kd">const</span> <span class="nx">server</span> <span class="o">=</span> <span class="nx">express</span><span class="p">()</span>
+<span class="kd">const</span> <span class="nx">server</span> <span class="o">=</span> <span class="nf">express</span><span class="p">()</span>
 
 <span class="kd">const</span> <span class="nx">options</span> <span class="o">=</span> <span class="p">{</span>
   <span class="na">directives</span><span class="p">:</span> <span class="p">{</span>
@@ -97,9 +97,9 @@ Every script will then need to have the nonce.</p>
 <span class="p">}</span>
 
 <span class="c1">// generate a nonce on every request and save it</span>
-<span class="nx">server</span><span class="p">.</span><span class="nx">use</span><span class="p">((</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
-  <span class="nx">res</span><span class="p">.</span><span class="nx">locals</span><span class="p">.</span><span class="nx">nonce</span> <span class="o">=</span> <span class="nx">v4</span><span class="p">()</span>
-  <span class="nx">helmet</span><span class="p">.</span><span class="nx">contentSecurityPolicy</span><span class="p">(</span><span class="nx">options</span><span class="p">)(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span>
+<span class="nx">server</span><span class="p">.</span><span class="nf">use</span><span class="p">((</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">res</span><span class="p">.</span><span class="nx">locals</span><span class="p">.</span><span class="nx">nonce</span> <span class="o">=</span> <span class="nf">v4</span><span class="p">()</span>
+  <span class="nx">helmet</span><span class="p">.</span><span class="nf">contentSecurityPolicy</span><span class="p">(</span><span class="nx">options</span><span class="p">)(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span>
 <span class="p">})</span>
 </code></pre></div></div>
 
@@ -121,16 +121,16 @@ Let’s create a custom <code class="language-plaintext highlighter-rouge">Docum
   <span class="nx">nonce</span><span class="p">?:</span> <span class="nx">string</span>
 <span class="p">}</span>
 
-<span class="kd">class</span> <span class="nx">CustomDocument</span> <span class="kd">extends</span> <span class="nx">Document</span><span class="o">&lt;</span><span class="nx">CustomDocumentProps</span><span class="o">&gt;</span> <span class="p">{</span>
-  <span class="kd">static</span> <span class="k">async</span> <span class="nx">getInitialProps</span><span class="p">(</span><span class="na">ctx</span><span class="p">:</span> <span class="nx">DocumentContext</span><span class="p">)</span> <span class="p">{</span>
+<span class="kd">class</span> <span class="nc">CustomDocument</span> <span class="kd">extends</span> <span class="nc">Document</span><span class="o">&lt;</span><span class="nx">CustomDocumentProps</span><span class="o">&gt;</span> <span class="p">{</span>
+  <span class="kd">static</span> <span class="k">async</span> <span class="nf">getInitialProps</span><span class="p">(</span><span class="na">ctx</span><span class="p">:</span> <span class="nx">DocumentContext</span><span class="p">)</span> <span class="p">{</span>
     <span class="c1">// get the nonce from res.locals.nonce</span>
     <span class="kd">const</span> <span class="nx">nonce</span> <span class="o">=</span> <span class="p">(</span><span class="nx">ctx</span><span class="p">.</span><span class="nx">res</span> <span class="k">as</span> <span class="nx">ResponseWithNonce</span><span class="p">).</span><span class="nx">locals</span><span class="p">.</span><span class="nx">nonce</span>
-    <span class="kd">const</span> <span class="nx">initialProps</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">Document</span><span class="p">.</span><span class="nx">getInitialProps</span><span class="p">(</span><span class="nx">ctx</span><span class="p">)</span>
+    <span class="kd">const</span> <span class="nx">initialProps</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">Document</span><span class="p">.</span><span class="nf">getInitialProps</span><span class="p">(</span><span class="nx">ctx</span><span class="p">)</span>
     <span class="k">return</span> <span class="p">{</span> <span class="p">...</span><span class="nx">initialProps</span><span class="p">,</span> <span class="nx">nonce</span> <span class="p">}</span>
   <span class="p">}</span>
 
-  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="p">(</span>
+  <span class="nf">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return </span><span class="p">(</span>
       <span class="p">&lt;</span><span class="nc">Html</span><span class="p">&gt;</span>
         <span class="si">{</span><span class="cm">/* pass it to Next Head */</span><span class="si">}</span>
         <span class="p">&lt;</span><span class="nc">Head</span> <span class="na">nonce</span><span class="p">=</span><span class="si">{</span><span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">nonce</span><span class="si">}</span> <span class="p">/&gt;</span>
@@ -193,11 +193,5 @@ document.getElementById('theme-toggle').addEventListener('click', function() {
 })
 
     </script>
-    <!-- 
-      <script>
-        !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.async=!0,p.src=s.api_host+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="capture identify alias people.set people.set_once set_config register register_once unregister opt_out_capturing has_opted_out_capturing opt_in_capturing reset isFeatureEnabled onFeatureFlags".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
-        posthog.init('phc_cVJo2tGiiFFbFwb0KJW9ABoI6c4UcPtTBum41wI3Vkp',{api_host:'https://t.bitgate.cz'})
-      </script>
-     -->
   </body>
 </html>
