@@ -27,7 +27,6 @@ const nextGen = []
 
 function flushHoverBuffer() {
   hoverBuffer.length = 0
-  console.log('flushed')
 }
 
 function handleMouseoverCell(event) {
@@ -129,6 +128,20 @@ function updateWorld() {
   }
 }
 
+function positionWorld() {
+  const world = document.querySelector('#world')
+
+  function resizeWorld() {
+    const scaleX =  window.innerWidth / (world.offsetWidth - 15)
+    const scaleY = window.innerHeight / (world.offsetHeight - 15)
+    const scale = Math.max(scaleX, scaleY)
+    world.style.transform = `scale(${scale})`
+  }
+
+  resizeWorld()
+  window.addEventListener('resize', resizeWorld)
+}
+
 function simulate(timestamp) {
   const deltaTime = timestamp - lastFrameTime
   if (deltaTime > 100) {
@@ -143,5 +156,6 @@ function simulate(timestamp) {
 window.onload = function () {
   createWorld()
   createGenArrays()
+  positionWorld()
   simulate()
 }
