@@ -5,6 +5,7 @@
     <link rel="stylesheet" href="/assets/css/default.css?{{ site.time | date: '%s%N' }}">
     <link rel="stylesheet" href="/assets/css/fonts.css">
     <link rel="stylesheet" href="/assets/css/monokai.css">
+    <link rel="stylesheet" href="/assets/css/world.css">
     <link rel="icon" href="/assets/favicon.png" type="image/png">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ page.title }} &middot; bitgate</title>
@@ -13,6 +14,7 @@
   </head>
   <body>
     {% include themeToggle.html %}
+
     <div class="overflow-x-hidden">
       <div class="golden bg-grid">
         {% include navigation.html %}
@@ -24,8 +26,11 @@
         {% endif %}
       </div>
     </div>
-    <script>
-      {% include theme.js %}
-    </script>
+
+    <script>{% include theme.js %}</script>
+    {% unless page.skip_world %}
+      <div id="world"></div>
+      <script src="/assets/world.js"></script>
+    {% endunless %}
   </body>
 </html>

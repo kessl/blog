@@ -60,7 +60,7 @@ function createWorld() {
 
   for (let y = 0; y < rows; y++) {
     let row = document.createElement('div')
-    row.classList.add('row')
+    row.classList.add('hex-row')
 
     for (let x = 0; x < columns; x++) {
       let cell = document.createElement('div')

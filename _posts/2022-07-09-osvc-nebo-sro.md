@@ -3,6 +3,7 @@ title: OSVČ nebo SRO? 2023 edition
 tagline: Srovnávací daňová kalkulačka pro rok 2023
 description: Rok 2023 přinese navýšení limitů OSVČ pro využití režimu paušální daně. Jak si vede paušální daň ve srovnání s SRO a OSVČ ve standardním režimu?
 category: cs
+skip_world: true
 ---
 Rok 2023 přinese [navýšení příjmových limitů](https://zpravy.aktualne.cz/ekonomika/kalkulacka-pausalni-dan-2023/r~ba0dfdcad05611ec8a24ac1f6b220ee8/){:target="_blank"} OSVČ pro využití režimu paušální daně.
 Paušální daň nově spadá do tří pásem podle výše příjmů a výdajového paušálu.
