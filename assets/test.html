@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<body style="background: #f0f0f0">
+  <button id="btn" style="position: relative; z-index: 1">do something</button>
+  <pre id="app"></pre>
+  <canvas id="canvas" width="800" height="600" style="position: fixed; top: 0; left: 0; opacity: 0.5"></canvas>
+  <script>
+    const app = document.getElementById("app")
+    const btn = document.getElementById("btn")
+    const canvas = document.getElementById("canvas")
+    const ctx = canvas.getContext("2d")
+
+    function dump(buffer) {
+      let dump = ''
+      for (let i = 0; i < 65_536; i++) {
+        if (i % 64 === 0) dump += `\n${i.toString(16).padStart(5, '0')}:`
+        dump += ` ${buffer[i].toString(16).padStart(2, '0')}`
+      }
+      app.textContent = dump
+    }
+
+    function render(buffer) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+      for (let i = 0; i < 65_536; i++) {
+        if (!buffer[i]) continue
+        const x = i % 128
+        const y = ~~(i / 128)
+        ctx.fillStyle = `rgb(0, 0, 0)`
+        ctx.fillRect(x * 16, y * 16, 16, 16)
+      }
+    }
+
+    function update(instance) {
+      const buffer = new Uint8Array(instance.exports.memory.buffer, instance.exports.offset.value, 65_536)
+      dump(buffer)
+      render(buffer)
+    }
+
+    WebAssembly.instantiateStreaming(fetch("test.wasm")).then((obj) => {
+      let i = 0
+      btn.onclick = () => {
+        obj.instance.exports.test(i)
+        i += 1
+        update(obj.instance)
+      }
+
+      update(obj.instance)
+    })
+  </script>
+</body>
