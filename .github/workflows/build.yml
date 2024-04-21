@@ -10,29 +10,27 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-
       - uses: actions/cache@v2
         with:
           path: vendor/bundle
           key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile') }}
           restore-keys: |
             ${{ runner.os }}-gems-
-
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 3.2.2
-
       - uses: actions/cache@v2
         with:
           path: '**/node_modules'
           key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
-
       - run: yarn --frozen-lockfile
-
       - uses: limjh16/jekyll-action-ts@v2
         with:
           enable_cache: true
-
+      - uses: mwilliamson/setup-wabt-action@v2
+        with:
+          wabt-version: "1.0.34"
+      - run: mkdir -p _site/assets/build && wat2wasm -o _site/assets/build/game.wasm assets/game.wat
       - uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
