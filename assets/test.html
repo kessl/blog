@@ -40,9 +40,12 @@
     }
 
     WebAssembly.instantiateStreaming(fetch("test.wasm"), imports).then((obj) => {
+      const buffer = new Uint8Array(obj.instance.exports.memory.buffer, obj.instance.exports.offset.value, 65_536)
+      buffer.fill(1)
+
       let i = 0
       btn.onclick = () => {
-        obj.instance.exports.test(Math.floor(i / 5), i % 5)
+        obj.instance.exports.generate_next_gen(Math.floor(i / 5), i % 5)
         console.log('-–––-----------')
         i += 1
         update(obj.instance)
