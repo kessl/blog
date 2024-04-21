@@ -59,7 +59,7 @@
       console: { log: console.log },
     }
 
-    WebAssembly.instantiateStreaming(fetch("build/game.wasm"), imports).then((obj) => {
+    WebAssembly.instantiateStreaming(fetch('/assets/build/game.wasm'), imports).then((obj) => {
       const { next_gen } = obj.instance.exports
 
       btn.onclick = () => {
