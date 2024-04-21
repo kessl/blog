@@ -24,16 +24,44 @@
     (i32.div_u (local.get $idx) (global.get $cols))
   )
 
+  (func $load_coords (param $x i32) (param $y i32) (result i32)
+    (if (i32.lt_s (local.get $x) (i32.const 0))
+      (then (return (i32.const 0)))
+    )
+    (if(i32.lt_s (local.get $y) (i32.const 0))
+      (then (return (i32.const 0)))
+    )
+
+    (i32.load8_u
+      (i32.add
+        (global.get $offset)
+        (call $coords_to_idx (local.get $x) (local.get $y))
+      )
+    )
+  )
+
+  (func $count_neighbors (param $x i32) (param $y i32) (result i32)
+    (local $count i32)
+    (local.set $count (i32.const 0))
+    (local.set $count (i32.add (local.get $count) (call $load_coords (i32.add (local.get $x) (i32.const -1)) (i32.add (local.get $y) (i32.const -1)))))
+    (local.set $count (i32.add (local.get $count) (call $load_coords (i32.add (local.get $x) (i32.const -1)) (local.get $y))))
+    (local.set $count (i32.add (local.get $count) (call $load_coords (i32.add (local.get $x) (i32.const -1)) (i32.add (local.get $y) (i32.const 1)))))
+    (local.set $count (i32.add (local.get $count) (call $load_coords (local.get $x) (i32.add (local.get $y) (i32.const -1)))))
+    (local.set $count (i32.add (local.get $count) (call $load_coords (local.get $x) (i32.add (local.get $y) (i32.const 1)))))
+    (local.set $count (i32.add (local.get $count) (call $load_coords (i32.add (local.get $x) (i32.const 1)) (i32.add (local.get $y) (i32.const -1)))))
+    (local.set $count (i32.add (local.get $count) (call $load_coords (i32.add (local.get $x) (i32.const 1)) (local.get $y))))
+    (local.set $count (i32.add (local.get $count) (call $load_coords (i32.add (local.get $x) (i32.const 1)) (i32.add (local.get $y) (i32.const 1)))))
+    local.get $count
+  )
+
   (func (export "test") (param $x i32) (param $y i32)
     (local $i i32)
 
-    (call $switch_gen)
+;;    (call $switch_gen)
 
     (local.set $i (call $coords_to_idx (local.get $x) (local.get $y)))
     (i32.store (i32.add (global.get $offset) (local.get $i)) (i32.const 1))
 
-    (call $log2 (local.get $x) (local.get $y))
-    (call $log1 (local.get $i))
-    (call $log2 (call $idx_to_coords (local.get $i)))
+    (call $log1 (call $count_neighbors (local.get $x) (local.get $y)))
   )
 )

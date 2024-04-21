@@ -42,7 +42,8 @@
     WebAssembly.instantiateStreaming(fetch("test.wasm"), imports).then((obj) => {
       let i = 0
       btn.onclick = () => {
-        obj.instance.exports.test(i, i)
+        obj.instance.exports.test(Math.floor(i / 5), i % 5)
+        console.log('-–––-----------')
         i += 1
         update(obj.instance)
       }
