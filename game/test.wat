@@ -3,7 +3,7 @@
   (import "console" "log" (func $log2 (param i32) (param i32)))
 
   (memory (export "memory") 2)
-  (global $page_size i32 (i32.const 65_536))
+  (global $page_size (export "page_size") i32 (i32.const 65_536))
 
   (global $cols (export "cols") i32 (i32.const 128))
   (global $rows (export "rows") i32 (i32.const 64))
@@ -55,7 +55,7 @@
     local.get $count
   )
 
-  (func (export "generate_next_gen")
+  (func (export "next_gen")
     (local $i i32)
     (local $x i32)
     (local $y i32)

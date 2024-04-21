@@ -9,6 +9,8 @@
     const canvas = document.getElementById("canvas")
     const ctx = canvas.getContext("2d")
 
+    const cellSize = 16
+
     function dump(buffer) {
       let dump = ''
       for (let i = 0; i < 65_536; i++) {
@@ -18,21 +20,39 @@
       app.textContent = dump
     }
 
-    function render(buffer) {
+    function render(buffer, page_size, cols) {
       ctx.clearRect(0, 0, canvas.width, canvas.height)
-      for (let i = 0; i < 65_536; i++) {
+      for (let i = 0; i < page_size; i++) {
         if (!buffer[i]) continue
-        const x = i % 128
-        const y = ~~(i / 128)
+        const x = i % cols
+        const y = ~~(i / cols)
         ctx.fillStyle = `rgb(0, 0, 0)`
-        ctx.fillRect(x * 16, y * 16, 16, 16)
+        ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize)
       }
     }
 
     function update(instance) {
-      const buffer = new Uint8Array(instance.exports.memory.buffer, instance.exports.offset.value, 65_536)
+      const { page_size, cols, memory, offset } = instance.exports
+      const buffer = new Uint8Array(memory.buffer, offset.value, page_size.value)
+
       dump(buffer)
-      render(buffer)
+      render(buffer, page_size.value, cols.value)
+    }
+
+    function init(instance) {
+      const { cols, memory, offset, page_size } = instance.exports
+
+      canvas.addEventListener('click', (event) => {
+        const x = ~~(event.offsetX / cellSize)
+        const y = ~~(event.offsetY / cellSize)
+
+        const buffer = new Uint8Array(memory.buffer, offset.value, page_size.value)
+        buffer[y * cols.value + x] = +!buffer[y * cols.value + x]
+
+        update(instance)
+      })
+
+      update(instance)
     }
 
     const imports = {
@@ -40,18 +60,14 @@
     }
 
     WebAssembly.instantiateStreaming(fetch("test.wasm"), imports).then((obj) => {
-      const buffer = new Uint8Array(obj.instance.exports.memory.buffer, obj.instance.exports.offset.value, 65_536)
-      buffer.fill(1)
+      const { next_gen } = obj.instance.exports
 
-      let i = 0
       btn.onclick = () => {
-        obj.instance.exports.generate_next_gen(Math.floor(i / 5), i % 5)
-        console.log('-–––-----------')
-        i += 1
+        next_gen()
         update(obj.instance)
       }
 
-      update(obj.instance)
+      init(obj.instance)
     })
   </script>
 </body>
