@@ -35,10 +35,14 @@
       render(buffer)
     }
 
-    WebAssembly.instantiateStreaming(fetch("test.wasm")).then((obj) => {
+    const imports = {
+      console: { log: console.log },
+    }
+
+    WebAssembly.instantiateStreaming(fetch("test.wasm"), imports).then((obj) => {
       let i = 0
       btn.onclick = () => {
-        obj.instance.exports.test(i)
+        obj.instance.exports.test(i, i)
         i += 1
         update(obj.instance)
       }
