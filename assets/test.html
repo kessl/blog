@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <body style="background: #f0f0f0">
   <button id="btn" style="position: relative; z-index: 1">do something</button>
-  <pre id="app"></pre>
+  <pre id="app" style="font: 10px monospace"></pre>
   <canvas id="canvas" width="800" height="600" style="position: fixed; top: 0; left: 0; opacity: 0.5"></canvas>
   <script>
     const app = document.getElementById("app")
@@ -26,7 +26,7 @@
         if (!buffer[i]) continue
         const x = (i % cols) / cell_size
         const y = ~~((i / cols) / cell_size)
-        ctx.fillStyle = `rgb(0, 0, 0)`
+        ctx.fillStyle = `rgb(${buffer[i]}, ${buffer[i + 1]}, ${buffer[i + 2]})`
         ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize)
       }
     }
@@ -48,7 +48,16 @@
 
         const buffer = new Uint8Array(memory.buffer, offset.value, page_size.value)
         const index = (y * cols.value + x) * cell_size.value
-        buffer[index] = +!buffer[index]
+
+        if (!buffer[index] && !buffer[index + 1] && !buffer[index + 2]) {
+          buffer[index] = ~~(Math.random() * 255)
+          buffer[index + 1] = ~~(Math.random() * 255)
+          buffer[index + 2] = ~~(Math.random() * 255)
+        } else {
+          buffer[index] = 0
+          buffer[index + 1] = 0
+          buffer[index + 2] = 0
+        }
 
         update(instance)
       })
