@@ -19,31 +19,22 @@
   )
 
   (func $idx_to_x_coord (param $idx i32) (result i32)
-    (i32.div_u (i32.rem_u (local.get $idx) (global.get $cols)) (global.get $cell_size))
+    (i32.rem_u (i32.div_u (local.get $idx) (global.get $cell_size)) (global.get $cols))
   )
 
   (func $idx_to_y_coord (param $idx i32) (result i32)
-    (i32.div_u (i32.div_u (local.get $idx) (global.get $cols)) (global.get $cell_size))
+    (i32.div_u (i32.div_u (local.get $idx) (global.get $cell_size)) (global.get $cols))
   )
 
   (func $load_coords (param $x i32) (param $y i32) (result i32)
     (if (i32.lt_s (local.get $x) (i32.const 0)) (then (return (i32.const 0))))
     (if (i32.lt_s (local.get $y) (i32.const 0)) (then (return (i32.const 0))))
 
-    (i32.load
-      (i32.add
-        (global.get $current_gen_offset)
-        (call $coords_to_idx (local.get $x) (local.get $y))
-      )
-    )
+    (i32.load (i32.add (global.get $current_gen_offset) (call $coords_to_idx (local.get $x) (local.get $y))))
   )
 
   (func $is_alive (param $x i32) (param $y i32) (result i32)
-    (select
-      (i32.const 1)
-      (i32.const 0)
-      (call $load_coords (local.get $x) (local.get $y))
-    )
+    (select (i32.const 1) (i32.const 0) (call $load_coords (local.get $x) (local.get $y)))
   )
 
   (func $count_neighbors (param $x i32) (param $y i32) (result i32)
@@ -142,20 +133,27 @@
         (if (i32.eq (local.get $neighbors) (i32.const 2))
           (then
             (i32.store (i32.add (global.get $next_gen_offset) (local.get $i)) (local.get $current_state))
-            br $rules
+            (br $rules)
           )
         )
         (if (i32.eq (local.get $neighbors) (i32.const 3))
           (then
+            (call $log1 (i32.const 22222222))
+            (call $log1 (local.get $i))
+            (call $log2 (local.get $x) (local.get $y))
+            (if (i32.eq (local.get $current_state) (i32.const 0))
+              (then (i32.store (i32.add (global.get $next_gen_offset) (local.get $i)) (call $ancestry_color (local.get $x) (local.get $y))))
+              (else (i32.store (i32.add (global.get $next_gen_offset) (local.get $i)) (local.get $current_state)))
+            )
             (i32.store (i32.add (global.get $next_gen_offset) (local.get $i)) (call $ancestry_color (local.get $x) (local.get $y)))
-            br $rules
+            (br $rules)
           )
         )
         (i32.store (i32.add (global.get $next_gen_offset) (local.get $i)) (i32.const 0))
       )
 
       (local.set $i (i32.add (local.get $i) (global.get $cell_size)))
-      (br_if $world (i32.lt_u (local.get $i) (i32.mul (global.get $cols) (global.get $rows))))
+      (br_if $world (i32.lt_u (local.get $i) (i32.mul (global.get $cell_size) (i32.mul (global.get $cols) (global.get $rows)))))
     )
 
     (call $switch_buffers)
