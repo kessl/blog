@@ -2,14 +2,12 @@
 <body style="background: #f0f0f0">
   <button id="btn" style="position: relative; z-index: 1">do something</button>
   <pre id="app" style="font: 10px monospace"></pre>
-  <canvas id="canvas" width="800" height="600" style="position: fixed; top: 0; left: 0; opacity: 0.5"></canvas>
+  <canvas id="canvas" width="1600" height="800" style="position: fixed; top: 0; left: 0; opacity: 0.5"></canvas>
   <script>
     const app = document.getElementById("app")
     const btn = document.getElementById("btn")
     const canvas = document.getElementById("canvas")
     const ctx = canvas.getContext("2d")
-
-    const cellSize = 16
 
     function dump(buffer) {
       let dump = ''
@@ -20,14 +18,31 @@
       app.textContent = dump
     }
 
+    const cols = 128 / 4
+    const rows = 64 / 4
+
+    const a = 2 * Math.PI / 6
+    const r = Math.min(canvas.height / (rows * Math.sin(a)), (canvas.width / cols) / (Math.cos(a) - Math.cos(3 * a)))
+
+    function drawHexagon(x, y, fillStyle) {
+      ctx.beginPath()
+      for (var i = 0; i < 6; i++) {
+        ctx.lineTo(x + r * Math.cos(a * i), y + r * Math.sin(a * i))
+      }
+      ctx.closePath()
+      ctx.fillStyle = fillStyle
+      ctx.fill()
+    }
+
     function render(buffer, page_size, cell_size, cols) {
       ctx.clearRect(0, 0, canvas.width, canvas.height)
       for (let i = 0; i < page_size; i += cell_size) {
         if (!buffer[i + 2] && !buffer[i + 1] && !buffer[i]) continue
         const x = ~~((i / cell_size) % cols)
         const y = ~~((i / cell_size) / cols)
-        ctx.fillStyle = `rgb(${buffer[i + 2]}, ${buffer[i + 1]}, ${buffer[i]})`
-        ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize)
+
+        const fillStyle = `rgb(${buffer[i + 2]}, ${buffer[i + 1]}, ${buffer[i]})`
+        drawHexagon(x * r * (1 + Math.cos(a)), y * 2 * r * Math.sin(a) - (-1) ** x * r * Math.sin(a) / 2, fillStyle)
       }
     }
 
@@ -44,8 +59,32 @@
       let color = null
       let timeout = null
       canvas.addEventListener('click', (event) => {
-        const x = ~~(event.offsetX / cellSize)
-        const y = ~~(event.offsetY / cellSize)
+        // brute force which potential hexagon center is closest ¯\_(ツ)_/¯
+        const potentialXs = [], potentialYs = []
+        potentialXs[0]= Math.floor(event.offsetX / (r * (1 + Math.cos(a))))
+        potentialXs[1] = potentialXs[0] - 1
+        potentialXs[2] = potentialXs[0] + 1
+
+        potentialYs[0] = Math.floor(event.offsetY / (2 * r * Math.sin(a) - r * Math.sin(a) / 2))
+        potentialYs[1] = potentialYs[0] - 1
+        potentialYs[2] = potentialYs[0] + 1
+        potentialYs[3] = Math.floor(event.offsetY / (2 * r * Math.sin(a) + r * Math.sin(a) / 2))
+        potentialYs[4] = potentialYs[3] - 1
+        potentialYs[5] = potentialYs[3] + 1
+
+        let x, y, smallestDistanceSq = Infinity
+        for (let i = 0; i < 3; i++) {
+          for (let j = 0; j < 6; j++) {
+            const canvasX = potentialXs[i] * r * (1 + Math.cos(a))
+            const canvasY = potentialYs[j] * 2 * r * Math.sin(a) - (-1) ** potentialXs[i] * r * Math.sin(a) / 2
+            const distanceSq = (event.offsetX - canvasX) ** 2 + (event.offsetY - canvasY) ** 2
+            if (distanceSq < smallestDistanceSq) {
+              smallestDistanceSq = distanceSq
+              x = potentialXs[i]
+              y = potentialYs[j]
+            }
+          }
+        }
 
         const buffer = new Uint8Array(memory.buffer, offset.value, page_size.value)
         const index = (y * cols.value + x) * cell_size.value
