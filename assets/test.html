@@ -23,7 +23,7 @@
     function render(buffer, page_size, cell_size, cols) {
       ctx.clearRect(0, 0, canvas.width, canvas.height)
       for (let i = 0; i < page_size; i += cell_size) {
-        if (!buffer[i]) continue
+        if (!buffer[i + 2] && !buffer[i + 1] && !buffer[i]) continue
         const x = (i % cols) / cell_size
         const y = ~~((i / cols) / cell_size)
         ctx.fillStyle = `rgb(${buffer[i + 2]}, ${buffer[i + 1]}, ${buffer[i]})`
@@ -34,10 +34,7 @@
     function update(instance) {
       const { page_size, cell_size, cols, memory, offset } = instance.exports
       const buffer = new Uint8Array(memory.buffer, offset.value, page_size.value)
-
-      // const heap = new Uint8Array(memory.buffer, 65536+65536, 100)
       dump(buffer)
-
       render(buffer, page_size.value, cell_size.value, cols.value)
     }
 

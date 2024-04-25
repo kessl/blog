@@ -80,8 +80,11 @@
   (func $ancestry_color (param $x i32) (param $y i32) (result i32)
     ;; when a cell is born (neighbors == 3), make its color the average of its ancestors
     (local $i i32)
-    (local $color i32)
+    (local $acc_r i32)
+    (local $acc_g i32)
+    (local $acc_b i32)
     (local $neighbor_color i32)
+    (local $neighbor_count i32)
 
     (call $heap_set_i32 (i32.const 0) (call $load_coords (i32.add (local.get $x) (i32.const -1)) (i32.add (local.get $y) (i32.const -1))))
     (call $heap_set_i32 (i32.const 1) (call $load_coords (i32.add (local.get $x) (i32.const -1)) (local.get $y)))
@@ -93,15 +96,18 @@
     (call $heap_set_i32 (i32.const 7) (call $load_coords (i32.add (local.get $x) (i32.const 1)) (i32.add (local.get $y) (i32.const 1))))
 
     (local.set $i (i32.const 0))
-    (local.set $color (i32.const 0))
+    (local.set $acc_r (i32.const 0))
+    (local.set $acc_g (i32.const 0))
+    (local.set $acc_b (i32.const 0))
+    (local.set $neighbor_count (i32.const 0))
     (loop $neighbors
       (local.set $neighbor_color (call $heap_get_i32 (local.get $i)))
       (if (i32.gt_u (local.get $neighbor_color) (i32.const 0))
         (then
-          (if (i32.eq (local.get $color) (i32.const 0))
-            (then (local.set $color (local.get $neighbor_color)))
-            (else (local.set $color (call $color_avg (local.get $color) (local.get $neighbor_color))))
-          )
+          (local.set $neighbor_count (i32.add (local.get $neighbor_count) (i32.const 1)))
+          (local.set $acc_r (i32.add (local.get $acc_r) (i32.and (local.get $neighbor_color) (i32.const 0x000000ff))))
+          (local.set $acc_g (i32.add (local.get $acc_g) (i32.and (local.get $neighbor_color) (i32.const 0x0000ff00))))
+          (local.set $acc_b (i32.add (local.get $acc_b) (i32.and (local.get $neighbor_color) (i32.const 0x00ff0000))))
         )
       )
 
@@ -109,7 +115,10 @@
       (br_if $neighbors (i32.lt_u (local.get $i) (i32.const 8))) ;; 8 neighbor spaces
     )
 
-    (local.get $color)
+    (local.set $acc_r (i32.and (i32.div_u (local.get $acc_r) (local.get $neighbor_count)) (i32.const 0x000000ff)))
+    (local.set $acc_g (i32.and (i32.div_u (local.get $acc_g) (local.get $neighbor_count)) (i32.const 0x0000ff00)))
+    (local.set $acc_b (i32.and (i32.div_u (local.get $acc_b) (local.get $neighbor_count)) (i32.const 0x00ff0000)))
+    (i32.add (i32.add (local.get $acc_r) (local.get $acc_g)) (local.get $acc_b))
   )
 
   (func (export "next_gen")
