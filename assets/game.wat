@@ -15,14 +15,17 @@
   )
 
   (func $coords_to_idx (param $x i32) (param $y i32) (result i32)
+    ;; (y * cols + x) * cell_size
     (i32.mul (i32.add (local.get $x) (i32.mul (local.get $y) (global.get $cols))) (global.get $cell_size))
   )
 
   (func $idx_to_x_coord (param $idx i32) (result i32)
+    ;; (idx / cell_size) % cols
     (i32.rem_u (i32.div_u (local.get $idx) (global.get $cell_size)) (global.get $cols))
   )
 
   (func $idx_to_y_coord (param $idx i32) (result i32)
+    ;; (idx / cell_size) / cols
     (i32.div_u (i32.div_u (local.get $idx) (global.get $cell_size)) (global.get $cols))
   )
 

@@ -24,8 +24,8 @@
       ctx.clearRect(0, 0, canvas.width, canvas.height)
       for (let i = 0; i < page_size; i += cell_size) {
         if (!buffer[i + 2] && !buffer[i + 1] && !buffer[i]) continue
-        const x = (i % cols) / cell_size
-        const y = ~~((i / cols) / cell_size)
+        const x = ~~((i / cell_size) % cols)
+        const y = ~~((i / cell_size) / cols)
         ctx.fillStyle = `rgb(${buffer[i + 2]}, ${buffer[i + 1]}, ${buffer[i]})`
         ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize)
       }
