@@ -145,7 +145,6 @@
               (then (i32.store (i32.add (global.get $next_gen_offset) (local.get $i)) (call $ancestry_color (local.get $x) (local.get $y))))
               (else (i32.store (i32.add (global.get $next_gen_offset) (local.get $i)) (local.get $current_state)))
             )
-            (i32.store (i32.add (global.get $next_gen_offset) (local.get $i)) (call $ancestry_color (local.get $x) (local.get $y)))
             (br $rules)
           )
         )
