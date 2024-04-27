@@ -15,11 +15,11 @@
         if (i % 64 === 0) dump += `\n${i.toString(16).padStart(5, '0')}:`
         dump += ` ${buffer[i].toString(16).padStart(2, '0')}`
       }
-      app.textContent = dump
+      // app.textContent = dump
     }
 
-    const cols = 128 / 4
-    const rows = 64 / 4
+    const cols = 128
+    const rows = 64
 
     const a = 2 * Math.PI / 6
     const r = Math.min(canvas.height / (rows * Math.sin(a)), (canvas.width / cols) / (Math.cos(a) - Math.cos(3 * a)))
@@ -34,9 +34,9 @@
       ctx.fill()
     }
 
-    function render(buffer, page_size, cell_size, cols) {
+    function render(buffer, page_size, cell_size, rows, cols) {
       ctx.clearRect(0, 0, canvas.width, canvas.height)
-      for (let i = 0; i < page_size; i += cell_size) {
+      for (let i = 0; i < rows * cols * cell_size; i += cell_size) {
         if (!buffer[i + 2] && !buffer[i + 1] && !buffer[i]) continue
         const x = ~~((i / cell_size) % cols)
         const y = ~~((i / cell_size) / cols)
@@ -47,10 +47,10 @@
     }
 
     function update(instance) {
-      const { page_size, cell_size, cols, memory, offset } = instance.exports
+      const { page_size, cell_size, rows, cols, memory, offset } = instance.exports
       const buffer = new Uint8Array(memory.buffer, offset.value, page_size.value)
       dump(buffer)
-      render(buffer, page_size.value, cell_size.value, cols.value)
+      render(buffer, page_size.value, cell_size.value, rows.value, cols.value)
     }
 
     function init(instance) {
@@ -62,15 +62,15 @@
         // brute force which potential hexagon center is closest ¯\_(ツ)_/¯
         const potentialXs = [], potentialYs = []
         potentialXs[0]= Math.floor(event.offsetX / (r * (1 + Math.cos(a))))
-        potentialXs[1] = potentialXs[0] - 1
-        potentialXs[2] = potentialXs[0] + 1
+        potentialXs[1] = potentialXs[0] - 2
+        potentialXs[2] = potentialXs[0] - 1
 
         potentialYs[0] = Math.floor(event.offsetY / (2 * r * Math.sin(a) - r * Math.sin(a) / 2))
-        potentialYs[1] = potentialYs[0] - 1
-        potentialYs[2] = potentialYs[0] + 1
+        potentialYs[1] = potentialYs[0] - 2
+        potentialYs[2] = potentialYs[0] - 1
         potentialYs[3] = Math.floor(event.offsetY / (2 * r * Math.sin(a) + r * Math.sin(a) / 2))
-        potentialYs[4] = potentialYs[3] - 1
-        potentialYs[5] = potentialYs[3] + 1
+        potentialYs[4] = potentialYs[3] - 2
+        potentialYs[5] = potentialYs[3] - 1
 
         let x, y, smallestDistanceSq = Infinity
         for (let i = 0; i < 3; i++) {
@@ -78,6 +78,7 @@
             const canvasX = potentialXs[i] * r * (1 + Math.cos(a))
             const canvasY = potentialYs[j] * 2 * r * Math.sin(a) - (-1) ** potentialXs[i] * r * Math.sin(a) / 2
             const distanceSq = (event.offsetX - canvasX) ** 2 + (event.offsetY - canvasY) ** 2
+            console.log(potentialXs[i], potentialYs[j], smallestDistanceSq, distanceSq)
             if (distanceSq < smallestDistanceSq) {
               smallestDistanceSq = distanceSq
               x = potentialXs[i]

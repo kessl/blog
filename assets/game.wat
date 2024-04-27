@@ -43,15 +43,29 @@
   (func $count_neighbors (param $x i32) (param $y i32) (result i32)
     (local $count i32)
     (local.set $count (i32.const 0))
-    (local.set $count (i32.add (local.get $count) (call $is_alive (i32.add (local.get $x) (i32.const -1)) (i32.add (local.get $y) (i32.const -1)))))
-    (local.set $count (i32.add (local.get $count) (call $is_alive (i32.add (local.get $x) (i32.const -1)) (local.get $y))))
-    (local.set $count (i32.add (local.get $count) (call $is_alive (i32.add (local.get $x) (i32.const -1)) (i32.add (local.get $y) (i32.const 1)))))
-    (local.set $count (i32.add (local.get $count) (call $is_alive (local.get $x) (i32.add (local.get $y) (i32.const -1)))))
-    (local.set $count (i32.add (local.get $count) (call $is_alive (local.get $x) (i32.add (local.get $y) (i32.const 1)))))
-    (local.set $count (i32.add (local.get $count) (call $is_alive (i32.add (local.get $x) (i32.const 1)) (i32.add (local.get $y) (i32.const -1)))))
-    (local.set $count (i32.add (local.get $count) (call $is_alive (i32.add (local.get $x) (i32.const 1)) (local.get $y))))
-    (local.set $count (i32.add (local.get $count) (call $is_alive (i32.add (local.get $x) (i32.const 1)) (i32.add (local.get $y) (i32.const 1)))))
-    local.get $count
+
+    ;; odd columns are offset by 1/2 tile in a hex grid
+    ;; odd column:  (-1, 0), (-1, 1), (0, -1), (0, 1), (1, 0), (1, 1)
+    ;; even column: (-1, -1), (-1, 0), (0, -1), (0, 1), (1, -1), (1, 0)
+    (if (i32.eq (i32.rem_u (local.get $x) (i32.const 2)) (i32.const 1))
+      (then
+        (local.set $count (i32.add (local.get $count) (call $is_alive (i32.add (local.get $x) (i32.const -1)) (local.get $y))))
+        (local.set $count (i32.add (local.get $count) (call $is_alive (i32.add (local.get $x) (i32.const -1)) (i32.add (local.get $y) (i32.const 1)))))
+        (local.set $count (i32.add (local.get $count) (call $is_alive (local.get $x) (i32.add (local.get $y) (i32.const -1)))))
+        (local.set $count (i32.add (local.get $count) (call $is_alive (local.get $x) (i32.add (local.get $y) (i32.const 1)))))
+        (local.set $count (i32.add (local.get $count) (call $is_alive (i32.add (local.get $x) (i32.const 1)) (local.get $y))))
+        (local.set $count (i32.add (local.get $count) (call $is_alive (i32.add (local.get $x) (i32.const 1)) (i32.add (local.get $y) (i32.const 1)))))
+      )
+      (else
+        (local.set $count (i32.add (local.get $count) (call $is_alive (i32.add (local.get $x) (i32.const -1)) (i32.add (local.get $y) (i32.const -1)))))
+        (local.set $count (i32.add (local.get $count) (call $is_alive (i32.add (local.get $x) (i32.const -1)) (local.get $y))))
+        (local.set $count (i32.add (local.get $count) (call $is_alive (local.get $x) (i32.add (local.get $y) (i32.const -1)))))
+        (local.set $count (i32.add (local.get $count) (call $is_alive (local.get $x) (i32.add (local.get $y) (i32.const 1)))))
+        (local.set $count (i32.add (local.get $count) (call $is_alive (i32.add (local.get $x) (i32.const 1)) (i32.add (local.get $y) (i32.const -1)))))
+        (local.set $count (i32.add (local.get $count) (call $is_alive (i32.add (local.get $x) (i32.const 1)) (local.get $y))))
+      )
+    )
+    (local.get $count)
   )
 
   (func $heap_get_i32 (param $index i32) (result i32)
@@ -73,15 +87,8 @@
     )
   )
 
-  (func $color_avg (param $color1 i32) (param $color2 i32) (result i32)
-    (i32.add (i32.shr_u (i32.add (i32.and (local.get $color1) (i32.const 0x000000ff)) (i32.and (local.get $color2) (i32.const 0x000000ff))) (i32.const 1))
-      (i32.add (i32.shr_u (i32.add (i32.and (local.get $color1) (i32.const 0x0000ff00)) (i32.and (local.get $color2) (i32.const 0x0000ff00))) (i32.const 1))
-               (i32.shr_u (i32.add (i32.and (local.get $color1) (i32.const 0x00ff0000)) (i32.and (local.get $color2) (i32.const 0x00ff0000))) (i32.const 1)))
-    )
-  )
-
   (func $ancestry_color (param $x i32) (param $y i32) (result i32)
-    ;; when a cell is born (neighbors == 3), make its color the average of its ancestors
+    ;; when a cell is born (neighbors == 2), make its color the average of its ancestors
     (local $i i32)
     (local $acc_r i32)
     (local $acc_g i32)
@@ -89,14 +96,24 @@
     (local $neighbor_color i32)
     (local $neighbor_count i32)
 
-    (call $heap_set_i32 (i32.const 0) (call $load_coords (i32.add (local.get $x) (i32.const -1)) (i32.add (local.get $y) (i32.const -1))))
-    (call $heap_set_i32 (i32.const 1) (call $load_coords (i32.add (local.get $x) (i32.const -1)) (local.get $y)))
-    (call $heap_set_i32 (i32.const 2) (call $load_coords (i32.add (local.get $x) (i32.const -1)) (i32.add (local.get $y) (i32.const 1))))
-    (call $heap_set_i32 (i32.const 3) (call $load_coords (local.get $x) (i32.add (local.get $y) (i32.const -1))))
-    (call $heap_set_i32 (i32.const 4) (call $load_coords (local.get $x) (i32.add (local.get $y) (i32.const 1))))
-    (call $heap_set_i32 (i32.const 5) (call $load_coords (i32.add (local.get $x) (i32.const 1)) (i32.add (local.get $y) (i32.const -1))))
-    (call $heap_set_i32 (i32.const 6) (call $load_coords (i32.add (local.get $x) (i32.const 1)) (local.get $y)))
-    (call $heap_set_i32 (i32.const 7) (call $load_coords (i32.add (local.get $x) (i32.const 1)) (i32.add (local.get $y) (i32.const 1))))
+    (if (i32.eq (i32.rem_u (local.get $x) (i32.const 2)) (i32.const 1))
+      (then
+        (call $heap_set_i32 (i32.const 0) (call $load_coords (i32.add (local.get $x) (i32.const -1)) (local.get $y)))
+        (call $heap_set_i32 (i32.const 1) (call $load_coords (i32.add (local.get $x) (i32.const -1)) (i32.add (local.get $y) (i32.const 1))))
+        (call $heap_set_i32 (i32.const 2) (call $load_coords (local.get $x) (i32.add (local.get $y) (i32.const -1))))
+        (call $heap_set_i32 (i32.const 3) (call $load_coords (local.get $x) (i32.add (local.get $y) (i32.const 1))))
+        (call $heap_set_i32 (i32.const 4) (call $load_coords (i32.add (local.get $x) (i32.const 1)) (local.get $y)))
+        (call $heap_set_i32 (i32.const 5) (call $load_coords (i32.add (local.get $x) (i32.const 1)) (i32.add (local.get $y) (i32.const 1))))
+      )
+      (else
+        (call $heap_set_i32 (i32.const 0) (call $load_coords (i32.add (local.get $x) (i32.const -1)) (i32.add (local.get $y) (i32.const -1))))
+        (call $heap_set_i32 (i32.const 1) (call $load_coords (i32.add (local.get $x) (i32.const -1)) (local.get $y)))
+        (call $heap_set_i32 (i32.const 2) (call $load_coords (local.get $x) (i32.add (local.get $y) (i32.const -1))))
+        (call $heap_set_i32 (i32.const 3) (call $load_coords (local.get $x) (i32.add (local.get $y) (i32.const 1))))
+        (call $heap_set_i32 (i32.const 4) (call $load_coords (i32.add (local.get $x) (i32.const 1)) (i32.add (local.get $y) (i32.const -1))))
+        (call $heap_set_i32 (i32.const 5) (call $load_coords (i32.add (local.get $x) (i32.const 1)) (local.get $y)))
+      )
+    )
 
     (local.set $i (i32.const 0))
     (local.set $acc_r (i32.const 0))
@@ -115,7 +132,7 @@
       )
 
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
-      (br_if $neighbors (i32.lt_u (local.get $i) (i32.const 8))) ;; 8 neighbor spaces
+      (br_if $neighbors (i32.lt_u (local.get $i) (i32.const 6))) ;; 6 neighbor spaces
     )
 
     (local.set $acc_r (i32.and (i32.div_u (local.get $acc_r) (local.get $neighbor_count)) (i32.const 0x000000ff)))
@@ -142,25 +159,15 @@
       (local.set $neighbors (call $count_neighbors (local.get $x) (local.get $y)))
 
       (block $rules
-        (if (i32.eq (local.get $neighbors) (i32.const 2))
+        (if (i32.and (i32.eq (local.get $neighbors) (i32.const 2)) (i32.eq (local.get $current_state) (i32.const 0)))
           (then
-            (i32.store (i32.add (global.get $next_gen_offset) (local.get $i)) (local.get $current_state))
+            (i32.store (i32.add (global.get $next_gen_offset) (local.get $i)) (call $ancestry_color (local.get $x) (local.get $y)))
             (br $rules)
           )
         )
-        (if (i32.eq (local.get $neighbors) (i32.const 3))
-          (then
-            (call $log1 (i32.const 22222222))
-            (call $log1 (local.get $i))
-            (call $log2 (local.get $x) (local.get $y))
-            (if (i32.eq (local.get $current_state) (i32.const 0))
-              (then (i32.store (i32.add (global.get $next_gen_offset) (local.get $i)) (call $ancestry_color (local.get $x) (local.get $y))))
-              (else (i32.store (i32.add (global.get $next_gen_offset) (local.get $i)) (local.get $current_state)))
-            )
-            (br $rules)
-          )
+        (if (i32.or (i32.eq (local.get $neighbors) (i32.const 3)) (i32.eq (local.get $neighbors) (i32.const 5)))
+          (then (i32.store (i32.add (global.get $next_gen_offset) (local.get $i)) (local.get $current_state)))
         )
-        (i32.store (i32.add (global.get $next_gen_offset) (local.get $i)) (i32.const 0))
       )
 
       (local.set $i (i32.add (local.get $i) (global.get $cell_size)))
