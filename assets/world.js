@@ -19,15 +19,13 @@ function initCanvas() {
   const cols = instance.exports.cols.value
   const rows = instance.exports.rows.value
 
-  // choose radius so that canvas is covered with hex grid
+  // choose radius so that hex grid covers entire canvas
   const widthFitRadius = (canvas.width / cols) / (Math.cos(a) - Math.cos(3 * a))
   const heightFitRadius = canvas.height / (rows * Math.sin(a))
   r = Math.min(widthFitRadius, heightFitRadius)
 }
 
 function flushHoverBuffer() {
-  color = null
-
   const { cols, memory, offset, page_size, cell_size } = instance.exports
   const buffer = new Uint8Array(memory.buffer, offset.value, page_size.value)
   for (const [x, y, color] of Object.values(hoverBuffer)) {
@@ -37,19 +35,23 @@ function flushHoverBuffer() {
     buffer[index] = color[0]
   }
 
+  color = null
   hoverBuffer = {}
-  update(instance)
+  update()
 }
 
-function handleMouseover(event) {
-  if (!running) return
+const canvasToGrid = (offsetX, offsetY) => [
+  Math.round(offsetX / (r * (1 + Math.cos(2 * Math.PI / 6)))),
+  Math.round(offsetY / (2 * r * Math.sin(2 * Math.PI / 6))),
+]
 
-  const x = Math.round(event.offsetX / (r * (1 + Math.cos(2 * Math.PI / 6))))
-  const y = Math.round(event.offsetY / (2 * r * Math.sin(2 * Math.PI / 6)))
+function handleCanvasMouseover(event) {
+  if (!running) return
 
   window.clearTimeout(hoverBufferTimeout)
   hoverBufferTimeout = window.setTimeout(flushHoverBuffer, 100)
 
+  const [x, y] = canvasToGrid(event.offsetX, event.offsetY)
   if (hoverBuffer[`${x},${y}`]) return
 
   if (!color) {
@@ -57,9 +59,36 @@ function handleMouseover(event) {
     color = [randChannel(), randChannel(), randChannel()]
   }
 
-  const fillStyle = `rgba(${color[2]}, ${color[1]}, ${color[0]}, 0.5)`
+  const fillStyle = `rgba(${color[2]}, ${color[1]}, ${color[0]}, 0.7)`
   drawHexagon(x, y, fillStyle)
   hoverBuffer[`${x},${y}`] = [x, y, color]
+}
+
+function handleCanvasClick(event) {
+  if (running) return
+
+  window.clearTimeout(hoverBufferTimeout) // abuse to reset color
+  hoverBufferTimeout = window.setTimeout(flushHoverBuffer, 1000)
+
+  if (!color) {
+    const randChannel = () => ~~(Math.random() * (200 - 50) + 50)
+    color = [randChannel(), randChannel(), randChannel()]
+  }
+
+  const { cols, memory, offset, page_size, cell_size } = instance.exports
+  const buffer = new Uint8Array(memory.buffer, offset.value, page_size.value)
+
+  const [x, y] = canvasToGrid(event.offsetX, event.offsetY)
+  const index = (y * cols.value + x) * cell_size.value
+
+  if (buffer[index + 2] && buffer[index + 1] && buffer[index]) {
+    buffer[index + 2] = buffer[index + 1] = buffer[index] = 0
+  } else {
+    buffer[index + 2] = color[2]
+    buffer[index + 1] = color[1]
+    buffer[index] = color[0]
+  }
+  update()
 }
 
 function handleStartStop() {
@@ -80,7 +109,7 @@ function simulate(timestamp) {
   const deltaTime = timestamp - lastFrameTime
   if (deltaTime > 110) {
     instance.exports.next_gen()
-    update(instance)
+    update()
     lastFrameTime = timestamp
   }
   window.requestAnimationFrame(simulate)
@@ -103,7 +132,8 @@ function render(buffer, cell_size, rows, cols) {
   ctx.clearRect(0, 0, canvas.width, canvas.height)
 
   for (const [x, y, color] of Object.values(hoverBuffer)) {
-    const fillStyle = `rgba(${color[2]}, ${color[1]}, ${color[0]}, 0.5)`
+    if (!color[2] && !color[1] && !color[0]) continue
+    const fillStyle = `rgba(${color[2]}, ${color[1]}, ${color[0]}, 0.7)`
     drawHexagon(x, y, fillStyle)
   }
 
@@ -118,7 +148,7 @@ function render(buffer, cell_size, rows, cols) {
   }
 }
 
-function update(instance) {
+function update() {
   const { page_size, cell_size, rows, cols, memory, offset } = instance.exports
   const buffer = new Uint8Array(memory.buffer, offset.value, page_size.value)
   render(buffer, cell_size.value, rows.value, cols.value)
@@ -128,7 +158,8 @@ async function setup() {
   instance = (await WebAssembly.instantiateStreaming(fetch('/assets/build/game.wasm'))).instance
 
   initCanvas()
-  canvas.addEventListener('mousemove', handleMouseover)
+  canvas.addEventListener('mousemove', handleCanvasMouseover)
+  canvas.addEventListener('click', handleCanvasClick)
   startStopButton.addEventListener('click', handleStartStop)
 
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
