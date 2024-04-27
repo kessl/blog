@@ -42,7 +42,7 @@
         const y = ~~((i / cell_size) / cols)
 
         const fillStyle = `rgb(${buffer[i + 2]}, ${buffer[i + 1]}, ${buffer[i]})`
-        drawHexagon(x * r * (1 + Math.cos(a)), y * 2 * r * Math.sin(a) - (-1) ** x * r * Math.sin(a) / 2, fillStyle)
+        drawHexagon(x * r * (1 + Math.cos(a)), y * 2 * r * Math.sin(a) - (-1) ** x * r * Math.sin(a) / 2, fillStyle, x, y)
       }
     }
 
@@ -59,33 +59,8 @@
       let color = null
       let timeout = null
       canvas.addEventListener('click', (event) => {
-        // brute force which potential hexagon center is closest ¯\_(ツ)_/¯
-        const potentialXs = [], potentialYs = []
-        potentialXs[0]= Math.floor(event.offsetX / (r * (1 + Math.cos(a))))
-        potentialXs[1] = potentialXs[0] - 2
-        potentialXs[2] = potentialXs[0] - 1
-
-        potentialYs[0] = Math.floor(event.offsetY / (2 * r * Math.sin(a) - r * Math.sin(a) / 2))
-        potentialYs[1] = potentialYs[0] - 2
-        potentialYs[2] = potentialYs[0] - 1
-        potentialYs[3] = Math.floor(event.offsetY / (2 * r * Math.sin(a) + r * Math.sin(a) / 2))
-        potentialYs[4] = potentialYs[3] - 2
-        potentialYs[5] = potentialYs[3] - 1
-
-        let x, y, smallestDistanceSq = Infinity
-        for (let i = 0; i < 3; i++) {
-          for (let j = 0; j < 6; j++) {
-            const canvasX = potentialXs[i] * r * (1 + Math.cos(a))
-            const canvasY = potentialYs[j] * 2 * r * Math.sin(a) - (-1) ** potentialXs[i] * r * Math.sin(a) / 2
-            const distanceSq = (event.offsetX - canvasX) ** 2 + (event.offsetY - canvasY) ** 2
-            console.log(potentialXs[i], potentialYs[j], smallestDistanceSq, distanceSq)
-            if (distanceSq < smallestDistanceSq) {
-              smallestDistanceSq = distanceSq
-              x = potentialXs[i]
-              y = potentialYs[j]
-            }
-          }
-        }
+        const x = Math.round(event.offsetX / (r * (1 + Math.cos(2 * Math.PI / 6))))
+        const y = Math.round(event.offsetY / (2 * r * Math.sin(2 * Math.PI / 6)))
 
         const buffer = new Uint8Array(memory.buffer, offset.value, page_size.value)
         const index = (y * cols.value + x) * cell_size.value
