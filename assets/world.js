@@ -1,161 +1,67 @@
-const rows = 60
-const columns = 100
+const startStopButton = document.querySelector('#start-stop')
+const canvas = document.getElementById("canvas")
+const ctx = canvas.getContext("2d")
 
-// Even row
-//         (-1, 0)
-//          ____
-// (0, -1) /    \ (0, 1)
-// (1, -1) \____/ (1, 1)
-//         (1, 0)
-const evenRowNeighborCoords = [[0, -1], [-1, 0], [0, 1], [1, -1], [1, 0], [1, 1]]
+canvas.width = window.innerWidth
+canvas.height = window.innerHeight
 
-// Odd row
-//         (-1, -0)
-//           ____
-// (-1, -1) /    \ (-1, 1)
-//  (0, -1) \____/  (0, 1)
-//          (1, 0)
-const oddRowNeighborCoords = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [1, 0], [0, 1]]
+const cols = 128
+const rows = 64
 
+const a = 2 * Math.PI / 6
+const r = Math.min(canvas.height / (rows * Math.sin(a)), (canvas.width / cols) / (Math.cos(a) - Math.cos(3 * a)))
+
+let instance = null
 let running = false
 let lastFrameTime = 0
 
+let color = null
 const hoverBuffer = []
 let hoverBufferTimeout = null
 
-const currentGen = []
-const nextGen = []
-
 function flushHoverBuffer() {
+  color = null
+
+  const { cols, memory, offset, page_size, cell_size } = instance.exports
+  const buffer = new Uint8Array(memory.buffer, offset.value, page_size.value)
+  for (const [x, y, color] of hoverBuffer) {
+    const index = (y * cols.value + x) * cell_size.value
+    buffer[index + 2] = color[2]
+    buffer[index + 1] = color[1]
+    buffer[index] = color[0]
+  }
+
   hoverBuffer.length = 0
+  update(instance)
 }
 
-function handleMouseoverCell(event) {
-  if (!running) return
+function setupMouseover() {
+  canvas.addEventListener('mousemove', (event) => {
+    if (!running) return
 
-  const cell = event.target
-  const [x, y] = cell.id.split(',').map(Number)
+    const x = Math.round(event.offsetX / (r * (1 + Math.cos(2 * Math.PI / 6))))
+    const y = Math.round(event.offsetY / (2 * r * Math.sin(2 * Math.PI / 6)))
 
-  hoverBuffer.push([x, y])
-  currentGen[y][x] = 1
-  cell.classList.add('alive')
+    clearTimeout(hoverBufferTimeout)
+    hoverBufferTimeout = setTimeout(flushHoverBuffer, 300)
 
-  clearTimeout(hoverBufferTimeout)
-  hoverBufferTimeout = setTimeout(flushHoverBuffer, 200)
-}
-
-function createGenArrays() {
-  for (let y = 0; y < rows; y++) {
-    currentGen[y] = new Array(columns)
-    nextGen[y] = new Array(columns)
-  }
-
-  for (let y = 0; y < rows; y++) {
-    for (let x = 0; x < columns; x++) {
-      currentGen[y][x] = 0
-      nextGen[y][x] = 0
-    }
-  }
-}
-
-function createWorld() {
-  let world = document.querySelector('#world')
-
-  for (let y = 0; y < rows; y++) {
-    let row = document.createElement('div')
-    row.classList.add('hex-row')
-
-    for (let x = 0; x < columns; x++) {
-      let cell = document.createElement('div')
-      cell.classList.add('hex')
-      cell.classList.toggle('even', x % 2 === 0)
-      cell.id = `${x},${y}`
-      cell.addEventListener('mouseover', handleMouseoverCell)
-      row.appendChild(cell)
-    }
-    world.appendChild(row)
-  }
-
-  const startStopButton = document.querySelector('#start-stop')
-  startStopButton.addEventListener('click', startStop)
-}
-
-function positionWorld() {
-  const world = document.querySelector('#world')
-
-  function resizeWorld() {
-    const scaleX =  window.innerWidth / (world.offsetWidth - 15)
-    const scaleY = window.innerHeight / (world.offsetHeight - 15)
-    const scale = Math.max(scaleX, scaleY)
-    world.style.transform = `scale(${scale})`
-  }
-
-  resizeWorld()
-  window.addEventListener('resize', resizeWorld)
-}
-
-function createNextGen() {
-  for (row in currentGen) {
-    for (column in currentGen[row]) {
-      let neighbors = getNeighborCount(row, column)
-      if (neighbors === 3 || neighbors === 5) {
-        nextGen[row][column] = currentGen[row][column]
-      } else if (neighbors === 2 && currentGen[row][column] === 0) {
-        nextGen[row][column] = 1
-      } else {
-        nextGen[row][column] = 0
-      }
-    }
-  }
-}
-
-function getNeighborCount(row, column) {
-  let neighbors = 0
-  row = Number(row)
-  column = Number(column)
-
-  let y, x
-  for (let i = 0; i < 6; i++) {
-    if (column % 2) {
-      [y, x] = evenRowNeighborCoords[i]
-    } else {
-      [y, x] = oddRowNeighborCoords[i]
+    if (!color) {
+      color = [~~(Math.random() * 255), ~~(Math.random() * 255), ~~(Math.random() * 255)]
     }
 
-    if ((row + y >= 0) && (row + y < rows) && (column + x >= 0) && (column + x < columns)) {
-      neighbors += currentGen[row + y][column + x]
-    }
-  }
-  return neighbors
-}
-
-function updateCurrentGen() {
-  for (row in currentGen) {
-    for (col in currentGen[row]) {
-      if (hoverBuffer.includes([row, col])) continue
-      currentGen[row][col] = nextGen[row][col]
-      nextGen[row][col] = 0
-    }
-  }
-}
-
-function updateWorld() {
-  for (y in currentGen) {
-    for (x in currentGen[y]) {
-      const cell = document.getElementById(`${x},${y}`)
-      cell.classList.toggle('alive', currentGen[y][x] !== 0)
-    }
-  }
+    const fillStyle = `rgb(${color[2]}, ${color[1]}, ${color[0]})`
+    drawHexagon(x, y, fillStyle)
+    hoverBuffer.push([x, y, color])
+  })
 }
 
 function simulate(timestamp) {
   if (!running) return
 
   const deltaTime = timestamp - lastFrameTime
-  if (deltaTime > 100) {
-    createNextGen()
-    updateCurrentGen()
-    updateWorld()
+  if (deltaTime > 110) {
+    instance.exports.next_gen()
+    update(instance)
     lastFrameTime = timestamp
   }
   requestAnimationFrame(simulate)
@@ -163,17 +69,64 @@ function simulate(timestamp) {
 
 function startStop() {
   running = !running
-  if (running) simulate()
 
-  const startStopButton = document.querySelector('#start-stop')
+  if (running) {
+    simulate()
+  } else {
+    flushHoverBuffer()
+  }
+
   startStopButton.innerHTML = running ? '&#x23F8;' : '&#x23F5;'
 }
 
-window.onload = function () {
-  createGenArrays()
-  createWorld()
-  positionWorld()
+function drawHexagon(x, y, fillStyle) {
+  const canvasX = x * r * (1 + Math.cos(a))
+  const canvasY = y * 2 * r * Math.sin(a) - (-1) ** x * r * Math.sin(a) / 2
+
+  ctx.beginPath()
+  for (var i = 0; i < 6; i++) {
+    ctx.lineTo(canvasX + r * Math.cos(a * i), canvasY + r * Math.sin(a * i))
+  }
+  ctx.closePath()
+  ctx.fillStyle = fillStyle
+  ctx.fill()
+}
+
+function render(buffer, page_size, cell_size, rows, cols) {
+  ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+  for (let i = 0; i < hoverBuffer.length; i++) {
+    const [x, y, color] = hoverBuffer[i]
+    const fillStyle = `rgb(${color[2]}, ${color[1]}, ${color[0]})`
+    drawHexagon(x, y, fillStyle)
+  }
+
+  for (let i = 0; i < rows * cols * cell_size; i += cell_size) {
+    if (!buffer[i + 2] && !buffer[i + 1] && !buffer[i]) continue
+
+    const x = ~~((i / cell_size) % cols)
+    const y = ~~((i / cell_size) / cols)
+    const fillStyle = `rgb(${buffer[i + 2]}, ${buffer[i + 1]}, ${buffer[i]})`
+
+    drawHexagon(x, y, fillStyle)
+  }
+}
+
+function update(instance) {
+  const { page_size, cell_size, rows, cols, memory, offset } = instance.exports
+  const buffer = new Uint8Array(memory.buffer, offset.value, page_size.value)
+  render(buffer, page_size.value, cell_size.value, rows.value, cols.value)
+}
+
+async function setup() {
+  instance = (await WebAssembly.instantiateStreaming(fetch('/assets/build/game.wasm'))).instance
+
+  // instance.exports.init()
+  setupMouseover()
+  startStopButton.addEventListener('click', startStop)
 
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
   startStop()
 }
+
+window.addEventListener('load', setup)
