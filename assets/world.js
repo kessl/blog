@@ -1,58 +1,77 @@
 const startStopButton = document.querySelector('#start-stop')
-const canvas = document.getElementById("canvas")
-const ctx = canvas.getContext("2d")
-
-canvas.width = window.innerWidth
-canvas.height = window.innerHeight
-
-const cols = 128
-const rows = 64
+const canvas = document.getElementById('canvas')
+const ctx = canvas.getContext('2d')
 
 const a = 2 * Math.PI / 6
-const r = Math.min(canvas.height / (rows * Math.sin(a)), (canvas.width / cols) / (Math.cos(a) - Math.cos(3 * a)))
+let r // hexagon radius
 
 let instance = null
 let running = false
 let lastFrameTime = 0
 
 let color = null
-const hoverBuffer = []
+let hoverBuffer = {}
 let hoverBufferTimeout = null
+
+function initCanvas() {
+  canvas.width = window.innerWidth
+  canvas.height = window.innerHeight
+  const cols = instance.exports.cols.value
+  const rows = instance.exports.rows.value
+
+  // choose radius so that canvas is covered with hex grid
+  const widthFitRadius = (canvas.width / cols) / (Math.cos(a) - Math.cos(3 * a))
+  const heightFitRadius = canvas.height / (rows * Math.sin(a))
+  r = Math.min(widthFitRadius, heightFitRadius)
+}
 
 function flushHoverBuffer() {
   color = null
 
   const { cols, memory, offset, page_size, cell_size } = instance.exports
   const buffer = new Uint8Array(memory.buffer, offset.value, page_size.value)
-  for (const [x, y, color] of hoverBuffer) {
+  for (const [x, y, color] of Object.values(hoverBuffer)) {
     const index = (y * cols.value + x) * cell_size.value
     buffer[index + 2] = color[2]
     buffer[index + 1] = color[1]
     buffer[index] = color[0]
   }
 
-  hoverBuffer.length = 0
+  hoverBuffer = {}
   update(instance)
 }
 
-function setupMouseover() {
-  canvas.addEventListener('mousemove', (event) => {
-    if (!running) return
+function handleMouseover(event) {
+  if (!running) return
 
-    const x = Math.round(event.offsetX / (r * (1 + Math.cos(2 * Math.PI / 6))))
-    const y = Math.round(event.offsetY / (2 * r * Math.sin(2 * Math.PI / 6)))
+  const x = Math.round(event.offsetX / (r * (1 + Math.cos(2 * Math.PI / 6))))
+  const y = Math.round(event.offsetY / (2 * r * Math.sin(2 * Math.PI / 6)))
 
-    clearTimeout(hoverBufferTimeout)
-    hoverBufferTimeout = setTimeout(flushHoverBuffer, 300)
+  window.clearTimeout(hoverBufferTimeout)
+  hoverBufferTimeout = window.setTimeout(flushHoverBuffer, 100)
 
-    if (!color) {
-      color = [~~(Math.random() * 255), ~~(Math.random() * 255), ~~(Math.random() * 255)]
-    }
+  if (hoverBuffer[`${x},${y}`]) return
 
-    const fillStyle = `rgb(${color[2]}, ${color[1]}, ${color[0]})`
-    drawHexagon(x, y, fillStyle)
-    hoverBuffer.push([x, y, color])
-  })
+  if (!color) {
+    const randChannel = () => ~~(Math.random() * (200 - 50) + 50)
+    color = [randChannel(), randChannel(), randChannel()]
+  }
+
+  const fillStyle = `rgba(${color[2]}, ${color[1]}, ${color[0]}, 0.5)`
+  drawHexagon(x, y, fillStyle)
+  hoverBuffer[`${x},${y}`] = [x, y, color]
+}
+
+function handleStartStop() {
+  running = !running
+
+  if (running) {
+    simulate()
+  } else {
+    flushHoverBuffer()
+  }
+
+  startStopButton.innerHTML = running ? '&#x23F8;' : '&#x23F5;'
 }
 
 function simulate(timestamp) {
@@ -64,19 +83,7 @@ function simulate(timestamp) {
     update(instance)
     lastFrameTime = timestamp
   }
-  requestAnimationFrame(simulate)
-}
-
-function startStop() {
-  running = !running
-
-  if (running) {
-    simulate()
-  } else {
-    flushHoverBuffer()
-  }
-
-  startStopButton.innerHTML = running ? '&#x23F8;' : '&#x23F5;'
+  window.requestAnimationFrame(simulate)
 }
 
 function drawHexagon(x, y, fillStyle) {
@@ -92,12 +99,11 @@ function drawHexagon(x, y, fillStyle) {
   ctx.fill()
 }
 
-function render(buffer, page_size, cell_size, rows, cols) {
+function render(buffer, cell_size, rows, cols) {
   ctx.clearRect(0, 0, canvas.width, canvas.height)
 
-  for (let i = 0; i < hoverBuffer.length; i++) {
-    const [x, y, color] = hoverBuffer[i]
-    const fillStyle = `rgb(${color[2]}, ${color[1]}, ${color[0]})`
+  for (const [x, y, color] of Object.values(hoverBuffer)) {
+    const fillStyle = `rgba(${color[2]}, ${color[1]}, ${color[0]}, 0.5)`
     drawHexagon(x, y, fillStyle)
   }
 
@@ -115,18 +121,29 @@ function render(buffer, page_size, cell_size, rows, cols) {
 function update(instance) {
   const { page_size, cell_size, rows, cols, memory, offset } = instance.exports
   const buffer = new Uint8Array(memory.buffer, offset.value, page_size.value)
-  render(buffer, page_size.value, cell_size.value, rows.value, cols.value)
+  render(buffer, cell_size.value, rows.value, cols.value)
 }
 
 async function setup() {
   instance = (await WebAssembly.instantiateStreaming(fetch('/assets/build/game.wasm'))).instance
 
-  // instance.exports.init()
-  setupMouseover()
-  startStopButton.addEventListener('click', startStop)
+  initCanvas()
+  canvas.addEventListener('mousemove', handleMouseover)
+  startStopButton.addEventListener('click', handleStartStop)
 
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-  startStop()
+  handleStartStop()
+}
+
+function debounce(callback, wait) {
+  let timeoutId = null
+  return (...args) => {
+    window.clearTimeout(timeoutId)
+    timeoutId = window.setTimeout(() => {
+      callback(...args)
+    }, wait)
+  }
 }
 
 window.addEventListener('load', setup)
+window.addEventListener('resize', debounce(initCanvas, 50))
