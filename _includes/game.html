@@ -3,5 +3,13 @@
     &#x23F5;
   </button>
   <canvas id="canvas" width="1600" height="800" style="position: fixed; top: 0; left: 0; opacity: 0.6"></canvas>
-  <script src="/assets/world.js"></script>
+  <script type="module">
+    import { Channel } from '/assets/channel.js'
+    import { updatePointers, registerMousemoveHandler } from '/assets/pointers.js'
+    import '/assets/world.js'
+
+    const channel = new Channel('ws://localhost:3000/cable', 'SessionChannel', updatePointers)
+    registerMousemoveHandler(channel)
+
+  </script>
 {% endunless %}
