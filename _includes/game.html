@@ -5,10 +5,36 @@
   <canvas id="canvas" width="1600" height="800" style="position: fixed; top: 0; left: 0; opacity: 0.6"></canvas>
   <script type="module">
     import { Channel } from '/assets/channel.js'
-    import { updatePointers, registerMousemoveHandler } from '/assets/pointers.js'
+    import { updatePointer, registerMousemoveHandler } from '/assets/pointers.js'
     import '/assets/world.js'
 
-    const channel = new Channel('ws://localhost:3000/cable', 'SessionChannel', updatePointers)
+    const canvas = document.getElementById('canvas')
+
+    function handleMessage(data) {
+      switch (data.type) {
+        case 'mousemove':
+          updatePointer({ client_id: data.client_id, x: data.x, y: data.y })
+          // TODO
+          // canvas.dispatchEvent(new CustomEvent('remotemousemove', {
+          //   detail: data,
+          // }))
+          break
+        case 'unsubscribe':
+          updatePointer({ client_id: data.client_id })
+          break
+        case 'push_cell':
+          // TODO
+          break
+        case 'flush':
+          // TODO
+          // canvas.dispatchEvent(new CustomEvent('flush', {
+          //   detail: data,
+          // }))
+          break
+      }
+    }
+
+    const channel = new Channel('ws://localhost:3000/cable', 'SessionChannel', handleMessage)
     registerMousemoveHandler(channel)
 
   </script>

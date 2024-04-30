@@ -8,8 +8,19 @@ export class Channel {
     this.socket.addEventListener('message', this.receive.bind(this))
   }
 
-  send(data) {
-    this.socket.send(JSON.stringify(data))
+  send(data, command = 'message') {
+    this.socket.send(JSON.stringify({
+      command,
+      type: 'message',
+      identifier: {
+        channel: this.channel,
+        client_id: this.id,
+      },
+      data: {
+        client_id: this.id,
+        ...data,
+      },
+    }))
   }
 
   receive(message) {
@@ -31,28 +42,14 @@ export class Channel {
   }
 
   subscribe() {
-    this.send({
-      command: 'subscribe',
-      identifier: JSON.stringify({
-        channel: this.channel,
-        client_id: this.id,
-      }),
-    })
+    this.send({}, 'subscribe')
   }
 
   sendMouseMove(x, y) {
-    this.send({
-      command: 'message',
-      type: 'message',
-      identifier: JSON.stringify({
-        channel: this.channel,
-        client_id: this.id,
-      }),
-      data: JSON.stringify({
-        type: 'mousemove',
-        client_id: this.id,
-        x, y,
-      }),
-    })
+    this.send({ type: 'mousemove', x, y })
+  }
+
+  sendPushCell(x, y, color) {
+    this.send({ type: 'push_cell', x, y, color })
   }
 }

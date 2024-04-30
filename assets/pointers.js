@@ -29,34 +29,16 @@ function throttle(callback, limit) {
   }
 }
 
-const canvas = document.getElementById('canvas')
-
-export function updatePointers(data) {
-  switch (data.type) {
-    case 'mousemove':
-      pointers[data.client_id] ||= createPointer(data.x, data.y)
-
-      // TODO save this instead
-      const last_x = +pointers[data.client_id].style.left.replace('px', '') / window.innerWidth
-      const last_y = +pointers[data.client_id].style.top.replace('px', '') / window.innerHeight
-
-      pointers[data.client_id].style.left = `${data.x * window.innerWidth}px`
-      pointers[data.client_id].style.top = `${data.y * window.innerHeight}px`
-
-      canvas.dispatchEvent(new CustomEvent('remotemousemove', {
-        detail: {
-          x: data.x,
-          y: data.y,
-          last_x, last_y,
-          client_id: data.client_id,
-        },
-      }))
-      break
-    case 'unsubscribe':
-      pointers[data.client_id]?.remove()
-      delete pointers[data.client_id]
-      break
+export function updatePointer({ client_id, x, y }) {
+  if (!x || !y) {
+    pointers[client_id]?.remove()
+    delete pointers[client_id]
+    return
   }
+
+  pointers[client_id] ||= createPointer(x, y)
+  pointers[client_id].style.left = `${x * window.innerWidth}px`
+  pointers[client_id].style.top = `${y * window.innerHeight}px`
 }
 
 export function registerMousemoveHandler(channel) {
