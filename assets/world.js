@@ -4,6 +4,7 @@ const ctx = canvas.getContext('2d')
 
 const a = 2 * Math.PI / 6
 let r // hexagon radius
+let inscribedR
 
 let instance = null
 let running = false
@@ -23,6 +24,7 @@ function initCanvas() {
   const widthFitRadius = (canvas.width / cols) / (Math.cos(a) - Math.cos(3 * a))
   const heightFitRadius = canvas.height / (rows * Math.sin(a))
   r = Math.min(widthFitRadius, heightFitRadius)
+  inscribedR = r * Math.sin(a)
 }
 
 function flushHoverBuffer() {
@@ -45,11 +47,13 @@ const canvasToGrid = (offsetX, offsetY) => [
   Math.round(offsetY / (2 * r * Math.sin(2 * Math.PI / 6))),
 ]
 
+// TODO color per client
+
 function handleCanvasMouseover(event) {
   if (!running) return
 
   window.clearTimeout(hoverBufferTimeout)
-  hoverBufferTimeout = window.setTimeout(flushHoverBuffer, 100)
+  hoverBufferTimeout = window.setTimeout(flushHoverBuffer, 200)
 
   const [x, y] = canvasToGrid(event.offsetX, event.offsetY)
   if (hoverBuffer[`${x},${y}`]) return
@@ -62,6 +66,29 @@ function handleCanvasMouseover(event) {
   const fillStyle = `rgba(${color[2]}, ${color[1]}, ${color[0]}, 0.7)`
   drawHexagon(x, y, fillStyle)
   hoverBuffer[`${x},${y}`] = [x, y, color]
+}
+
+function handleRemoteCanvasMouseover(event) {
+  console.log(event.detail)
+  if (!running) return
+
+  window.clearTimeout(hoverBufferTimeout)
+  hoverBufferTimeout = window.setTimeout(flushHoverBuffer, 200)
+
+  // interpolate events along the path of the mousemove to create a continuous trail
+  const canvasX = event.detail.x * window.innerWidth
+  const canvasY = event.detail.y * window.innerHeight
+  const lastCanvasX = event.detail.last_x * window.innerWidth
+  const lastCanvasY = event.detail.last_y * window.innerHeight
+  const startX = Math.min(canvasX, lastCanvasX)
+  const startY = Math.min(canvasY, lastCanvasY)
+  const interpolationSteps = Math.floor(Math.max(Math.abs(canvasX - lastCanvasX), Math.abs(canvasY - lastCanvasY)) / inscribedR)
+  const stepX = Math.abs(canvasX - lastCanvasX) / interpolationSteps
+  const stepY = Math.abs(canvasY - lastCanvasY) / interpolationSteps
+  console.log({ lastCanvasX, canvasX, startX, lastCanvasY, canvasY, startY, interpolationSteps, stepX, stepY })
+  for (let i = 0; i < interpolationSteps; i++) {
+    handleCanvasMouseover({ offsetX: startX + i * stepX, offsetY: startY + i * stepY })
+  }
 }
 
 function handleCanvasClick(event) {
@@ -160,6 +187,7 @@ async function setup() {
   initCanvas()
   canvas.addEventListener('mousemove', handleCanvasMouseover)
   canvas.addEventListener('click', handleCanvasClick)
+  canvas.addEventListener('remotemousemove', handleRemoteCanvasMouseover)
   startStopButton.addEventListener('click', handleStartStop)
 
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
