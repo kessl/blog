@@ -1,30 +1,31 @@
 export class Channel {
-  constructor(url, channel, handleMessage) {
+  constructor(url, channel) {
     this.id = Math.random().toString(36)
     this.channel = channel
-    this.onMessage = handleMessage
 
     this.socket = new WebSocket(url)
     this.socket.addEventListener('message', this.receive.bind(this))
   }
 
   send(data, command = 'message') {
+    console.log('send', data)
     this.socket.send(JSON.stringify({
       command,
       type: 'message',
-      identifier: {
+      identifier: JSON.stringify({
         channel: this.channel,
         client_id: this.id,
-      },
-      data: {
+      }),
+      data: JSON.stringify({
         client_id: this.id,
         ...data,
-      },
+      }),
     }))
   }
 
   receive(message) {
     const data = JSON.parse(message.data)
+    console.log('receive', data)
 
     switch (data.type) {
       case 'welcome':
