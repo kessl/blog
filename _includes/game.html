@@ -12,7 +12,13 @@
     const canvas = document.getElementById('canvas')
     const world = new World(canvas, startStopButton)
 
-    const channel = new Channel('ws://localhost:3000/cable', 'SessionChannel')
+    const url =
+      {% if jekyll.environment == "production" %}
+        'wss://potato.bitgate.cz/cable'
+      {% else %}
+        'ws://localhost:3000/cable'
+      {% endif %}
+    const channel = new Channel(url, 'SessionChannel')
     const pointers = new Pointers()
 
     channel.onMessage = (data) => {
