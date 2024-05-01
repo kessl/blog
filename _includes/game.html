@@ -18,12 +18,12 @@
     channel.onMessage = (data) => {
       switch (data.type) {
         case 'unsubscribe':
-          pointers.updatePointer({ client_id: data.client_id })
+          pointers.updatePointer(data.client_id, null, null)
           break
         case 'push_cell':
           world.pushCell(data.client_id, data.x, data.y, data.color)
           const [canvasX, canvasY] = world.gridToCanvas(data.x, data.y)
-          pointers.updatePointer({ client_id: data.client_id, x: canvasX, y: canvasY })
+          pointers.updatePointer(data.client_id, canvasX, canvasY)
           break
         case 'flush':
           world.flushPaintBuffer(data.client_id)

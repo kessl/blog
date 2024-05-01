@@ -1,6 +1,6 @@
 export class Channel {
   constructor(url, channel) {
-    this.id = Math.random().toString(36)
+    this.id = Math.random().toString(36).substring(2)
     this.channel = channel
 
     this.socket = new WebSocket(url)
