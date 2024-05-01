@@ -8,7 +8,6 @@ export class Channel {
   }
 
   send(data, command = 'message') {
-    console.log('send', data)
     this.socket.send(JSON.stringify({
       command,
       type: 'message',
@@ -25,7 +24,6 @@ export class Channel {
 
   receive(message) {
     const data = JSON.parse(message.data)
-    console.log('receive', data)
 
     switch (data.type) {
       case 'welcome':
