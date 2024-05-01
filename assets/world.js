@@ -61,6 +61,13 @@ export class World {
     }
   }
 
+  gridToCanvas(x, y) {
+    return [
+      x * this.r * (1 + Math.cos(this.a)),
+      y * 2 * this.r * Math.sin(this.a) - (-1) ** x * this.r * Math.sin(this.a) / 2,
+    ]
+  }
+
   canvasToGrid(offsetX, offsetY) {
     return [
       Math.round(offsetX / (this.r * (1 + Math.cos(this.a)))),
@@ -144,8 +151,7 @@ export class World {
   }
 
   drawHexagon(x, y, fillStyle) {
-    const canvasX = x * this.r * (1 + Math.cos(this.a))
-    const canvasY = y * 2 * this.r * Math.sin(this.a) - (-1) ** x * this.r * Math.sin(this.a) / 2
+    const [canvasX, canvasY] = this.gridToCanvas(x, y)
 
     this.ctx.beginPath()
     for (var i = 0; i < 6; i++) {

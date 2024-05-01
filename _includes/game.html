@@ -13,22 +13,19 @@
     const world = new World(canvas, startStopButton)
 
     const channel = new Channel('ws://localhost:3000/cable', 'SessionChannel')
-    const pointers = new Pointers(channel)
+    const pointers = new Pointers()
 
     channel.onMessage = (data) => {
       switch (data.type) {
-        case 'mousemove':
-          pointers.updatePointer({ client_id: data.client_id, x: data.x, y: data.y })
-          break
         case 'unsubscribe':
           pointers.updatePointer({ client_id: data.client_id })
           break
         case 'push_cell':
-          console.log('push_cell', data)
           world.pushCell(data.client_id, data.x, data.y, data.color)
+          const [canvasX, canvasY] = world.gridToCanvas(data.x, data.y)
+          pointers.updatePointer({ client_id: data.client_id, x: canvasX, y: canvasY })
           break
         case 'flush':
-          console.log('flush', data)
           world.flushPaintBuffer(data.client_id)
           break
       }
