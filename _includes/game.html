@@ -19,23 +19,20 @@
       switch (data.type) {
         case 'unsubscribe':
           pointers.updatePointer(data.client_id, null, null)
+          world.resetColor = !pointers.hasPointers()
           break
         case 'push_cell':
           world.pushCell(data.client_id, data.x, data.y, data.color)
           const [canvasX, canvasY] = world.gridToCanvas(data.x, data.y)
           pointers.updatePointer(data.client_id, canvasX, canvasY)
+          world.resetColor = !pointers.hasPointers()
           break
         case 'flush':
           world.flushPaintBuffer(data.client_id)
           break
       }
     }
-
-    world.onPushPaintBuffer = function (x, y, color) {
-      channel.sendPushPaintBuffer(x, y, color)
-    }
-    world.onFlushPaintBuffer = function () {
-      channel.sendFlushPaintBuffer()
-    }
+    world.onPushPaintBuffer = channel.sendPushPaintBuffer.bind(channel)
+    world.onFlushPaintBuffer = channel.sendFlushPaintBuffer.bind(channel)
   </script>
 {% endunless %}

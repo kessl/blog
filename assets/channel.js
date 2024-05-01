@@ -1,6 +1,6 @@
 export class Channel {
   constructor(url, channel) {
-    this.id = Math.random().toString(36).substring(2)
+    this.client_id = Math.random().toString(36).substring(2)
     this.channel = channel
 
     this.socket = new WebSocket(url)
@@ -13,10 +13,10 @@ export class Channel {
       type: 'message',
       identifier: JSON.stringify({
         channel: this.channel,
-        client_id: this.id,
+        client_id: this.client_id,
       }),
       data: JSON.stringify({
-        client_id: this.id,
+        client_id: this.client_id,
         ...data,
       }),
     }))
@@ -34,7 +34,7 @@ export class Channel {
         return
     }
 
-    if (data.message) {
+    if (data.message && data.message.client_id !== this.client_id) {
       this.onMessage?.(data.message)
       return
     }

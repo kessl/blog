@@ -16,6 +16,7 @@ export class World {
   lastFrameTime = 0
 
   color = null
+  resetColor = true
   clientPaintBuffers = { [undefined]: {} }
   paintBufferTimeout = null
 
@@ -28,6 +29,18 @@ export class World {
 
     window.addEventListener('load', this.setup.bind(this))
     window.addEventListener('resize', debounce(this.initCanvas.bind(this)), 50)
+  }
+
+  async setup() {
+    this.instance = (await WebAssembly.instantiateStreaming(fetch('/assets/build/game.wasm'))).instance
+
+    this.initCanvas()
+    this.canvas.addEventListener('mousemove', this.handleCanvasMousemove.bind(this))
+    this.canvas.addEventListener('click', this.handleCanvasClick.bind(this))
+    this.startStopButton.addEventListener('click', this.handleStartStop.bind(this))
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    this.handleStartStop()
   }
 
   initCanvas() {
@@ -52,9 +65,12 @@ export class World {
       buffer[index] = color[0]
     }
 
-    this.color = null
     this.clientPaintBuffers[client_id] = {}
     this.update()
+
+    if (this.resetColor) {
+      this.color = null
+    }
 
     if (!client_id) {
       this.onFlushPaintBuffer?.()
@@ -80,7 +96,7 @@ export class World {
     this.clientPaintBuffers[client_id][`${x},${y}`] = [x, y, color]
   }
 
-  handleCanvasMouseover(event) {
+  handleCanvasMousemove(event) {
     if (!this.running) return
 
     window.clearTimeout(this.paintBufferTimeout)
@@ -187,17 +203,5 @@ export class World {
     const {page_size, cell_size, rows, cols, memory, offset} = this.instance.exports
     const buffer = new Uint8Array(memory.buffer, offset.value, page_size.value)
     this.render(buffer, cell_size.value, rows.value, cols.value)
-  }
-
-  async setup() {
-    this.instance = (await WebAssembly.instantiateStreaming(fetch('/assets/build/game.wasm'))).instance
-
-    this.initCanvas()
-    this.canvas.addEventListener('mousemove', this.handleCanvasMouseover.bind(this))
-    this.canvas.addEventListener('click', this.handleCanvasClick.bind(this))
-    this.startStopButton.addEventListener('click', this.handleStartStop.bind(this))
-
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-    this.handleStartStop()
   }
 }

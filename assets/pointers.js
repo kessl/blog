@@ -2,8 +2,8 @@
 const names = ['Aban', 'Adil', 'Alåth', 'Amost', 'Asmel', 'Asob', 'Ast', 'Astesh', 'Asën', 'Athel', 'Atír', 'Atîs', 'Avuz', 'Ber', 'Besmar', 'Bim', 'Bomrek', 'Bëmbul', 'Catten', 'Cerol', 'Cilob', 'Cog', 'Dakost', 'Dastot', 'Datan', 'Deduk', 'Degël', 'Deler', 'Dodók', 'Domas', 'Doren', 'Ducim', 'Dumat', 'Dumed', 'Dîshmab', 'Dôbar', 'Edzul', 'Edëm', 'Endok', 'Eral', 'Erib', 'Erush', 'Eshtân', 'Etur', 'Fath', 'Feb', 'Fikod', 'Geshud', 'Goden', 'Id', 'Iden', 'Ilral', 'Imush', 'Ineth', 'Ingish', 'Inod', 'Kadol', 'Kadôl', 'Kel', 'Kib', 'Kikrost', 'Kivish', 'Kogan', 'Kogsak', 'Kol', 'Kosoth', 'Kulet', 'Kumil', 'Kûbuk', 'Led', 'Libash', 'Likot', 'Limul', 'Litast', 'Logem', 'Lokum', 'Lolor', 'Lorbam', 'Lòr', 'Mafol', 'Mebzuth', 'Medtob', 'Melbil', 'Meng', 'Mestthos', 'Minkot', 'Mistêm', 'Moldath', 'Momuz', 'Monom', 'Mosus', 'Mörul', 'Mûthkat', 'Nil', 'Nish', 'Nomal', 'Obok', 'Oddom', 'Olin', 'Olon', 'Onget', 'Onol', 'Rakust', 'Ral', 'Reg', 'Rigòth', 'Rimtar', 'Rith', 'Rovod', 'Rîsen', 'Sarvesh', 'Sazir', 'Shem', 'Shorast', 'Sibrek', 'Sigun', 'Sodel', 'Solon', 'Stinthäd', 'Stodir', 'Stukos', 'Stâkud', 'Såkzul', 'Tekkud', 'Thob', 'Tholtig', 'Thîkut', 'Tirist', 'Tobul', 'Tosid', 'Tulon', 'Tun', 'Ubbul', 'Udib', 'Udil', 'Unib', 'Urdim', 'Urist', 'Urvad', 'Ushat', 'Ustuth', 'Uvash', 'Uzol', 'Vabôk', 'Vucar', 'Vutok', 'Zan', 'Zaneg', 'Zas', 'Zasit', 'Zefon', 'Zon', 'Zuglar', 'Zulban', 'Zuntîr', 'Zutthan', 'Äs', 'Åblel', 'Èrith', 'Èzum', 'Îton', 'Ïngiz', 'Ïteb', 'Ònul', 'Ùshrir']
 
 const nameTag = (client_id) => {
-  const hash = parseInt(client_id, 36)
-  return names[hash % names.length]
+  const num = parseInt(client_id, 36)
+  return names[num % names.length]
 }
 
 const pointerHtml = (client_id) => `
@@ -16,7 +16,7 @@ const pointerHtml = (client_id) => `
 `
 
 export class Pointers {
-  pointers = {}
+  clientPointers = {}
 
   createPointer(client_id, x, y) {
     const template = document.createElement('template')
@@ -32,13 +32,17 @@ export class Pointers {
 
   updatePointer(client_id, x, y) {
     if (!x || !y) {
-      this.pointers[client_id]?.remove()
-      delete this.pointers[client_id]
+      this.clientPointers[client_id]?.remove()
+      delete this.clientPointers[client_id]
       return
     }
 
-    this.pointers[client_id] ||= this.createPointer(client_id, x, y)
-    this.pointers[client_id].style.left = `${x}px`
-    this.pointers[client_id].style.top = `${y}px`
+    this.clientPointers[client_id] ||= this.createPointer(client_id, x, y)
+    this.clientPointers[client_id].style.left = `${x}px`
+    this.clientPointers[client_id].style.top = `${y}px`
+  }
+
+  hasPointers() {
+    return Object.keys(this.clientPointers).length > 0
   }
 }
