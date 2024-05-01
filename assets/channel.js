@@ -50,7 +50,11 @@ export class Channel {
     this.send({ type: 'mousemove', x, y })
   }
 
-  sendPushCell(x, y, color) {
+  sendPushPaintBuffer(x, y, color) {
     this.send({ type: 'push_cell', x, y, color })
+  }
+
+  sendFlushPaintBuffer() {
+    this.send({ type: 'flush' })
   }
 }

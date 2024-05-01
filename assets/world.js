@@ -16,8 +16,8 @@ export class World {
   lastFrameTime = 0
 
   color = null
-  hoverBuffer = {}
-  hoverBufferTimeout = null
+  clientPaintBuffers = { [undefined]: {} }
+  paintBufferTimeout = null
 
   a = 2 * Math.PI / 6
 
@@ -42,10 +42,10 @@ export class World {
     this.r = Math.min(widthFitRadius, heightFitRadius)
   }
 
-  flushHoverBuffer() {
-    const {cols, memory, offset, page_size, cell_size} = this.instance.exports
+  flushPaintBuffer(client_id) {
+    const { cols, memory, offset, page_size, cell_size } = this.instance.exports
     const buffer = new Uint8Array(memory.buffer, offset.value, page_size.value)
-    for (const [x, y, color] of Object.values(this.hoverBuffer)) {
+    for (const [x, y, color] of Object.values(this.clientPaintBuffers[client_id])) {
       const index = (y * cols.value + x) * cell_size.value
       buffer[index + 2] = color[2]
       buffer[index + 1] = color[1]
@@ -53,8 +53,12 @@ export class World {
     }
 
     this.color = null
-    this.hoverBuffer = {}
+    this.clientPaintBuffers[client_id] = {}
     this.update()
+
+    if (!client_id) {
+      this.onFlushPaintBuffer?.()
+    }
   }
 
   canvasToGrid(offsetX, offsetY) {
@@ -64,14 +68,19 @@ export class World {
     ]
   }
 
+  pushCell(client_id, x, y, color) {
+    this.clientPaintBuffers[client_id] ||= {}
+    this.clientPaintBuffers[client_id][`${x},${y}`] = [x, y, color]
+  }
+
   handleCanvasMouseover(event) {
     if (!this.running) return
 
-    window.clearTimeout(this.hoverBufferTimeout)
-    this.hoverBufferTimeout = window.setTimeout(this.flushHoverBuffer.bind(this), 200)
+    window.clearTimeout(this.paintBufferTimeout)
+    this.paintBufferTimeout = window.setTimeout(this.flushPaintBuffer.bind(this), 200)
 
     const [x, y] = this.canvasToGrid(event.offsetX, event.offsetY)
-    if (this.hoverBuffer[`${x},${y}`]) return
+    if (this.clientPaintBuffers[undefined][`${x},${y}`]) return
 
     if (!this.color) {
       this.color = [randChannel(), randChannel(), randChannel()]
@@ -79,20 +88,21 @@ export class World {
 
     const fillStyle = `rgba(${this.color[2]}, ${this.color[1]}, ${this.color[0]}, 0.7)`
     this.drawHexagon(x, y, fillStyle)
-    this.hoverBuffer[`${x},${y}`] = [x, y, this.color]
+    this.clientPaintBuffers[undefined][`${x},${y}`] = [x, y, this.color]
+    this.onPushPaintBuffer?.(x, y, this.color)
   }
 
   handleCanvasClick(event) {
     if (this.running) return
 
-    window.clearTimeout(this.hoverBufferTimeout) // abuse to reset color
-    this.hoverBufferTimeout = window.setTimeout(this.flushHoverBuffer.bind(this), 1000)
+    window.clearTimeout(this.paintBufferTimeout) // abuse to reset color
+    this.paintBufferTimeout = window.setTimeout(this.flushPaintBuffer.bind(this), 1000)
 
     if (!this.color) {
       this.color = [randChannel(), randChannel(), randChannel()]
     }
 
-    const {cols, memory, offset, page_size, cell_size} = this.instance.exports
+    const { cols, memory, offset, page_size, cell_size } = this.instance.exports
     const buffer = new Uint8Array(memory.buffer, offset.value, page_size.value)
 
     const [x, y] = this.canvasToGrid(event.offsetX, event.offsetY)
@@ -101,10 +111,11 @@ export class World {
     if (buffer[index + 2] && buffer[index + 1] && buffer[index]) {
       buffer[index + 2] = buffer[index + 1] = buffer[index] = 0
     } else {
-      buffer[index + 2] = color[2]
-      buffer[index + 1] = color[1]
-      buffer[index] = color[0]
+      buffer[index + 2] = this.color[2]
+      buffer[index + 1] = this.color[1]
+      buffer[index] = this.color[0]
     }
+    this.onPushPaintBuffer?.(x, y, this.color)
     this.update()
   }
 
@@ -114,7 +125,7 @@ export class World {
     if (this.running) {
       this.simulate()
     } else {
-      this.flushHoverBuffer()
+      this.flushPaintBuffer()
     }
 
     this.startStopButton.innerHTML = this.running ? '&#x23F8;' : '&#x23F5;'
@@ -148,7 +159,8 @@ export class World {
   render(buffer, cell_size, rows, cols) {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
 
-    for (const [x, y, color] of Object.values(this.hoverBuffer)) {
+    const paintCells = Object.values(this.clientPaintBuffers).flatMap(buffer => Object.values(buffer))
+    for (const [x, y, color] of paintCells) {
       if (!color[2] && !color[1] && !color[0]) continue
       const fillStyle = `rgba(${color[2]}, ${color[1]}, ${color[0]}, 0.7)`
       this.drawHexagon(x, y, fillStyle)
