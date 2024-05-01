@@ -2,10 +2,9 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <link rel="stylesheet" href="/assets/css/default.css?1713811463773520785">
+    <link rel="stylesheet" href="/assets/css/default.css?1714580517704631120">
     <link rel="stylesheet" href="/assets/css/fonts.css">
     <link rel="stylesheet" href="/assets/css/monokai.css">
-    <link rel="stylesheet" href="/assets/css/world.css">
     <link rel="icon" href="/assets/favicon.png" type="image/png">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Setting up a dev environment on GitLab pages &middot; bitgate</title>
@@ -38,8 +37,43 @@
   <button id="start-stop" title="start/pause simulation" class="hidden sm:block fixed z-10 bottom-30 right-30 border-none rounded-sm -mx-[5px] px-[5px] hover:bg-dark/10 dark:hover:bg-light/10">
     &#x23F5;
   </button>
-  <div id="world"></div>
-  <script src="/assets/world.js"></script>
+  <canvas id="canvas" width="1600" height="800" style="position: fixed; top: 0; left: 0; opacity: 0.6"></canvas>
+  <script type="module">
+    import { Channel } from '/assets/channel.js'
+    import { Pointers } from '/assets/pointers.js'
+    import { World } from '/assets/world.js'
+
+    const startStopButton = document.querySelector('#start-stop')
+    const canvas = document.getElementById('canvas')
+    const world = new World(canvas, startStopButton)
+
+    const url =
+      
+        'wss://potato.bitgate.cz/cable'
+      
+    const channel = new Channel(url, 'SessionChannel')
+    const pointers = new Pointers()
+
+    channel.onMessage = (data) => {
+      switch (data.type) {
+        case 'unsubscribe':
+          pointers.updatePointer(data.client_id, null, null)
+          world.resetColor = !pointers.hasPointers()
+          break
+        case 'push_cell':
+          world.pushCell(data.client_id, data.x, data.y, data.color)
+          const [canvasX, canvasY] = world.gridToCanvas(data.x, data.y)
+          pointers.updatePointer(data.client_id, canvasX, canvasY)
+          world.resetColor = !pointers.hasPointers()
+          break
+        case 'flush':
+          world.flushPaintBuffer(data.client_id)
+          break
+      }
+    }
+    world.onPushPaintBuffer = channel.sendPushPaintBuffer.bind(channel)
+    world.onFlushPaintBuffer = channel.sendFlushPaintBuffer.bind(channel)
+  </script>
 
 
 

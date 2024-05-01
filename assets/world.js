@@ -1,179 +1,207 @@
-const rows = 60
-const columns = 100
+const randChannel = () => ~~(Math.random() * (200 - 50) + 50)
 
-// Even row
-//         (-1, 0)
-//          ____
-// (0, -1) /    \ (0, 1)
-// (1, -1) \____/ (1, 1)
-//         (1, 0)
-const evenRowNeighborCoords = [[0, -1], [-1, 0], [0, 1], [1, -1], [1, 0], [1, 1]]
-
-// Odd row
-//         (-1, -0)
-//           ____
-// (-1, -1) /    \ (-1, 1)
-//  (0, -1) \____/  (0, 1)
-//          (1, 0)
-const oddRowNeighborCoords = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [1, 0], [0, 1]]
-
-let running = false
-let lastFrameTime = 0
-
-const hoverBuffer = []
-let hoverBufferTimeout = null
-
-const currentGen = []
-const nextGen = []
-
-function flushHoverBuffer() {
-  hoverBuffer.length = 0
+function debounce(callback, wait) {
+  let timeoutId = null
+  return (...args) => {
+    window.clearTimeout(timeoutId)
+    timeoutId = window.setTimeout(() => {
+      callback(...args)
+    }, wait)
+  }
 }
 
-function handleMouseoverCell(event) {
-  if (!running) return
+export class World {
+  instance = null
+  running = false
+  lastFrameTime = 0
 
-  const cell = event.target
-  const [x, y] = cell.id.split(',').map(Number)
+  color = null
+  resetColor = true
+  clientPaintBuffers = { [undefined]: {} }
+  paintBufferTimeout = null
 
-  hoverBuffer.push([x, y])
-  currentGen[y][x] = 1
-  cell.classList.add('alive')
+  a = 2 * Math.PI / 6
 
-  clearTimeout(hoverBufferTimeout)
-  hoverBufferTimeout = setTimeout(flushHoverBuffer, 200)
-}
+  constructor(canvas, startStopButton) {
+    this.canvas = canvas
+    this.ctx = canvas.getContext('2d')
+    this.startStopButton = startStopButton
 
-function createGenArrays() {
-  for (let y = 0; y < rows; y++) {
-    currentGen[y] = new Array(columns)
-    nextGen[y] = new Array(columns)
+    window.addEventListener('load', this.setup.bind(this))
+    window.addEventListener('resize', debounce(this.initCanvas.bind(this)), 50)
   }
 
-  for (let y = 0; y < rows; y++) {
-    for (let x = 0; x < columns; x++) {
-      currentGen[y][x] = 0
-      nextGen[y][x] = 0
+  async setup() {
+    this.instance = (await WebAssembly.instantiateStreaming(fetch('/assets/build/game.wasm'))).instance
+
+    this.initCanvas()
+    this.canvas.addEventListener('mousemove', this.handleCanvasMousemove.bind(this))
+    this.canvas.addEventListener('click', this.handleCanvasClick.bind(this))
+    this.startStopButton.addEventListener('click', this.handleStartStop.bind(this))
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    this.handleStartStop()
+  }
+
+  initCanvas() {
+    this.canvas.width = window.innerWidth
+    this.canvas.height = window.innerHeight
+    const cols = this.instance.exports.cols.value
+    const rows = this.instance.exports.rows.value
+
+    // choose radius so that hex grid covers entire canvas
+    const widthFitRadius = (this.canvas.width / cols) / (Math.cos(this.a) - Math.cos(3 * this.a))
+    const heightFitRadius = this.canvas.height / (rows * Math.sin(this.a))
+    this.r = Math.min(widthFitRadius, heightFitRadius)
+  }
+
+  flushPaintBuffer(client_id) {
+    const { cols, memory, offset, page_size, cell_size } = this.instance.exports
+    const buffer = new Uint8Array(memory.buffer, offset.value, page_size.value)
+    for (const [x, y, color] of Object.values(this.clientPaintBuffers[client_id])) {
+      const index = (y * cols.value + x) * cell_size.value
+      buffer[index + 2] = color[2]
+      buffer[index + 1] = color[1]
+      buffer[index] = color[0]
+    }
+
+    this.clientPaintBuffers[client_id] = {}
+    this.update()
+
+    if (this.resetColor) {
+      this.color = null
+    }
+
+    if (!client_id) {
+      this.onFlushPaintBuffer?.()
     }
   }
-}
 
-function createWorld() {
-  let world = document.querySelector('#world')
+  gridToCanvas(x, y) {
+    return [
+      x * this.r * (1 + Math.cos(this.a)),
+      y * 2 * this.r * Math.sin(this.a) - (-1) ** x * this.r * Math.sin(this.a) / 2,
+    ]
+  }
 
-  for (let y = 0; y < rows; y++) {
-    let row = document.createElement('div')
-    row.classList.add('hex-row')
+  canvasToGrid(offsetX, offsetY) {
+    return [
+      Math.round(offsetX / (this.r * (1 + Math.cos(this.a)))),
+      Math.round(offsetY / (2 * this.r * Math.sin(this.a))),
+    ]
+  }
 
-    for (let x = 0; x < columns; x++) {
-      let cell = document.createElement('div')
-      cell.classList.add('hex')
-      cell.classList.toggle('even', x % 2 === 0)
-      cell.id = `${x},${y}`
-      cell.addEventListener('mouseover', handleMouseoverCell)
-      row.appendChild(cell)
+  pushCell(client_id, x, y, color) {
+    this.clientPaintBuffers[client_id] ||= {}
+    this.clientPaintBuffers[client_id][`${x},${y}`] = [x, y, color]
+  }
+
+  handleCanvasMousemove(event) {
+    if (!this.running) return
+
+    window.clearTimeout(this.paintBufferTimeout)
+    this.paintBufferTimeout = window.setTimeout(this.flushPaintBuffer.bind(this), 200)
+
+    const [x, y] = this.canvasToGrid(event.offsetX, event.offsetY)
+    if (this.clientPaintBuffers[undefined][`${x},${y}`]) return
+
+    if (!this.color) {
+      this.color = [randChannel(), randChannel(), randChannel()]
     }
-    world.appendChild(row)
+
+    const fillStyle = `rgba(${this.color[2]}, ${this.color[1]}, ${this.color[0]}, 0.7)`
+    this.drawHexagon(x, y, fillStyle)
+    this.clientPaintBuffers[undefined][`${x},${y}`] = [x, y, this.color]
+    this.onPushPaintBuffer?.(x, y, this.color)
   }
 
-  const startStopButton = document.querySelector('#start-stop')
-  startStopButton.addEventListener('click', startStop)
-}
+  handleCanvasClick(event) {
+    if (this.running) return
 
-function positionWorld() {
-  const world = document.querySelector('#world')
+    window.clearTimeout(this.paintBufferTimeout) // abuse to reset color
+    this.paintBufferTimeout = window.setTimeout(this.flushPaintBuffer.bind(this), 1000)
 
-  function resizeWorld() {
-    const scaleX =  window.innerWidth / (world.offsetWidth - 15)
-    const scaleY = window.innerHeight / (world.offsetHeight - 15)
-    const scale = Math.max(scaleX, scaleY)
-    world.style.transform = `scale(${scale})`
-  }
-
-  resizeWorld()
-  window.addEventListener('resize', resizeWorld)
-}
-
-function createNextGen() {
-  for (row in currentGen) {
-    for (column in currentGen[row]) {
-      let neighbors = getNeighborCount(row, column)
-      if (neighbors === 3 || neighbors === 5) {
-        nextGen[row][column] = currentGen[row][column]
-      } else if (neighbors === 2 && currentGen[row][column] === 0) {
-        nextGen[row][column] = 1
-      } else {
-        nextGen[row][column] = 0
-      }
+    if (!this.color) {
+      this.color = [randChannel(), randChannel(), randChannel()]
     }
-  }
-}
 
-function getNeighborCount(row, column) {
-  let neighbors = 0
-  row = Number(row)
-  column = Number(column)
+    const { cols, memory, offset, page_size, cell_size } = this.instance.exports
+    const buffer = new Uint8Array(memory.buffer, offset.value, page_size.value)
 
-  let y, x
-  for (let i = 0; i < 6; i++) {
-    if (column % 2) {
-      [y, x] = evenRowNeighborCoords[i]
+    const [x, y] = this.canvasToGrid(event.offsetX, event.offsetY)
+    const index = (y * cols.value + x) * cell_size.value
+
+    if (buffer[index + 2] && buffer[index + 1] && buffer[index]) {
+      buffer[index + 2] = buffer[index + 1] = buffer[index] = 0
     } else {
-      [y, x] = oddRowNeighborCoords[i]
+      buffer[index + 2] = this.color[2]
+      buffer[index + 1] = this.color[1]
+      buffer[index] = this.color[0]
+    }
+    this.onPushPaintBuffer?.(x, y, this.color)
+    this.update()
+  }
+
+  handleStartStop() {
+    this.running = !this.running
+
+    if (this.running) {
+      this.simulate()
+    } else {
+      this.flushPaintBuffer()
     }
 
-    if ((row + y >= 0) && (row + y < rows) && (column + x >= 0) && (column + x < columns)) {
-      neighbors += currentGen[row + y][column + x]
+    this.startStopButton.innerHTML = this.running ? '&#x23F8;' : '&#x23F5;'
+  }
+
+  simulate(timestamp) {
+    if (!this.running) return
+
+    const deltaTime = timestamp - this.lastFrameTime
+    if (deltaTime > 110) {
+      this.instance.exports.next_gen()
+      this.update()
+      this.lastFrameTime = timestamp
+    }
+    window.requestAnimationFrame(this.simulate.bind(this))
+  }
+
+  drawHexagon(x, y, fillStyle) {
+    const [canvasX, canvasY] = this.gridToCanvas(x, y)
+
+    this.ctx.beginPath()
+    for (var i = 0; i < 6; i++) {
+      this.ctx.lineTo(canvasX + this.r * Math.cos(this.a * i), canvasY + this.r * Math.sin(this.a * i))
+    }
+    this.ctx.closePath()
+    this.ctx.fillStyle = fillStyle
+    this.ctx.fill()
+  }
+
+  render(buffer, cell_size, rows, cols) {
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
+
+    const paintCells = Object.values(this.clientPaintBuffers).flatMap(buffer => Object.values(buffer))
+    for (const [x, y, color] of paintCells) {
+      if (!color[2] && !color[1] && !color[0]) continue
+      const fillStyle = `rgba(${color[2]}, ${color[1]}, ${color[0]}, 0.7)`
+      this.drawHexagon(x, y, fillStyle)
+    }
+
+    for (let i = 0; i < rows * cols * cell_size; i += cell_size) {
+      if (!buffer[i + 2] && !buffer[i + 1] && !buffer[i]) continue
+
+      const x = ~~((i / cell_size) % cols)
+      const y = ~~((i / cell_size) / cols)
+      const fillStyle = `rgb(${buffer[i + 2]}, ${buffer[i + 1]}, ${buffer[i]})`
+
+      this.drawHexagon(x, y, fillStyle)
     }
   }
-  return neighbors
-}
 
-function updateCurrentGen() {
-  for (row in currentGen) {
-    for (col in currentGen[row]) {
-      if (hoverBuffer.includes([row, col])) continue
-      currentGen[row][col] = nextGen[row][col]
-      nextGen[row][col] = 0
-    }
+  update() {
+    const {page_size, cell_size, rows, cols, memory, offset} = this.instance.exports
+    const buffer = new Uint8Array(memory.buffer, offset.value, page_size.value)
+    this.render(buffer, cell_size.value, rows.value, cols.value)
   }
-}
-
-function updateWorld() {
-  for (y in currentGen) {
-    for (x in currentGen[y]) {
-      const cell = document.getElementById(`${x},${y}`)
-      cell.classList.toggle('alive', currentGen[y][x] !== 0)
-    }
-  }
-}
-
-function simulate(timestamp) {
-  if (!running) return
-
-  const deltaTime = timestamp - lastFrameTime
-  if (deltaTime > 100) {
-    createNextGen()
-    updateCurrentGen()
-    updateWorld()
-    lastFrameTime = timestamp
-  }
-  requestAnimationFrame(simulate)
-}
-
-function startStop() {
-  running = !running
-  if (running) simulate()
-
-  const startStopButton = document.querySelector('#start-stop')
-  startStopButton.innerHTML = running ? '&#x23F8;' : '&#x23F5;'
-}
-
-window.onload = function () {
-  createGenArrays()
-  createWorld()
-  positionWorld()
-
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-  startStop()
 }
