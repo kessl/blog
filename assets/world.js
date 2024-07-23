@@ -158,7 +158,7 @@ export class World {
     if (!this.running) return
 
     const deltaTime = timestamp - this.lastFrameTime
-    if (deltaTime > 110) {
+    if (deltaTime > 90) {
       this.instance.exports.next_gen()
       this.update()
       this.lastFrameTime = timestamp
@@ -200,7 +200,7 @@ export class World {
   }
 
   update() {
-    const {page_size, cell_size, rows, cols, memory, offset} = this.instance.exports
+    const { page_size, cell_size, rows, cols, memory, offset } = this.instance.exports
     const buffer = new Uint8Array(memory.buffer, offset.value, page_size.value)
     this.render(buffer, cell_size.value, rows.value, cols.value)
   }
