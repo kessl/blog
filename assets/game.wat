@@ -4,8 +4,8 @@
   (global $page_size (export "page_size") i32 (i32.const 65_536))
   (global $cell_size (export "cell_size") i32 (i32.const 4))
 
-  (global $cols (export "cols") i32 (i32.const 128))
-  (global $rows (export "rows") i32 (i32.const 64))
+  (global $cols (export "cols") i32 (i32.const 160))
+  (global $rows (export "rows") i32 (i32.const 100))
 
   (global $current_gen_offset (export "offset") (mut i32) (i32.const 0))
   (global $next_gen_offset (mut i32) (i32.const 65_536))
